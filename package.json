@@ -1,12 +1,32 @@
 {
   "name": "signal-utils",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "signals",
+    "signal",
+    "reactivity",
+    "tracked",
+    "rune",
+    "runes",
+    "ember",
+    "glimmer",
+    "svelte",
+    "vue",
+    "angular",
+    "solid",
+    "preact"
+  ],
+  "author": "NullVoxPopuli",
+  "license": "MIT",
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.5",
+    "typescript": "^5.4.3",
+    "vite": "^5.2.7",
+    "vite-plugin-dts": "^3.8.1",
+    "vitest": "^1.4.0"
+  }
 }
