@@ -3,7 +3,27 @@
   "version": "0.0.0",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "pnpm vite build --watch",
+    "build": "pnpm vite build",
+    "prepack": "pnpm run build"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./declarations/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./declarations/*",
+      "default": "./dist/*"
+    }
+  },
+  "typesVersions": {
+    ">=4.0.0": {
+      "*": [
+        "declarations/*"
+      ]
+    }
   },
   "keywords": [
     "signals",
@@ -23,7 +43,10 @@
   "author": "NullVoxPopuli",
   "license": "MIT",
   "devDependencies": {
+    "@embroider/addon-dev": "^4.2.1",
     "@tsconfig/strictest": "^2.0.5",
+    "globby": "^14.0.1",
+    "prettier": "^3.2.5",
     "typescript": "^5.4.3",
     "vite": "^5.2.7",
     "vite-plugin-dts": "^3.8.1",
