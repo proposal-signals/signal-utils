@@ -22,7 +22,7 @@ import { Signal } from "signal-polyfill";
   *  }
  * ```
  */ 
-export function signal(target) {
+export function signal(target: object, _context: any) {
   const { get } = target;
 
   return {

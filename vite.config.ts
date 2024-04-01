@@ -3,8 +3,11 @@ import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 import { globbySync } from 'globby'
 
+import { babel } from "@rollup/plugin-babel";
+
 import { Addon } from "@embroider/addon-dev/rollup";
 
+let entryFiles = globbySync('src/*.ts');
 
 let entries = {}; 
 
@@ -16,6 +19,9 @@ for (let entry of entryFiles) {
 const lib = new Addon();
 
 export default defineConfig({
+  // esbuild in vite does not support decorators
+  // https://github.com/evanw/esbuild/issues/104
+  esbuild: false,
   build: {
     outDir: 'dist',
     // These targets are not "support".
@@ -38,8 +44,14 @@ export default defineConfig({
       formats: ['es'],
     }
   },
-  plugins: [dts({
-    rollupTypes: true,
-    outDir: 'declarations',
-  })]
+  plugins: [
+    babel({
+      babelHelpers: "inline",
+      extensions: [".js", ".ts"],
+    }),
+    dts({
+      rollupTypes: true,
+      outDir: 'declarations',
+    })
+  ]
 })
