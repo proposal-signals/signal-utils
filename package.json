@@ -51,7 +51,7 @@
     "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
     "format": "prettier --write .",
     "lint": "concurrently 'npm:lint:*'",
-    "lint:types": "tsc --noEmit",
+    "lint:types": "tsc --noEmit --emitDeclarationOnly false",
     "lint:prettier": "prettier --check .",
     "prepack": "pnpm run build",
     "start": "pnpm build && pnpm dev",
