@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm install
+      - uses: wyvox/action-setup-pnpm@v3
+      - run: pnpm install
       - run: pnpm test 
 
