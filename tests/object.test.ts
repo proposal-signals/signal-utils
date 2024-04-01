@@ -19,7 +19,7 @@ describe('ReactiveObject', () => {
     assert.equal(original.foo, 123, 'original object was not updated');
   });
 
-  it('preserves getters', (assert) => {
+  it('preserves getters', () => {
     let obj = new ReactiveObject({
       foo: 123,
       get bar(): number {
@@ -34,7 +34,7 @@ describe('ReactiveObject', () => {
     assert.equal(obj.bar, 456, 'getter cloned correctly');
   });
 
-  it('fromEntries', (assert) => {
+  it('fromEntries', () => {
     const entries = Object.entries({ foo: 123 });
     let obj = ReactiveObject.fromEntries(entries);
     // We will lose the specific key, becuase `Object.entries` does not preserve

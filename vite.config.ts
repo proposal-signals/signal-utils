@@ -8,7 +8,7 @@ import { babel } from "@rollup/plugin-babel";
 const require = createRequire(import.meta.url);
 const manifest = require("./package.json");
 
-let entryFiles = globbySync("src/*.ts");
+let entryFiles = globbySync("src/*.ts", { ignore: ['**/*.d.ts'] });
 
 let entries: Record<string, string> = {};
 
