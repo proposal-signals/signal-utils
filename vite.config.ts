@@ -1,4 +1,4 @@
-import { resolve, basename } from "node:path";
+import { basename } from "node:path";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -8,7 +8,7 @@ import { babel } from "@rollup/plugin-babel";
 const require = createRequire(import.meta.url);
 const manifest = require("./package.json");
 
-let entryFiles = globbySync("src/*.ts");
+let entryFiles = globbySync("src/*.ts", { ignore: ["**/*.d.ts"] });
 
 let entries: Record<string, string> = {};
 
@@ -60,7 +60,8 @@ export default defineConfig({
       extensions: [".js", ".ts"],
     }),
     dts({
-      rollupTypes: true,
+      // This can generate duplicate types in the d.ts files
+      // rollupTypes: true,
       outDir: "declarations",
     }),
   ],

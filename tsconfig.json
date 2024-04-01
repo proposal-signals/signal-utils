@@ -6,6 +6,8 @@
     "target": "esnext",
     "module": "preserve",
     "moduleResolution": "bundler",
+    "declaration": true,
+    "emitDeclarationOnly": true,
 
     /**
       https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions

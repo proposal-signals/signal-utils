@@ -1,5 +1,6 @@
 import { describe, it, assert } from "vitest";
 
+import { assertStable, assertReactivelySettled } from "./helpers.ts";
 import { signal } from "signal-utils";
 import { Signal } from "signal-polyfill";
 
@@ -17,24 +18,11 @@ describe("@signal", () => {
 
     let state = new State();
 
-    let calls = 0;
-    const computed = new Signal.Computed(() => {
-      calls++;
-      return state.doubled;
+    assertReactivelySettled({
+      access: () => state.doubled,
+      change: () => state.increment(),
     });
 
-    assert.equal(state.doubled, 6);
-    assert.equal(computed.get(), 6);
-    assert.equal(calls, 1);
-
-    state.increment();
-
-    assert.equal(state.doubled, 8);
-    assert.equal(computed.get(), 8);
-    assert.equal(calls, 2);
-
-    // Is Stable
-    assert.equal(computed.get(), 8);
-    assert.equal(calls, 2);
+    assertStable(() => state.doubled);
   });
 });
