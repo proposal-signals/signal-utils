@@ -84,6 +84,9 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
+      signal-polyfill:
+        specifier: ^0.1.0
+        version: 0.1.0
       signal-utils:
         specifier: workspace:*
         version: link:..
@@ -3234,7 +3237,6 @@ packages:
 
   /signal-polyfill@0.1.0:
     resolution: {integrity: sha512-RMyLaEor0noasIsXmvLfRNf/QeF3eND6A1WErMqJ5ZLc3dpI7aifcZMwwpLafJkGnyLSWraK8gcXaAqxCtxxeg==}
-    dev: false
 
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
