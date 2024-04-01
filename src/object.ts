@@ -11,7 +11,9 @@ const createStorage = () => new Signal.State(null, { equals: () => false });
  * https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js
  */
 export class ReactiveObjectImpl {
-  static fromEntries<T = unknown>(entries: Iterable<readonly [PropertyKey, T]>) {
+  static fromEntries<T = unknown>(
+    entries: Iterable<readonly [PropertyKey, T]>,
+  ) {
     return new ReactiveObject(Object.fromEntries(entries)) as T;
   }
   #storages = new Map<PropertyKey, Signal.State<null>>();
@@ -24,7 +26,7 @@ export class ReactiveObjectImpl {
     let clone = Object.create(proto);
 
     for (let prop in descs) {
-      // SAFETY: we just iterated over the property, so having to do an 
+      // SAFETY: we just iterated over the property, so having to do an
       //         existence check here is a little silly
       Object.defineProperty(clone, prop, descs[prop]!);
     }
@@ -70,7 +72,7 @@ export class ReactiveObjectImpl {
       },
 
       getPrototypeOf() {
-        return ReactiveObject.prototype;
+        return ReactiveObjectImpl.prototype;
       },
     });
   }
@@ -101,14 +103,15 @@ export class ReactiveObjectImpl {
 
 declare interface ReactiveObject {
   fromEntries<T = unknown>(
-    entries: Iterable<readonly [PropertyKey, T]>
+    entries: Iterable<readonly [PropertyKey, T]>,
   ): { [k: string]: T };
 
   new <T extends Record<PropertyKey, unknown> = Record<PropertyKey, unknown>>(
-    obj?: T
+    obj?: T,
   ): T;
 }
 
 // Types are too hard in proxy-implementation
 // we want TS to think the ReactiveObject is Object-like
-export const ReactiveObject: ReactiveObject = ReactiveObjectImpl as unknown as ReactiveObject;
+export const ReactiveObject: ReactiveObject =
+  ReactiveObjectImpl as unknown as ReactiveObject;
