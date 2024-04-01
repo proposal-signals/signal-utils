@@ -48,14 +48,13 @@
   ],
   "scripts": {
     "build": "vite build",
-    "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
     "format": "prettier --write .",
     "lint": "concurrently 'npm:lint:*'",
     "lint:types": "tsc --noEmit --emitDeclarationOnly false",
     "lint:prettier": "prettier --check .",
     "prepack": "pnpm run build",
-    "start": "pnpm build && pnpm dev",
-    "test": "cd tests && pnpm test"
+    "start": "vite build --watch",
+    "test": "vitest"
   },
   "dependencies": {
     "signal-polyfill": "^0.1.0"
