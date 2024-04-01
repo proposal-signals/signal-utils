@@ -19,7 +19,7 @@ describe("ReactiveObject", () => {
 
     assertReactivelySettled({
       access: () => obj.foo,
-      change: () => (obj.foo += "!!"),
+      change: () => (obj.foo += 2),
     });
   });
 
@@ -39,7 +39,7 @@ describe("ReactiveObject", () => {
 
     assertReactivelySettled({
       access: () => obj.bar,
-      change: () => (obj.foo += "!!"),
+      change: () => (obj.foo += 2),
     });
   });
 
