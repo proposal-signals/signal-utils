@@ -1,8 +1,7 @@
 import { describe, it, assert } from "vitest";
 import { ReactiveObject } from "signal-utils/object";
-import { Signal } from "signal-polyfill";
 import { expectTypeOf } from "expect-type";
-import { assertStable, assertReactivelySettled } from "./helpers.ts";
+import { assertReactivelySettled } from "./helpers.ts";
 
 describe("ReactiveObject", () => {
   it("works", () => {
@@ -37,6 +36,11 @@ describe("ReactiveObject", () => {
     obj.foo = 456;
     assert.equal(obj.foo, 456, "object updated correctly");
     assert.equal(obj.bar, 456, "getter cloned correctly");
+
+    assertReactivelySettled({
+      access: () => obj.bar,
+      change: () => (obj.foo += "!!"),
+    });
   });
 
   it("fromEntries", () => {
