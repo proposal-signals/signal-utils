@@ -2,6 +2,7 @@
   "name": "signal-utils-tests",
   "private": true,
   "scripts": {
+    "lint": "tsc --noEmit && prettier --check .",
     "format": "prettier --write .",
     "test": "vitest"
   },
