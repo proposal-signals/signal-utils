@@ -36,6 +36,9 @@ importers:
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
+      expect-type:
+        specifier: ^0.19.0
+        version: 0.19.0
       globby:
         specifier: ^14.0.1
         version: 14.0.1
@@ -58,7 +61,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(@vitest/browser@1.4.0)(@vitest/ui@1.4.0)
 
-  tests:
+  tests-public:
     devDependencies:
       '@babel/core':
         specifier: ^7.24.3

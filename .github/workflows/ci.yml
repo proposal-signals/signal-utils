@@ -12,17 +12,7 @@ concurrency:
 
 jobs:
   lint:
-    name: "Lint (Package)"
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - uses: wyvox/action-setup-pnpm@v3
-      - run: pnpm install
-      - run: pnpm lint
-
-  lint_tests:
-    name: "Lint (Tests)"
+    name: "Lint"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -31,7 +21,8 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: pnpm lint
-        working-directory: tests
+      - run: pnpm lint
+        working-directory: tests-public 
 
   test:
     name: "Tests"
@@ -43,3 +34,5 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: pnpm test
+      - run: pnpm test
+        working-directory: tests-public 
