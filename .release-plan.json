@@ -2,24 +2,16 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.0.1",
-      "newVersion": "0.1.0",
+      "oldVersion": "0.1.0",
+      "newVersion": "0.2.0",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-01)\n\nsignal-utils 0.1.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#1](https://github.com/NullVoxPopuli/signal-utils/pull/1) Infra and initial feature, the `@signal` decorator ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#2](https://github.com/NullVoxPopuli/signal-utils/pull/2) Fix `@signal` decorator types ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#4](https://github.com/NullVoxPopuli/signal-utils/pull/4) More asserstions to assure that @signal is stable ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-01)\n\nsignal-utils 0.2.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#5](https://github.com/NullVoxPopuli/signal-utils/pull/5) New util: `ReactiveObject` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
