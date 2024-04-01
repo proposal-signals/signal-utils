@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
-    "start": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
+    "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
+    "start": "pnpm build && pnpm dev",
     "test": "cd tests && pnpm test",
+    "lint": "tsc --noEmit && prettier --check .",
     "build": "vite build",
     "format": "prettier --write .",
     "prepack": "pnpm run build"

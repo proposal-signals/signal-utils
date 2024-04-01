@@ -4,8 +4,8 @@
   "include": ["src"],
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node16",
+    "module": "preserve",
+    "moduleResolution": "bundler",
 
     /**
       https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions
