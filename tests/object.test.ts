@@ -48,11 +48,13 @@ describe("ReactiveObject", () => {
     });
   });
 
-  it('works with methods', () => {
+  it("works with methods", () => {
     let obj = new ReactiveObject({
       foo: 123,
 
-      method() { return this.foo },
+      method() {
+        return this.foo;
+      },
     });
 
     expectTypeOf(obj).toEqualTypeOf<{ foo: number; method: () => number }>();

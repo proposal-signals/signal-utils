@@ -35,7 +35,7 @@ export class ReactiveObjectImpl {
 
     return new Proxy(clone, {
       get(target, prop, receiver) {
-        // we don't use the signals directly 
+        // we don't use the signals directly
         // because we don't know (nor care!) what the value would be
         // and the value could be replaced
         // (this is also important for supporting getters)
