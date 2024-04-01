@@ -21,8 +21,8 @@ import { Signal } from "signal-polyfill";
      * }
   *  }
  * ```
- */ 
-export function signal(target: object, _context: any) {
+ */
+export function signal(target: any, _context: any) {
   const { get } = target;
 
   return {
@@ -30,11 +30,11 @@ export function signal(target: object, _context: any) {
       return get.call(this).get();
     },
 
-    set(value) {
+    set(value: unknown) {
       get.call(this).set(value);
     },
-    
-    init(value) {
+
+    init(value: unknown) {
       return new Signal.State(value);
     },
   };

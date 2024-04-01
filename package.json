@@ -3,13 +3,16 @@
   "version": "0.0.1",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
-    "start": "vite build --watch",
+    "start": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
     "test": "cd tests && pnpm test",
     "build": "vite build",
     "prepack": "pnpm run build"
   },
   "type": "module",
-  "files": ["dist", "declarations"],
+  "files": [
+    "dist",
+    "declarations"
+  ],
   "exports": {
     ".": {
       "types": "./declarations/index.d.ts",
@@ -52,6 +55,7 @@
     "@babel/preset-typescript": "^7.24.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/strictest": "^2.0.5",
+    "concurrently": "^8.2.2",
     "globby": "^14.0.1",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3",
