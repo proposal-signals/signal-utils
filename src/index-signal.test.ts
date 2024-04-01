@@ -17,5 +17,9 @@ describe('@signal', () => {
     let state = new State();
 
     assert.equal(state.doubled, 6);
+
+    state.increment();
+
+    assert.equal(state.doubled, 8);
   });
 });
