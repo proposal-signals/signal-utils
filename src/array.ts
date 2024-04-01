@@ -6,12 +6,8 @@
 // and it will blow up in JS in exactly the same way, so it is safe to assume
 // that properties within the getter have the correct type in TS.
 
-import {
-  TrackedStorage,
-  createStorage,
-  getValue,
-  setValue,
-} from 'ember-tracked-storage-polyfill';
+import { Signal } from "signal-polyfill";
+import { createStorage } from "./-private/util.ts";
 
 const ARRAY_GETTER_METHODS = new Set<string | symbol | number>([
   Symbol.iterator,
@@ -55,12 +51,12 @@ function convertToInt(prop: number | string | symbol): number | null {
   return num % 1 === 0 ? num : null;
 }
 
-class TrackedArray<T = unknown> {
+class ReactiveArrayImpl<T = unknown> {
   /**
    * Creates an array from an iterable object.
    * @param iterable An iterable object to convert to an array.
    */
-  static from<T>(iterable: Iterable<T> | ArrayLike<T>): TrackedArray<T>;
+  static from<T>(iterable: Iterable<T> | ArrayLike<T>): ReactiveArrayImpl<T>;
 
   /**
    * Creates an array from an iterable object.
@@ -72,20 +68,20 @@ class TrackedArray<T = unknown> {
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn: (v: T, k: number) => U,
     thisArg?: unknown
-  ): TrackedArray<U>;
+  ): ReactiveArrayImpl<U>;
 
   static from<T, U>(
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn?: (v: T, k: number) => U,
     thisArg?: unknown
-  ): TrackedArray<T> | TrackedArray<U> {
+  ): ReactiveArrayImpl<T> | ReactiveArrayImpl<U> {
     return mapfn
-      ? new TrackedArray(Array.from(iterable, mapfn, thisArg))
-      : new TrackedArray(Array.from(iterable));
+      ? new ReactiveArrayImpl(Array.from(iterable, mapfn, thisArg))
+      : new ReactiveArrayImpl(Array.from(iterable));
   }
 
-  static of<T>(...arr: T[]): TrackedArray<T> {
-    return new TrackedArray(arr);
+  static of<T>(...arr: T[]): ReactiveArrayImpl<T> {
+    return new ReactiveArrayImpl(arr);
   }
 
   constructor(arr: T[] = []) {
@@ -108,7 +104,7 @@ class TrackedArray<T = unknown> {
 
         if (index !== null) {
           self.#readStorageFor(index);
-          getValue(self.#collection);
+          self.#collection.get();
 
           return target[index];
         }
@@ -125,7 +121,7 @@ class TrackedArray<T = unknown> {
           if (nativelyAccessingLengthFromPushOrUnshift) {
             nativelyAccessingLengthFromPushOrUnshift = false;
           } else {
-            getValue(self.#collection);
+            self.#collection.get();
           }
 
           return target[prop];
@@ -143,7 +139,7 @@ class TrackedArray<T = unknown> {
 
           if (fn === undefined) {
             fn = (...args) => {
-              getValue(self.#collection);
+              self.#collection.get();
               return (target as any)[prop](...args);
             };
 
@@ -163,57 +159,59 @@ class TrackedArray<T = unknown> {
 
         if (index !== null) {
           self.#dirtyStorageFor(index);
-          setValue(self.#collection, null);
+          self.#collection.set(null);
         } else if (prop === 'length') {
-          setValue(self.#collection, null);
+          self.#collection.set(null);
         }
 
         return true;
       },
 
       getPrototypeOf() {
-        return TrackedArray.prototype;
+        return ReactiveArrayImpl.prototype;
       },
-    }) as TrackedArray<T>;
+    }) as ReactiveArrayImpl<T>;
   }
 
-  #collection = createStorage(null, () => false);
+  #collection = createStorage();
 
-  #storages = new Map<number, TrackedStorage<null>>();
+  #storages = new Map<PropertyKey, Signal.State<null>>();
 
   #readStorageFor(index: number) {
     let storage = this.#storages.get(index);
 
     if (storage === undefined) {
-      storage = createStorage(null, () => false);
+      storage = createStorage();
       this.#storages.set(index, storage);
     }
 
-    getValue(storage);
+    storage.get();
   }
 
   #dirtyStorageFor(index: number): void {
     const storage = this.#storages.get(index);
 
     if (storage) {
-      setValue(storage, null);
+      storage.set(null);
     }
   }
 }
 
 // This rule is correct in the general case, but it doesn't understand
 // declaration merging, which is how we're using the interface here. This says
-// `TrackedArray` acts just like `Array<T>`, but also has the properties
+// `ReactiveArray` acts just like `Array<T>`, but also has the properties
 // declared via the `class` declaration above -- but without the cost of a
 // subclass, which is much slower that the proxied array behavior. That is: a
-// `TrackedArray` *is* an `Array`, just with a proxy in front of accessors and
+// `ReactiveArray` *is* an `Array`, just with a proxy in front of accessors and
 // setters, rather than a subclass of an `Array` which would be de-optimized by
 // the browsers.
 //
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface TrackedArray<T = unknown> extends Array<T> { }
+interface ReactiveArrayImpl<T = unknown> extends Array<T> { }
 
-export default TrackedArray;
+type ReactiveArray = ReactiveArrayImpl;
+
+export const ReactiveArray: ReactiveArray = ReactiveArrayImpl as unknown as ReactiveArray;
 
 // Ensure instanceof works correctly
-Object.setPrototypeOf(TrackedArray.prototype, Array.prototype);
+Object.setPrototypeOf(ReactiveArrayImpl.prototype, Array.prototype);

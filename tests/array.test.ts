@@ -1,14 +1,8 @@
-import Component from '@glimmer/component';
-import { TrackedArray } from 'tracked-built-ins';
+import { describe, it, test, assert } from 'vitest';
+import { ReactiveArray } from 'signal-utils/array';
 import { expectTypeOf } from 'expect-type';
+import { assertReactivelySettled } from './helpers';
 
-import { setupRenderingTest } from 'ember-qunit';
-import { module, test } from 'qunit';
-import { reactivityTest } from '../helpers/reactivity';
-import {
-  eachReactivityTest,
-  eachInReactivityTest,
-} from '../helpers/collection-reactivity';
 
 const ARRAY_GETTER_METHODS = [
   'concat',
@@ -45,56 +39,54 @@ const ARRAY_SETTER_METHODS = [
   'unshift',
 ];
 
-// We can use a `TrackedArray<T>` anywhere we can use an `Array<T>` (but not
+// We can use a `ReactiveArray<T>` anywhere we can use an `Array<T>` (but not
 // vice versa).
-expectTypeOf<TrackedArray<unknown>>().toMatchTypeOf<Array<unknown>>();
+expectTypeOf<ReactiveArray<unknown>>().toMatchTypeOf<Array<unknown>>();
 
-module('TrackedArray', function(hooks) {
-  setupRenderingTest(hooks);
-
-  test('Can get values on array directly', (assert) => {
-    let arr = new TrackedArray(['foo']);
+describe('ReactiveArray', function() {
+  test('Can get values on array directly', () => {
+    let arr = new ReactiveArray(['foo']);
 
     assert.equal(arr[0], 'foo');
   });
 
-  test('Can get length on array directly', (assert) => {
-    let arr = new TrackedArray(['foo']);
+  test('Can get length on array directly', () => {
+    let arr = new ReactiveArray(['foo']);
 
     assert.equal(arr.length, 1);
   });
 
-  test('Can set values on array directly', (assert) => {
-    let arr = new TrackedArray();
+  test('Can set values on array directly', () => {
+    let arr = new ReactiveArray();
     arr[0] = 123;
 
     assert.equal(arr[0], 123);
   });
 
-  test('Can set length on array directly', (assert) => {
-    let arr = new TrackedArray();
+  test('Can set length on array directly', () => {
+    let arr = new ReactiveArray();
     arr.length = 123;
 
     assert.equal(arr.length, 123);
   });
 
-  test('Can clear array by setting length to 0', (assert) => {
-    let arr = new TrackedArray([123]);
+  test('Can clear array by setting length to 0', () => {
+    let arr = new ReactiveArray([123]);
     arr.length = 0;
 
     assert.equal(arr.length, 0);
     assert.equal(arr[0], undefined);
   });
 
-  module('methods', () => {
-    test('isArray', (assert) => {
-      let arr = new TrackedArray();
+  describe('methods', () => {
+    test('isArray', () => {
+      let arr = new ReactiveArray();
 
       assert.ok(Array.isArray(arr));
     });
 
-    test('length', (assert) => {
-      let arr = new TrackedArray();
+    test('length', () => {
+      let arr = new ReactiveArray();
 
       assert.equal(arr.length, 0);
 
@@ -103,23 +95,23 @@ module('TrackedArray', function(hooks) {
       assert.equal(arr.length, 101);
     });
 
-    test('concat', (assert) => {
-      let arr = new TrackedArray();
-      let arr2 = arr.concat([1], new TrackedArray([2]));
+    test('concat', () => {
+      let arr = new ReactiveArray();
+      let arr2 = arr.concat([1], new ReactiveArray([2]));
 
       assert.deepEqual(arr2, [1, 2]);
-      assert.notOk(arr2 instanceof TrackedArray);
+      assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('copyWithin', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('copyWithin', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       arr.copyWithin(1, 0, 1);
 
       assert.deepEqual(arr, [1, 1, 3]);
     });
 
-    test('entries', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('entries', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.entries();
 
       assert.deepEqual(iter.next().value, [0, 1]);
@@ -128,15 +120,15 @@ module('TrackedArray', function(hooks) {
       assert.equal(iter.next().done, true);
     });
 
-    test('every', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('every', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.ok(arr.every((v) => typeof v === 'number'));
       assert.notOk(arr.every((v) => v !== 2));
     });
 
-    test('fill', (assert) => {
-      let arr = new TrackedArray();
+    test('fill', () => {
+      let arr = new ReactiveArray();
       arr.length = 100;
       arr.fill(123);
 
@@ -152,16 +144,16 @@ module('TrackedArray', function(hooks) {
       assert.ok(isCorrect);
     });
 
-    test('filter', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('filter', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.filter((v) => v > 1);
 
       assert.deepEqual(arr2, [2, 3]);
-      assert.notOk(arr2 instanceof TrackedArray);
+      assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('find', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('find', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
         arr.find((v) => v > 1),
@@ -169,8 +161,8 @@ module('TrackedArray', function(hooks) {
       );
     });
 
-    test('findIndex', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('findIndex', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
         arr.findIndex((v) => v > 1),
@@ -178,15 +170,15 @@ module('TrackedArray', function(hooks) {
       );
     });
 
-    test('flat', (assert) => {
-      let arr = new TrackedArray([1, 2, [3]]);
+    test('flat', () => {
+      let arr = new ReactiveArray([1, 2, [3]]);
 
       assert.deepEqual(arr.flat(), [1, 2, 3]);
       assert.deepEqual(arr, [1, 2, [3]]);
     });
 
-    test('flatMap', (assert) => {
-      let arr = new TrackedArray([1, 2, [3]]);
+    test('flatMap', () => {
+      let arr = new ReactiveArray([1, 2, [3]]);
 
       assert.deepEqual(
         arr.flatMap((v) => (typeof v === 'number' ? v + 1 : v)),
@@ -195,34 +187,34 @@ module('TrackedArray', function(hooks) {
       assert.deepEqual(arr, [1, 2, [3]]);
     });
 
-    test('forEach', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('forEach', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       arr.forEach((v, i) => assert.equal(v, i + 1));
     });
 
-    test('includes', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('includes', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(arr.includes(1), true);
       assert.equal(arr.includes(5), false);
     });
 
-    test('indexOf', (assert) => {
-      let arr = new TrackedArray([1, 2, 1]);
+    test('indexOf', () => {
+      let arr = new ReactiveArray([1, 2, 1]);
 
       assert.equal(arr.indexOf(1), 0);
       assert.equal(arr.indexOf(5), -1);
     });
 
-    test('join', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('join', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(arr.join(','), '1,2,3');
     });
 
-    test('keys', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('keys', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.keys();
 
       assert.equal(iter.next().value, 0);
@@ -231,39 +223,39 @@ module('TrackedArray', function(hooks) {
       assert.equal(iter.next().done, true);
     });
 
-    test('lastIndexOf', (assert) => {
-      let arr = new TrackedArray([3, 2, 3]);
+    test('lastIndexOf', () => {
+      let arr = new ReactiveArray([3, 2, 3]);
 
       assert.equal(arr.lastIndexOf(3), 2);
       assert.equal(arr.lastIndexOf(5), -1);
     });
 
-    test('map', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('map', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.map((v) => v + 1);
 
       assert.deepEqual(arr2, [2, 3, 4]);
-      assert.notOk(arr2 instanceof TrackedArray);
+      assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('pop', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('pop', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.pop();
 
       assert.deepEqual(arr, [1, 2]);
       assert.equal(val, 3);
     });
 
-    test('push', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('push', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.push(4);
 
       assert.deepEqual(arr, [1, 2, 3, 4]);
       assert.equal(val, 4);
     });
 
-    test('reduce', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('reduce', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
         arr.reduce((s, v) => s + v, ''),
@@ -271,8 +263,8 @@ module('TrackedArray', function(hooks) {
       );
     });
 
-    test('reduceRight', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('reduceRight', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
         arr.reduceRight((s, v) => s + v, ''),
@@ -280,47 +272,47 @@ module('TrackedArray', function(hooks) {
       );
     });
 
-    test('reverse', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('reverse', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       arr.reverse();
 
       assert.deepEqual(arr, [3, 2, 1]);
     });
 
-    test('shift', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('shift', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.shift();
 
       assert.deepEqual(arr, [2, 3]);
       assert.equal(val, 1);
     });
 
-    test('slice', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('slice', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.slice();
 
       assert.notEqual(arr, arr2);
-      assert.notOk(arr2 instanceof TrackedArray);
+      assert.notOk(arr2 instanceof ReactiveArray);
       assert.deepEqual(arr, arr2);
     });
 
-    test('some', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('some', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
 
       assert.ok(arr.some((v) => v > 1));
       assert.notOk(arr.some((v) => v < 1));
     });
 
-    test('sort', (assert) => {
-      let arr = new TrackedArray([3, 1, 2]);
+    test('sort', () => {
+      let arr = new ReactiveArray([3, 1, 2]);
       let arr2 = arr.sort();
 
       assert.equal(arr, arr2);
       assert.deepEqual(arr, [1, 2, 3]);
     });
 
-    test('sort (with method)', (assert) => {
-      let arr = new TrackedArray([3, 1, 2, 2]);
+    test('sort (with method)', () => {
+      let arr = new ReactiveArray([3, 1, 2, 2]);
       let arr2 = arr.sort((a, b) => {
         if (a > b) return -1;
         if (a < b) return 1;
@@ -331,25 +323,25 @@ module('TrackedArray', function(hooks) {
       assert.deepEqual(arr, [3, 2, 2, 1]);
     });
 
-    test('splice', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('splice', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.splice(1, 1);
 
-      assert.notOk(arr2 instanceof TrackedArray);
+      assert.notOk(arr2 instanceof ReactiveArray);
       assert.deepEqual(arr, [1, 3]);
       assert.deepEqual(arr2, [2]);
     });
 
-    test('unshift', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('unshift', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.unshift(0);
 
       assert.deepEqual(arr, [0, 1, 2, 3]);
       assert.equal(val, 4);
     });
 
-    test('values', (assert) => {
-      let arr = new TrackedArray([1, 2, 3]);
+    test('values', () => {
+      let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.values();
 
       assert.equal(iter.next().value, 1);
@@ -358,197 +350,27 @@ module('TrackedArray', function(hooks) {
       assert.equal(iter.next().done, true);
     });
 
-    test('of', (assert) => {
-      let arr = TrackedArray.of(1, 2, 3);
+    test('of', () => {
+      let arr = ReactiveArray.of(1, 2, 3);
 
       assert.deepEqual(arr, [1, 2, 3]);
     });
 
-    test('from', (assert) => {
-      let arr = TrackedArray.from([1, 2, 3]);
+    test('from', () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
 
       assert.deepEqual(arr, [1, 2, 3]);
     });
   });
 
-  module('reactivity', () => {
-    reactivityTest(
-      'getting and setting an index',
-      class extends Component {
-        arr = new TrackedArray(['foo']);
+  describe('reactivity', () => {
+    test('reassignment is stable', () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
 
-        get value() {
-          return this.arr[0];
-        }
-
-        update() {
-          this.arr[0] = 'bar';
-        }
-      },
-    );
-
-    reactivityTest(
-      'Can push into a newly created TrackedArray during construction',
-      class extends Component {
-        arr = new TrackedArray<string>();
-
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        constructor(owner: unknown, args: {}) {
-          super(owner, args);
-          this.arr.push('hello');
-        }
-
-        get value() {
-          return this.arr[0];
-        }
-
-        update() {
-          this.arr[0] = 'goodbye';
-        }
-      },
-    );
-
-    reactivityTest(
-      'Can unshift into a newly created TrackedArray during construction',
-      class extends Component {
-        arr = new TrackedArray<string>();
-
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        constructor(owner: unknown, args: {}) {
-          super(owner, args);
-          this.arr.unshift('hello');
-        }
-
-        get value() {
-          return this.arr[0];
-        }
-
-        update() {
-          this.arr[0] = 'goodbye';
-        }
-      },
-    );
-
-    eachReactivityTest(
-      '{{each}} works with new items',
-      class extends Component {
-        collection = new TrackedArray([1, 2, 3]);
-
-        update() {
-          this.collection.push(4);
-        }
-      },
-    );
-
-    eachReactivityTest(
-      '{{each}} works when updating old items',
-      class extends Component {
-        collection = new TrackedArray([1, 2, 3]);
-
-        update() {
-          this.collection[2] = 5;
-        }
-      },
-    );
-
-    eachInReactivityTest(
-      '{{each-in}} works with new items',
-      class extends Component {
-        collection = new TrackedArray([1, 2, 3]);
-
-        update() {
-          this.collection.push(4);
-        }
-      },
-    );
-
-    eachInReactivityTest(
-      '{{each-in}} works when updating old items',
-      class extends Component {
-        collection = new TrackedArray([1, 2, 3]);
-
-        update() {
-          this.collection[2] = 5;
-        }
-      },
-    );
-
-    ARRAY_GETTER_METHODS.forEach((method) => {
-      reactivityTest(
-        `${method} individual index`,
-        class extends Component {
-          arr = new TrackedArray(['foo', 'bar']);
-
-          get value() {
-            // @ts-ignore -- this can't be represented easily in TS, and we
-            // don't actually care that it is; we're *just* testing reactivity.
-            return this.arr[method](() => {
-              /* no op */
-            });
-          }
-
-          update() {
-            this.arr[0] = 'bar';
-          }
-        },
-      );
-
-      reactivityTest(
-        `${method} collection tag`,
-        class extends Component {
-          arr = new TrackedArray(['foo', 'bar']);
-
-          get value() {
-            // @ts-ignore -- this can't be represented easily in TS, and we
-            // don't actually care that it is; we're *just* testing reactivity.
-            return this.arr[method](() => {
-              /* no op */
-            });
-          }
-
-          update() {
-            this.arr.sort();
-          }
-        },
-      );
-    });
-
-    ARRAY_SETTER_METHODS.forEach((method) => {
-      reactivityTest(
-        `${method} individual index`,
-        class extends Component {
-          arr = new TrackedArray(['foo', 'bar']);
-
-          get value() {
-            return this.arr[0];
-          }
-
-          update() {
-            // @ts-ignore -- this can't be represented easily in TS, and we
-            // don't actually care that it is; we're *just* testing reactivity.
-            this.arr[method](undefined);
-          }
-        },
-      );
-
-      reactivityTest(
-        `${method} collection tag`,
-        class extends Component {
-          arr = new TrackedArray(['foo', 'bar']);
-
-          get value() {
-            return this.arr.forEach(() => {
-              /* no op */
-            });
-          }
-
-          update() {
-            // @ts-ignore -- this can't be represented easily in TS, and we
-            // don't actually care that it is; we're *just* testing reactivity.
-            this.arr[method](undefined);
-          }
-        },
-      );
+      assertReactivelySettled({
+        access: () => arr[0],
+        change: () => arr[0] = 4,
+      });
     });
   });
 });
