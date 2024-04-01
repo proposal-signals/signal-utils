@@ -34,10 +34,14 @@ export class ReactiveObjectImpl {
     let self = this;
 
     return new Proxy(clone, {
-      get(target, prop) {
+      get(target, prop, receiver) {
+        // we don't use the signals directly 
+        // because we don't know (nor care!) what the value would be
+        // and the value could be replaced
+        // (this is also important for supporting getters)
         self.#readStorageFor(prop);
 
-        return target[prop];
+        return Reflect.get(target, prop, receiver);
       },
 
       has(target, prop) {
@@ -52,13 +56,13 @@ export class ReactiveObjectImpl {
         return Reflect.ownKeys(target);
       },
 
-      set(target, prop, value) {
-        target[prop] = value;
+      set(target, prop, value, receiver) {
+        let result = Reflect.set(target, prop, value, receiver);
 
         self.#dirtyStorageFor(prop);
         self.#dirtyCollection();
 
-        return true;
+        return result;
       },
 
       deleteProperty(target, prop) {

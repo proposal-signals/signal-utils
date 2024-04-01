@@ -39,7 +39,29 @@ describe("ReactiveObject", () => {
 
     assertReactivelySettled({
       access: () => obj.bar,
-      change: () => (obj.foo += 2),
+      change: () => {
+        obj.foo += 2;
+
+        assert.equal(obj.foo, 458, "foo is updated");
+        assert.equal(obj.bar, 458, "bar is updated");
+      },
+    });
+  });
+
+  it('works with methods', () => {
+    let obj = new ReactiveObject({
+      foo: 123,
+
+      method() { return this.foo },
+    });
+
+    expectTypeOf(obj).toEqualTypeOf<{ foo: number; method: () => number }>();
+
+    assertReactivelySettled({
+      access: () => obj.method(),
+      change: () => {
+        obj.foo += 2;
+      },
     });
   });
 
@@ -54,5 +76,12 @@ describe("ReactiveObject", () => {
 
     assert.ok(obj instanceof ReactiveObject);
     assert.deepEqual(Object.keys(obj), ["foo"]);
+
+    assertReactivelySettled({
+      access: () => obj["foo"],
+      change: () => {
+        obj["foo"] += 2;
+      },
+    });
   });
 });
