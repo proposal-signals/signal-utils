@@ -5,8 +5,10 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 ## APIs 
 
 > [!NOTE]
-> All examples either use JavaScript or a mixed-language psuedocode to convey the reactive intention of using Signals. 
+> All examples either use JavaScript or a mixed-language psuedocode[^syntax-based-off] to convey the reactive intention of using Signals. 
 > These utilities can be used in any framework that wires up Signals to their rendering implementation.
+
+[^syntax-based-off]: The syntax is based of a mix of [Glimmer-flavored Javascript](https://tutorial.glimdown.com) and [Svelte](https://svelte.dev/). The main thing being focused around JavaScript without having a custom file format. The `<template>...</template>` blocks may as well be HTML, and `{{ }}` escapes out to JS. I don't have a strong preference on `{{ }}` vs `{ }`, the important thing is only to be consistent within an ecosystem.
 
 ### `@signal`
 
