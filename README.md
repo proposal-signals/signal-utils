@@ -36,9 +36,23 @@ A reactive Array
 
 ### `Object`
 
-wip
-
 A reactive Object
+
+```js
+import { ReactiveObject } from 'signal-utils/object';
+
+let obj = new ReactiveObject({
+    isLoading: true,
+    error: null,
+    result: null,
+});
+
+obj.isLoading // true
+obj.isLoading = false
+obj.isLoading // false
+```
+
+In this example, we could use a reactive object for quickly and dynamically creating an object of signals -- useful for when we don't know all the keys boforehand, or if we want a shorthand to creating many named signals.
 
 ### `Map`
 
