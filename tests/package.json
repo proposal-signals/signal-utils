@@ -1,0 +1,24 @@
+{
+  "name": "signal-utils-tests",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write .",
+    "test": "vitest"
+  },
+  "author": "NullVoxPopuli",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.24.3",
+    "@babel/plugin-proposal-decorators": "^7.24.1",
+    "@babel/plugin-syntax-decorators": "^7.24.1",
+    "@babel/plugin-transform-typescript": "^7.24.1",
+    "@babel/preset-typescript": "^7.24.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "prettier": "^3.2.5",
+    "globby": "^14.0.1",
+    "@tsconfig/strictest": "^2.0.5",
+    "typescript": "^5.4.3",
+    "signal-utils": "workspace:*",
+    "vitest": "^1.4.0"
+  }
+}
