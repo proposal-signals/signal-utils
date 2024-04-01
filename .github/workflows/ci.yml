@@ -29,6 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
       - run: pnpm install
+      - run: pnpm build
       - run: pnpm lint
         working-directory: tests
 
