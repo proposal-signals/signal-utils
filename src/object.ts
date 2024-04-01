@@ -1,5 +1,5 @@
 export class Object {
   constructor() {
-    throw new Error('Not implemented');
+    throw new Error("Not implemented");
   }
 }
