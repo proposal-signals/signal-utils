@@ -60,7 +60,8 @@ export default defineConfig({
       extensions: [".js", ".ts"],
     }),
     dts({
-      rollupTypes: true,
+      // This can generate duplicate types in the d.ts files
+      // rollupTypes: true,
       outDir: "declarations",
     }),
   ],

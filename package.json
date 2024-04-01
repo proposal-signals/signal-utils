@@ -30,8 +30,8 @@
       "default": "./dist/index.js"
     },
     "./*": {
-      "types": "./declarations/*",
-      "default": "./dist/*"
+      "types": "./declarations/*.d.ts",
+      "default": "./dist/*.js"
     }
   },
   "typesVersions": {
