@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
-    "start": "pnpm vite build --watch",
+    "start": "vite build --watch",
     "test": "vitest",
-    "build": "pnpm vite build",
+    "build": "vite build",
     "prepack": "pnpm run build"
   },
   "type": "module",

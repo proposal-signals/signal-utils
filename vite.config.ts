@@ -1,15 +1,17 @@
 import { resolve, basename } from 'node:path'
+import { createRequire } from 'node:module';
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 import { globbySync } from 'globby'
-
 import { babel } from "@rollup/plugin-babel";
-
 import { Addon } from "@embroider/addon-dev/rollup";
+
+const require = createRequire(import.meta.url);
+const manifest = require('./package.json');
 
 let entryFiles = globbySync('src/*.ts');
 
-let entries = {}; 
+let entries: Record<string, string> = {}; 
 
 for (let entry of entryFiles) {
   let name = basename(entry)
@@ -37,6 +39,10 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: lib.output(),
+      external: [
+        ...Object.keys(manifest.dependencies || {}),
+        ...Object.keys(manifest.peerDependencies || {}),
+      ]
     },
     lib: {
       entry: entries,
