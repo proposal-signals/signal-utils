@@ -42,19 +42,19 @@
     }
   },
   "files": [
+    "src",
     "dist",
     "declarations"
   ],
   "scripts": {
     "build": "vite build",
-    "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
     "format": "prettier --write .",
     "lint": "concurrently 'npm:lint:*'",
-    "lint:types": "tsc --noEmit",
+    "lint:types": "tsc --noEmit --emitDeclarationOnly false",
     "lint:prettier": "prettier --check .",
     "prepack": "pnpm run build",
-    "start": "pnpm build && pnpm dev",
-    "test": "cd tests && pnpm test"
+    "start": "vite build --watch",
+    "test": "vitest"
   },
   "dependencies": {
     "signal-polyfill": "^0.1.0"
@@ -68,6 +68,7 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/strictest": "^2.0.5",
     "concurrently": "^8.2.2",
+    "expect-type": "^0.19.0",
     "globby": "^14.0.1",
     "prettier": "^3.2.5",
     "release-plan": "^0.9.0",
