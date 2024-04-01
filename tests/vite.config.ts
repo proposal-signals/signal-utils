@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
 import { babel } from "@rollup/plugin-babel";
 
 export default defineConfig({
@@ -10,5 +10,5 @@ export default defineConfig({
       babelHelpers: "inline",
       extensions: [".js", ".ts"],
     }),
-  ]
-})
+  ],
+});

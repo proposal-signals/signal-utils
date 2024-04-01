@@ -7,8 +7,8 @@ on:
   pull_request: {}
 
 concurrency:
-   group: ci-${{ github.head_ref || github.ref }}
-   cancel-in-progress: true
+  group: ci-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -20,5 +20,4 @@ jobs:
       - uses: wyvox/action-setup-pnpm@v3
       - run: pnpm install
       - run: pnpm build
-      - run: pnpm test 
-
+      - run: pnpm test

@@ -1,9 +1,9 @@
-import { describe, it, assert } from 'vitest';
+import { describe, it, assert } from "vitest";
 
-import { signal } from 'signal-utils';
+import { signal } from "signal-utils";
 
-describe('@signal', () => {
-  it('works', () => {
+describe("@signal", () => {
+  it("works", () => {
     class State {
       @signal accessor #value = 3;
 

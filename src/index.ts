@@ -11,15 +11,15 @@ import { Signal } from "signal-polyfill";
  *     }
  *
  *     increment() {
-  *      this.#value++;
-   *   }
-*
+ *      this.#value++;
+ *   }
+ *
  *     decrement() {
-  *      if (this.#value > 0) {
-   *       this.#value--;
-    *    }
-     * }
-  *  }
+ *      if (this.#value > 0) {
+ *       this.#value--;
+ *    }
+ * }
+ *  }
  * ```
  */
 export function signal(target: any, _context: any) {
