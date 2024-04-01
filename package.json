@@ -6,6 +6,7 @@
     "start": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
     "test": "cd tests && pnpm test",
     "build": "vite build",
+    "format": "prettier --write .",
     "prepack": "pnpm run build"
   },
   "type": "module",

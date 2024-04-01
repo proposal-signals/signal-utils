@@ -2,6 +2,7 @@
   "name": "signal-utils-tests",
   "private": true,
   "scripts": {
+    "format": "prettier --write .",
     "test": "vitest"
   },
   "author": "NullVoxPopuli",
