@@ -2,20 +2,28 @@
   "name": "signal-utils",
   "version": "0.0.1",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
-  "scripts": {
-    "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
-    "start": "pnpm build && pnpm dev",
-    "test": "cd tests && pnpm test",
-    "lint": "tsc --noEmit && prettier --check .",
-    "build": "vite build",
-    "format": "prettier --write .",
-    "prepack": "pnpm run build"
-  },
-  "type": "module",
-  "files": [
-    "dist",
-    "declarations"
+  "keywords": [
+    "signals",
+    "signal",
+    "reactivity",
+    "tracked",
+    "rune",
+    "runes",
+    "ember",
+    "glimmer",
+    "svelte",
+    "vue",
+    "angular",
+    "solid",
+    "preact"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NullVoxPopuli/signal-utils.git"
+  },
+  "license": "MIT",
+  "author": "NullVoxPopuli",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./declarations/index.d.ts",
@@ -33,23 +41,22 @@
       ]
     }
   },
-  "keywords": [
-    "signals",
-    "signal",
-    "reactivity",
-    "tracked",
-    "rune",
-    "runes",
-    "ember",
-    "glimmer",
-    "svelte",
-    "vue",
-    "angular",
-    "solid",
-    "preact"
+  "files": [
+    "dist",
+    "declarations"
   ],
-  "author": "NullVoxPopuli",
-  "license": "MIT",
+  "scripts": {
+    "build": "vite build",
+    "dev": "concurrently 'vite build --watch' 'cd tests && pnpm vitest'",
+    "format": "prettier --write .",
+    "lint": "tsc --noEmit && prettier --check .",
+    "prepack": "pnpm run build",
+    "start": "pnpm build && pnpm dev",
+    "test": "cd tests && pnpm test"
+  },
+  "dependencies": {
+    "signal-polyfill": "^0.1.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.24.3",
     "@babel/plugin-proposal-decorators": "^7.24.1",
@@ -61,11 +68,9 @@
     "concurrently": "^8.2.2",
     "globby": "^14.0.1",
     "prettier": "^3.2.5",
+    "release-plan": "^0.8.0",
     "typescript": "^5.4.3",
     "vite": "^5.2.7",
     "vite-plugin-dts": "^3.8.1"
-  },
-  "dependencies": {
-    "signal-polyfill": "^0.1.0"
   }
 }
