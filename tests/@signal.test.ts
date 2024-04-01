@@ -1,6 +1,6 @@
 import { describe, it, assert } from 'vitest';
 
-import { signal } from './index.ts';
+import { signal } from 'signal-utils';
 
 describe('@signal', () => {
   it('works', () => {

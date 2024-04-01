@@ -4,11 +4,12 @@
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "scripts": {
     "start": "vite build --watch",
-    "test": "vitest",
+    "test": "cd tests && pnpm test",
     "build": "vite build",
     "prepack": "pnpm run build"
   },
   "type": "module",
+  "files": ["dist", "declarations"],
   "exports": {
     ".": {
       "types": "./declarations/index.d.ts",
@@ -49,15 +50,13 @@
     "@babel/plugin-syntax-decorators": "^7.24.1",
     "@babel/plugin-transform-typescript": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
-    "@embroider/addon-dev": "^4.2.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/strictest": "^2.0.5",
     "globby": "^14.0.1",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3",
     "vite": "^5.2.7",
-    "vite-plugin-dts": "^3.8.1",
-    "vitest": "^1.4.0"
+    "vite-plugin-dts": "^3.8.1"
   },
   "dependencies": {
     "signal-polyfill": "^0.1.0"
