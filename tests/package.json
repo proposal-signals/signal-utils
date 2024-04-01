@@ -15,11 +15,12 @@
     "@babel/plugin-transform-typescript": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
     "@rollup/plugin-babel": "^6.0.4",
-    "prettier": "^3.2.5",
-    "globby": "^14.0.1",
     "@tsconfig/strictest": "^2.0.5",
-    "typescript": "^5.4.3",
+    "globby": "^14.0.1",
+    "prettier": "^3.2.5",
+    "signal-polyfill": "^0.1.0",
     "signal-utils": "workspace:*",
+    "typescript": "^5.4.3",
     "vitest": "^1.4.0"
   }
 }
