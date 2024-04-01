@@ -1,10 +1,5 @@
 import { Signal } from "signal-polyfill";
-
-/**
- * equality check here is always false so that we can dirty the storage
- * via setting to _anything_
- */
-const createStorage = () => new Signal.State(null, { equals: () => false });
+import { createStorage } from "./-private/util.ts";
 
 /**
  * Implementation based of tracked-built-ins' TrackedObject

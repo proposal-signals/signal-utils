@@ -4,11 +4,17 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 
 ## APIs 
 
+> [!NOTE]
+> All examples either use JavaScript or a mixed-language psuedocode[^syntax-based-off] to convey the reactive intention of using Signals. 
+> These utilities can be used in any framework that wires up Signals to their rendering implementation.
+
+[^syntax-based-off]: The syntax is based of a mix of [Glimmer-flavored Javascript](https://tutorial.glimdown.com) and [Svelte](https://svelte.dev/). The main thing being focused around JavaScript without having a custom file format. The `<template>...</template>` blocks may as well be HTML, and `{{ }}` escapes out to JS. I don't have a strong preference on `{{ }}` vs `{ }`, the important thing is only to be consistent within an ecosystem.
+
 ### `@signal`
 
 A utility decorator for easily creating signals 
 
-```ts
+```jsx
 import { signal } from 'signal-utils';
 
 class State {
@@ -23,16 +29,33 @@ class State {
 
 let state = new State();
 
-state.doubled // 6
-state.increment()
-state.doubled // 8
+
+// output: 6
+// button clicked
+// output: 8
+<template>
+  <output>{{state.doubled}}</output>
+  <button onclick={{state.increment}}>+</button>
+</template>
 ```
 
 ### `Array`
 
-wip
-
 A reactive Array
+
+```jsx
+import { ReactiveArray } from 'signal-utils/array';
+
+let arr = new ReactiveArray([1, 2, 3]);
+
+// output: 3
+// button clicked
+// output: 2
+<template>
+  <output>{{arr.at(-1)}}</output>
+  <button onclick={{() => arr.pop()}}>pop</button>
+</template>
+```
 
 ### `Object`
 
@@ -47,9 +70,13 @@ let obj = new ReactiveObject({
     result: null,
 });
 
-obj.isLoading // true
-obj.isLoading = false
-obj.isLoading // false
+// output: true
+// button clicked
+// output: false
+<template>
+  <output>{{obj.isLoading}}</output>
+  <button onclick={{() => obj.isLoading = false}}>finish</button>
+</template>
 ```
 
 In this example, we could use a reactive object for quickly and dynamically creating an object of signals -- useful for when we don't know all the keys boforehand, or if we want a shorthand to creating many named signals.
