@@ -14,7 +14,7 @@ export class ReactiveObjectImpl {
   static fromEntries<T = unknown>(
     entries: Iterable<readonly [PropertyKey, T]>,
   ) {
-    return new ReactiveObject(Object.fromEntries(entries)) as T;
+    return new ReactiveObjectImpl(Object.fromEntries(entries)) as T;
   }
   #storages = new Map<PropertyKey, Signal.State<null>>();
   #collection = createStorage();
@@ -101,7 +101,7 @@ export class ReactiveObjectImpl {
   }
 }
 
-declare interface ReactiveObject {
+interface ReactiveObject {
   fromEntries<T = unknown>(
     entries: Iterable<readonly [PropertyKey, T]>,
   ): { [k: string]: T };
@@ -110,8 +110,22 @@ declare interface ReactiveObject {
     obj?: T,
   ): T;
 }
-
 // Types are too hard in proxy-implementation
 // we want TS to think the ReactiveObject is Object-like
+
+/**
+ * Create a reactive Object, backed by Signals, using a Proxy.
+ * This allows dynamic creation and deletion of signals using the object primitive
+ * APIs that most folks are familiar with -- the only difference is instantiation.
+ * ```js
+ * const obj = new ReactiveObject({ foo: 123 });
+ *
+ * obj.foo // 123
+ * obj.foo = 456
+ * obj.foo // 456
+ * obj.bar = 2
+ * obj.bar // 2
+ * ```
+ */
 export const ReactiveObject: ReactiveObject =
   ReactiveObjectImpl as unknown as ReactiveObject;

@@ -1,4 +1,4 @@
-import { resolve, basename } from "node:path";
+import { basename } from "node:path";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
