@@ -11,38 +11,38 @@ import { createStorage } from "./-private/util.ts";
 
 const ARRAY_GETTER_METHODS = new Set<string | symbol | number>([
   Symbol.iterator,
-  'concat',
-  'entries',
-  'every',
-  'filter',
-  'find',
-  'findIndex',
-  'flat',
-  'flatMap',
-  'forEach',
-  'includes',
-  'indexOf',
-  'join',
-  'keys',
-  'lastIndexOf',
-  'map',
-  'reduce',
-  'reduceRight',
-  'slice',
-  'some',
-  'values',
+  "concat",
+  "entries",
+  "every",
+  "filter",
+  "find",
+  "findIndex",
+  "flat",
+  "flatMap",
+  "forEach",
+  "includes",
+  "indexOf",
+  "join",
+  "keys",
+  "lastIndexOf",
+  "map",
+  "reduce",
+  "reduceRight",
+  "slice",
+  "some",
+  "values",
 ]);
 
 // For these methods, `Array` itself immediately gets the `.length` to return
 // after invoking them.
 const ARRAY_WRITE_THEN_READ_METHODS = new Set<string | symbol>([
-  'fill',
-  'push',
-  'unshift',
+  "fill",
+  "push",
+  "unshift",
 ]);
 
 function convertToInt(prop: number | string | symbol): number | null {
-  if (typeof prop === 'symbol') return null;
+  if (typeof prop === "symbol") return null;
 
   const num = Number(prop);
 
@@ -67,13 +67,13 @@ class ReactiveArrayImpl<T = unknown> {
   static from<T, U>(
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn: (v: T, k: number) => U,
-    thisArg?: unknown
+    thisArg?: unknown,
   ): ReactiveArrayImpl<U>;
 
   static from<T, U>(
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn?: (v: T, k: number) => U,
-    thisArg?: unknown
+    thisArg?: unknown,
   ): ReactiveArrayImpl<T> | ReactiveArrayImpl<U> {
     return mapfn
       ? new ReactiveArrayImpl(Array.from(iterable, mapfn, thisArg))
@@ -109,7 +109,7 @@ class ReactiveArrayImpl<T = unknown> {
           return target[index];
         }
 
-        if (prop === 'length') {
+        if (prop === "length") {
           // If we are reading `.length`, it may be a normal user-triggered
           // read, or it may be a read triggered by Array itself. In the latter
           // case, it is because we have just done `.push()` or `.unshift()`; in
@@ -160,7 +160,7 @@ class ReactiveArrayImpl<T = unknown> {
         if (index !== null) {
           self.#dirtyStorageFor(index);
           self.#collection.set(null);
-        } else if (prop === 'length') {
+        } else if (prop === "length") {
           self.#collection.set(null);
         }
 
@@ -207,11 +207,12 @@ class ReactiveArrayImpl<T = unknown> {
 // the browsers.
 //
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ReactiveArrayImpl<T = unknown> extends Array<T> { }
+interface ReactiveArrayImpl<T = unknown> extends Array<T> {}
 
 type ReactiveArray = ReactiveArrayImpl;
 
-export const ReactiveArray: ReactiveArray = ReactiveArrayImpl as unknown as ReactiveArray;
+export const ReactiveArray: ReactiveArray =
+  ReactiveArrayImpl as unknown as ReactiveArray;
 
 // Ensure instanceof works correctly
 Object.setPrototypeOf(ReactiveArrayImpl.prototype, Array.prototype);

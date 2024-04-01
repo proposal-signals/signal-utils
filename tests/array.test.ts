@@ -1,76 +1,75 @@
-import { describe, it, test, assert } from 'vitest';
-import { ReactiveArray } from 'signal-utils/array';
-import { expectTypeOf } from 'expect-type';
-import { assertReactivelySettled } from './helpers';
-
+import { describe, it, test, assert } from "vitest";
+import { ReactiveArray } from "signal-utils/array";
+import { expectTypeOf } from "expect-type";
+import { assertReactivelySettled } from "./helpers";
 
 const ARRAY_GETTER_METHODS = [
-  'concat',
-  'entries',
-  'every',
-  'filter',
-  'find',
-  'findIndex',
-  'flat',
-  'flatMap',
-  'forEach',
-  'includes',
-  'indexOf',
-  'join',
-  'keys',
-  'lastIndexOf',
-  'map',
-  'reduce',
-  'reduceRight',
-  'slice',
-  'some',
-  'values',
+  "concat",
+  "entries",
+  "every",
+  "filter",
+  "find",
+  "findIndex",
+  "flat",
+  "flatMap",
+  "forEach",
+  "includes",
+  "indexOf",
+  "join",
+  "keys",
+  "lastIndexOf",
+  "map",
+  "reduce",
+  "reduceRight",
+  "slice",
+  "some",
+  "values",
 ];
 
 const ARRAY_SETTER_METHODS = [
-  'copyWithin',
-  'fill',
-  'pop',
-  'push',
-  'reverse',
-  'shift',
-  'sort',
-  'splice',
-  'unshift',
+  "copyWithin",
+  "fill",
+  "pop",
+  "push",
+  "reverse",
+  "shift",
+  "sort",
+  "splice",
+  "unshift",
 ];
 
 // We can use a `ReactiveArray<T>` anywhere we can use an `Array<T>` (but not
 // vice versa).
 expectTypeOf<ReactiveArray<unknown>>().toMatchTypeOf<Array<unknown>>();
 
-describe('ReactiveArray', function() {
-  test('Can get values on array directly', () => {
-    let arr = new ReactiveArray(['foo']);
+describe("ReactiveArray", function () {
+  test("Can get values on array directly", () => {
+    let arr = new ReactiveArray(["foo"]);
 
-    assert.equal(arr[0], 'foo');
+    assert.equal(arr[0], "foo");
   });
 
-  test('Can get length on array directly', () => {
-    let arr = new ReactiveArray(['foo']);
+  test("Can get length on array directly", () => {
+    let arr = new ReactiveArray(["foo"]);
 
     assert.equal(arr.length, 1);
   });
 
-  test('Can set values on array directly', () => {
+  test("Can set values on array directly", () => {
     let arr = new ReactiveArray();
     arr[0] = 123;
 
     assert.equal(arr[0], 123);
   });
 
-  test('Can set length on array directly', () => {
+  test("Can set length on array directly", () => {
     let arr = new ReactiveArray();
     arr.length = 123;
 
     assert.equal(arr.length, 123);
   });
 
-  test('Can clear array by setting length to 0', () => {
+  test("Can clear array by setting length to 0", () => {
     let arr = new ReactiveArray([123]);
     arr.length = 0;
 
@@ -78,14 +77,14 @@ describe('ReactiveArray', function() {
     assert.equal(arr[0], undefined);
   });
 
-  describe('methods', () => {
-    test('isArray', () => {
+  describe("methods", () => {
+    test("isArray", () => {
       let arr = new ReactiveArray();
 
       assert.ok(Array.isArray(arr));
     });
 
-    test('length', () => {
+    test("length", () => {
       let arr = new ReactiveArray();
 
       assert.equal(arr.length, 0);
@@ -95,7 +94,7 @@ describe('ReactiveArray', function() {
       assert.equal(arr.length, 101);
     });
 
-    test('concat', () => {
+    test("concat", () => {
       let arr = new ReactiveArray();
       let arr2 = arr.concat([1], new ReactiveArray([2]));
 
@@ -103,14 +102,14 @@ describe('ReactiveArray', function() {
       assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('copyWithin', () => {
+    test("copyWithin", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       arr.copyWithin(1, 0, 1);
 
       assert.deepEqual(arr, [1, 1, 3]);
     });
 
-    test('entries', () => {
+    test("entries", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.entries();
 
@@ -120,14 +119,14 @@ describe('ReactiveArray', function() {
       assert.equal(iter.next().done, true);
     });
 
-    test('every', () => {
+    test("every", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
-      assert.ok(arr.every((v) => typeof v === 'number'));
+      assert.ok(arr.every((v) => typeof v === "number"));
       assert.notOk(arr.every((v) => v !== 2));
     });
 
-    test('fill', () => {
+    test("fill", () => {
       let arr = new ReactiveArray();
       arr.length = 100;
       arr.fill(123);
@@ -144,7 +143,7 @@ describe('ReactiveArray', function() {
       assert.ok(isCorrect);
     });
 
-    test('filter', () => {
+    test("filter", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.filter((v) => v > 1);
 
@@ -152,7 +151,7 @@ describe('ReactiveArray', function() {
       assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('find', () => {
+    test("find", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
@@ -161,7 +160,7 @@ describe('ReactiveArray', function() {
       );
     });
 
-    test('findIndex', () => {
+    test("findIndex", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
@@ -170,50 +169,50 @@ describe('ReactiveArray', function() {
       );
     });
 
-    test('flat', () => {
+    test("flat", () => {
       let arr = new ReactiveArray([1, 2, [3]]);
 
       assert.deepEqual(arr.flat(), [1, 2, 3]);
       assert.deepEqual(arr, [1, 2, [3]]);
     });
 
-    test('flatMap', () => {
+    test("flatMap", () => {
       let arr = new ReactiveArray([1, 2, [3]]);
 
       assert.deepEqual(
-        arr.flatMap((v) => (typeof v === 'number' ? v + 1 : v)),
+        arr.flatMap((v) => (typeof v === "number" ? v + 1 : v)),
         [2, 3, 3],
       );
       assert.deepEqual(arr, [1, 2, [3]]);
     });
 
-    test('forEach', () => {
+    test("forEach", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       arr.forEach((v, i) => assert.equal(v, i + 1));
     });
 
-    test('includes', () => {
+    test("includes", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(arr.includes(1), true);
       assert.equal(arr.includes(5), false);
     });
 
-    test('indexOf', () => {
+    test("indexOf", () => {
       let arr = new ReactiveArray([1, 2, 1]);
 
       assert.equal(arr.indexOf(1), 0);
       assert.equal(arr.indexOf(5), -1);
     });
 
-    test('join', () => {
+    test("join", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
-      assert.equal(arr.join(','), '1,2,3');
+      assert.equal(arr.join(","), "1,2,3");
     });
 
-    test('keys', () => {
+    test("keys", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.keys();
 
@@ -223,14 +222,14 @@ describe('ReactiveArray', function() {
       assert.equal(iter.next().done, true);
     });
 
-    test('lastIndexOf', () => {
+    test("lastIndexOf", () => {
       let arr = new ReactiveArray([3, 2, 3]);
 
       assert.equal(arr.lastIndexOf(3), 2);
       assert.equal(arr.lastIndexOf(5), -1);
     });
 
-    test('map', () => {
+    test("map", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.map((v) => v + 1);
 
@@ -238,7 +237,7 @@ describe('ReactiveArray', function() {
       assert.notOk(arr2 instanceof ReactiveArray);
     });
 
-    test('pop', () => {
+    test("pop", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.pop();
 
@@ -246,7 +245,7 @@ describe('ReactiveArray', function() {
       assert.equal(val, 3);
     });
 
-    test('push', () => {
+    test("push", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.push(4);
 
@@ -254,32 +253,32 @@ describe('ReactiveArray', function() {
       assert.equal(val, 4);
     });
 
-    test('reduce', () => {
+    test("reduce", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
-        arr.reduce((s, v) => s + v, ''),
-        '123',
+        arr.reduce((s, v) => s + v, ""),
+        "123",
       );
     });
 
-    test('reduceRight', () => {
+    test("reduceRight", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.equal(
-        arr.reduceRight((s, v) => s + v, ''),
-        '321',
+        arr.reduceRight((s, v) => s + v, ""),
+        "321",
       );
     });
 
-    test('reverse', () => {
+    test("reverse", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       arr.reverse();
 
       assert.deepEqual(arr, [3, 2, 1]);
     });
 
-    test('shift', () => {
+    test("shift", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.shift();
 
@@ -287,7 +286,7 @@ describe('ReactiveArray', function() {
       assert.equal(val, 1);
     });
 
-    test('slice', () => {
+    test("slice", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.slice();
 
@@ -296,14 +295,14 @@ describe('ReactiveArray', function() {
       assert.deepEqual(arr, arr2);
     });
 
-    test('some', () => {
+    test("some", () => {
       let arr = new ReactiveArray([1, 2, 3]);
 
       assert.ok(arr.some((v) => v > 1));
       assert.notOk(arr.some((v) => v < 1));
     });
 
-    test('sort', () => {
+    test("sort", () => {
       let arr = new ReactiveArray([3, 1, 2]);
       let arr2 = arr.sort();
 
@@ -311,7 +310,7 @@ describe('ReactiveArray', function() {
       assert.deepEqual(arr, [1, 2, 3]);
     });
 
-    test('sort (with method)', () => {
+    test("sort (with method)", () => {
       let arr = new ReactiveArray([3, 1, 2, 2]);
       let arr2 = arr.sort((a, b) => {
         if (a > b) return -1;
@@ -323,7 +322,7 @@ describe('ReactiveArray', function() {
       assert.deepEqual(arr, [3, 2, 2, 1]);
     });
 
-    test('splice', () => {
+    test("splice", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let arr2 = arr.splice(1, 1);
 
@@ -332,7 +331,7 @@ describe('ReactiveArray', function() {
       assert.deepEqual(arr2, [2]);
     });
 
-    test('unshift', () => {
+    test("unshift", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let val = arr.unshift(0);
 
@@ -340,7 +339,7 @@ describe('ReactiveArray', function() {
       assert.equal(val, 4);
     });
 
-    test('values', () => {
+    test("values", () => {
       let arr = new ReactiveArray([1, 2, 3]);
       let iter = arr.values();
 
@@ -350,26 +349,26 @@ describe('ReactiveArray', function() {
       assert.equal(iter.next().done, true);
     });
 
-    test('of', () => {
+    test("of", () => {
       let arr = ReactiveArray.of(1, 2, 3);
 
       assert.deepEqual(arr, [1, 2, 3]);
     });
 
-    test('from', () => {
+    test("from", () => {
       let arr = ReactiveArray.from([1, 2, 3]);
 
       assert.deepEqual(arr, [1, 2, 3]);
     });
   });
 
-  describe('reactivity', () => {
-    test('reassignment is stable', () => {
+  describe("reactivity", () => {
+    test("reassignment is stable", () => {
       let arr = ReactiveArray.from([1, 2, 3]);
 
       assertReactivelySettled({
         access: () => arr[0],
-        change: () => arr[0] = 4,
+        change: () => (arr[0] = 4),
       });
     });
   });
