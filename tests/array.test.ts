@@ -371,5 +371,41 @@ describe("ReactiveArray", function () {
         change: () => (arr[0] = 4),
       });
     });
+
+    test("length is stable: push", () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
+
+      assertReactivelySettled({
+        access: () => arr.length,
+        change: () => arr.push(4),
+      });
+    });
+
+    test("length is stable: pop", () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
+
+      assertReactivelySettled({
+        access: () => arr.length,
+        change: () => arr.pop(),
+      });
+    });
+
+    test("length is stable: unshift", () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
+
+      assertReactivelySettled({
+        access: () => arr.length,
+        change: () => arr.unshift(0),
+      });
+    });
+
+    test("length is stable: shift", () => {
+      let arr = ReactiveArray.from([1, 2, 3]);
+
+      assertReactivelySettled({
+        access: () => arr.length,
+        change: () => arr.shift(),
+      });
+    });
   });
 });
