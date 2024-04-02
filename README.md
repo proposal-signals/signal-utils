@@ -41,7 +41,8 @@ let state = new State();
 
 ### `Array`
 
-A reactive Array
+A reactive Array.
+This API mimics the built-in APIs and behaviors of [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array). 
 
 ```jsx
 import { SignalArray } from 'signal-utils/array';
@@ -57,10 +58,21 @@ let arr = new SignalArray([1, 2, 3]);
 </template>
 ```
 
+Other ways of constructing an array:
+
+```jsx
+import { SignalArray, signalArray } from 'signal-utils/array';
+
+SignalArray.from([1, 2, 3]);
+signalArray([1, 2, 3]);
+```
+
+Note that [`.from`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from) gives you more options of how to create your new array structure.
 
 ### `Object`
 
-A reactive Object
+A reactive Object.
+This API mimics the built-in APIs and behaviors of [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object).
 
 ```js
 import { SignalObject } from 'signal-utils/object';
@@ -82,6 +94,16 @@ let obj = new SignalObject({
 
 In this example, we could use a reactive object for quickly and dynamically creating an object of signals -- useful for when we don't know all the keys boforehand, or if we want a shorthand to creating many named signals.
 
+Other ways of constructing an object:
+
+```jsx
+import { SignalObject, signalObject } from 'signal-utils/object';
+
+SignalObject.fromEntries([ /* ... */ ]);
+signalObject({ /* ... */ } );
+```
+
+Note that [`.fromEntries`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries) gives you more options of how to create your new object structure.
 
 ### `Map`
 

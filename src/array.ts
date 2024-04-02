@@ -210,3 +210,7 @@ export class SignalArray<T = unknown> {
 
 // Ensure instanceof works correctly
 Object.setPrototypeOf(SignalArray.prototype, Array.prototype);
+
+export function signalArray<Item>(x?: Item[]) {
+  return new SignalArray(x);
+}

@@ -1,8 +1,8 @@
 import { describe, it, assert } from "vitest";
 
 import { signal } from "signal-utils";
-import { SignalObject } from "signal-utils/object";
-import { SignalArray } from "signal-utils/array";
+import { signalObject, SignalObject } from "signal-utils/object";
+import { signalArray, SignalArray } from "signal-utils/array";
 import { load, SignalAsyncData } from "signal-utils/async-data";
 
 describe("Public API", () => {
@@ -16,7 +16,9 @@ describe("Public API", () => {
 
     assert.ok(state);
     assert.ok(new SignalObject());
+    assert.ok(signalObject());
     assert.ok(new SignalArray());
+    assert.ok(signalArray());
     assert.ok(SignalArray.from([]));
     assert.ok(load(Promise.resolve()));
     assert.ok(new SignalAsyncData(Promise.resolve()));

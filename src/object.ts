@@ -128,3 +128,9 @@ interface SignalObject {
  */
 export const SignalObject: SignalObject =
   SignalObjectImpl as unknown as SignalObject;
+
+export function signalObject<T extends Record<PropertyKey, unknown>>(
+  obj?: T | undefined,
+) {
+  return new SignalObject(obj);
+}
