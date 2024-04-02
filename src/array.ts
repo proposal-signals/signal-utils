@@ -60,7 +60,7 @@ function convertToInt(prop: number | string | symbol): number | null {
 // setters, rather than a subclass of an `Array` which would be de-optimized by
 // the browsers.
 //
-export interface SignalArray<T = unknown> extends Array<T> { }
+export interface SignalArray<T = unknown> extends Array<T> {}
 
 export class SignalArray<T = unknown> {
   /**
