@@ -2,13 +2,13 @@ import { Signal } from "signal-polyfill";
 
 /** A very cheap representation of the of a promise. */
 type StateRepr<T> =
-  | [tag: 'PENDING']
-  | [tag: 'RESOLVED', value: T]
-  | [tag: 'REJECTED', error: unknown];
+  | [tag: "PENDING"]
+  | [tag: "RESOLVED", value: T]
+  | [tag: "REJECTED", error: unknown];
 
 // We only need a single instance of the pending state in our system, since it
 // is otherwise unparameterized (unlike the resolved and rejected states).
-const PENDING = ['PENDING'] as [tag: 'PENDING'];
+const PENDING = ["PENDING"] as [tag: "PENDING"];
 
 // NOTE: this class is the implementation behind the types; the public types
 // layer on additional safety. See below! Additionally, the docs for the class
@@ -32,11 +32,11 @@ class _SignalAsyncData<T> {
     // SAFETY: do not let TS type-narrow this condition,
     //         else, `this` is of type `never`
     if ((this.constructor as any) !== _SignalAsyncData) {
-      throw new Error('tracked-async-data cannot be subclassed');
+      throw new Error("tracked-async-data cannot be subclassed");
     }
 
     if (!isPromiseLike(data)) {
-      this.#state.set(['RESOLVED', data]);
+      this.#state.set(["RESOLVED", data]);
       this.#promise = Promise.resolve(data);
       return;
     }
@@ -47,29 +47,32 @@ class _SignalAsyncData<T> {
     // system, so we continue creating a new instance.
     this.#promise.then(
       (value) => {
-        this.#state.set(['RESOLVED', value]);
+        this.#state.set(["RESOLVED", value]);
       },
       (error) => {
-        this.#state.set(['REJECTED', error]);
+        this.#state.set(["REJECTED", error]);
       },
     );
   }
 
-  then = (onResolved: (value: T) => null | undefined, onRejected?: (reason: unknown) => void) => {
+  then = (
+    onResolved: (value: T) => null | undefined,
+    onRejected?: (reason: unknown) => void,
+  ) => {
     if (isPromiseLike(this.#promise)) {
       return this.#promise.then(onResolved).catch(onRejected);
     }
 
-    if (this.state === 'RESOLVED') {
+    if (this.state === "RESOLVED") {
       return onResolved(this.value as T);
     }
 
-    if (this.state === 'REJECTED' && onRejected) {
+    if (this.state === "REJECTED" && onRejected) {
       return onRejected(this.error);
     }
 
     throw new Error(`Value was not resolveable`);
-  }
+  };
 
   /**
    * The resolution state of the promise.
@@ -89,7 +92,7 @@ class _SignalAsyncData<T> {
    */
   get value(): T | null {
     let data = this.#state.get();
-    return data[0] === 'RESOLVED' ? data[1] : null;
+    return data[0] === "RESOLVED" ? data[1] : null;
   }
 
   /**
@@ -104,24 +107,24 @@ class _SignalAsyncData<T> {
    */
   get error(): unknown {
     let data = this.#state.get();
-    return data[0] === 'REJECTED' ? data[1] : null;
+    return data[0] === "REJECTED" ? data[1] : null;
   }
 
   /**
     Is the state `"PENDING"`.
    */
   get isPending(): boolean {
-    return this.state === 'PENDING';
+    return this.state === "PENDING";
   }
 
   /** Is the state `"RESOLVED"`? */
   get isResolved(): boolean {
-    return this.state === 'RESOLVED';
+    return this.state === "RESOLVED";
   }
 
   /** Is the state `"REJECTED"`? */
   get isRejected(): boolean {
-    return this.state === 'REJECTED';
+    return this.state === "REJECTED";
   }
 
   // SAFETY: casts are safe because we uphold these invariants elsewhere in the
@@ -193,7 +196,7 @@ export type JSONRepr<T> =
 //     automatically.
 
 interface Pending<T> extends _SignalAsyncData<T> {
-  state: 'PENDING';
+  state: "PENDING";
   isPending: true;
   isResolved: false;
   isRejected: false;
@@ -202,7 +205,7 @@ interface Pending<T> extends _SignalAsyncData<T> {
 }
 
 interface Resolved<T> extends _SignalAsyncData<T> {
-  state: 'RESOLVED';
+  state: "RESOLVED";
   isPending: false;
   isResolved: true;
   isRejected: false;
@@ -211,7 +214,7 @@ interface Resolved<T> extends _SignalAsyncData<T> {
 }
 
 interface Rejected<T> extends _SignalAsyncData<T> {
-  state: 'REJECTED';
+  state: "REJECTED";
   isPending: false;
   isResolved: false;
   isRejected: true;
@@ -280,10 +283,10 @@ function has<K extends PropertyKey, T extends object>(
 
 function isPromiseLike(data: unknown): data is PromiseLike<unknown> {
   return (
-    typeof data === 'object' &&
+    typeof data === "object" &&
     data !== null &&
-    has('then', data) &&
-    typeof data.then === 'function'
+    has("then", data) &&
+    typeof data.then === "function"
   );
 }
 
