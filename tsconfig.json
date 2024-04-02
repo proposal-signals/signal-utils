@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/strictest",
   "include": ["src"],
+  "exclude": ["dist", "declarations"],
   "compilerOptions": {
     "target": "esnext",
     "module": "preserve",
