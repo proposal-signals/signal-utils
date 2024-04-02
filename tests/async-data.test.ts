@@ -1,13 +1,13 @@
 import { describe, test, assert } from 'vitest';
 import { defer } from './helpers.ts';
-import { load, TrackedAsyncData } from 'signal-utils/async-data';
+import { load, SignalAsyncData } from 'signal-utils/async-data';
 
 describe('Unit | load', function() {
   test('given a promise', async function() {
     const { promise, resolve } = defer();
     const result = load(promise);
     assert.ok(
-      result instanceof TrackedAsyncData,
+      result instanceof SignalAsyncData,
       'it returns a TrackedAsyncData instance',
     );
     resolve();
@@ -17,7 +17,7 @@ describe('Unit | load', function() {
   test('given a plain value', async function() {
     const result = load(12);
     assert.ok(
-      result instanceof TrackedAsyncData,
+      result instanceof SignalAsyncData,
       'it returns a TrackedAsyncData instance',
     );
   });
@@ -27,7 +27,7 @@ describe('Unit | TrackedAsyncData', function() {
   test('cannot be subclassed', function() {
     // @ts-expect-error: The type is not statically subclassable, either, so
     //   this fails both at the type-checking level and dynamically at runtime.
-    class Subclass extends TrackedAsyncData<unknown> { }
+    class Subclass extends SignalAsyncData<unknown> { }
 
     assert.throws(() => new Subclass(Promise.resolve('nope')));
   });
@@ -35,7 +35,7 @@ describe('Unit | TrackedAsyncData', function() {
   test('is initially PENDING', async function() {
     const deferred = defer();
 
-    const result = new TrackedAsyncData(deferred.promise);
+    const result = new SignalAsyncData(deferred.promise);
     assert.strictEqual(result.state, 'PENDING');
     assert.strictEqual(result.isPending, true);
     assert.strictEqual(result.isResolved, false);
@@ -49,7 +49,7 @@ describe('Unit | TrackedAsyncData', function() {
 
   test('it updates to resolved state', async function() {
     const deferred = defer();
-    const result = new TrackedAsyncData(deferred.promise);
+    const result = new SignalAsyncData(deferred.promise);
 
     deferred.resolve('foobar');
     await deferred.promise;
@@ -64,7 +64,7 @@ describe('Unit | TrackedAsyncData', function() {
 
   describe('it returns resolved state for non-thenable input', function() {
     test('undefined', async function() {
-      const loadUndefined = new TrackedAsyncData(undefined);
+      const loadUndefined = new SignalAsyncData(undefined);
       await loadUndefined;
 
       assert.strictEqual(loadUndefined.state, 'RESOLVED');
@@ -76,7 +76,7 @@ describe('Unit | TrackedAsyncData', function() {
     });
 
     test('null', async function() {
-      const loadNull = new TrackedAsyncData(null);
+      const loadNull = new SignalAsyncData(null);
       await loadNull;
 
       assert.strictEqual(loadNull.state, 'RESOLVED');
@@ -89,7 +89,7 @@ describe('Unit | TrackedAsyncData', function() {
 
     test('non-thenable object', async function() {
       const notAThenableObject = { notAThenable: true };
-      const loadObject = new TrackedAsyncData(notAThenableObject);
+      const loadObject = new SignalAsyncData(notAThenableObject);
       await loadObject
 
       assert.strictEqual(loadObject.state, 'RESOLVED');
@@ -101,7 +101,7 @@ describe('Unit | TrackedAsyncData', function() {
     });
 
     test('boolean: true', async function() {
-      const loadTrue = new TrackedAsyncData(true);
+      const loadTrue = new SignalAsyncData(true);
       await loadTrue;
 
       assert.strictEqual(loadTrue.state, 'RESOLVED');
@@ -113,7 +113,7 @@ describe('Unit | TrackedAsyncData', function() {
     });
 
     test('boolean: false', async function() {
-      const loadFalse = new TrackedAsyncData(false);
+      const loadFalse = new SignalAsyncData(false);
       await loadFalse;
 
       assert.strictEqual(loadFalse.state, 'RESOLVED');
@@ -125,7 +125,7 @@ describe('Unit | TrackedAsyncData', function() {
     });
 
     test('number', async function() {
-      const loadNumber = new TrackedAsyncData(5);
+      const loadNumber = new SignalAsyncData(5);
       await loadNumber;
 
       assert.strictEqual(loadNumber.state, 'RESOLVED');
@@ -137,7 +137,7 @@ describe('Unit | TrackedAsyncData', function() {
     });
 
     test('string', async function() {
-      const loadString = new TrackedAsyncData('js');
+      const loadString = new SignalAsyncData('js');
       await loadString;
 
       // loadString
@@ -154,7 +154,7 @@ describe('Unit | TrackedAsyncData', function() {
 
     // This handles the error throw from rendering a rejected promise
     const deferred = defer();
-    const result = new TrackedAsyncData(deferred.promise);
+    const result = new SignalAsyncData(deferred.promise);
 
     // eslint-disable-next-line ember/no-array-prototype-extensions
     deferred.reject(new Error('foobar'));
@@ -173,7 +173,7 @@ describe('Unit | TrackedAsyncData', function() {
 
   test('it returns loading state and then loaded state', async function() {
     const deferred = defer();
-    const result = new TrackedAsyncData(deferred.promise);
+    const result = new SignalAsyncData(deferred.promise);
     assert.strictEqual(result.state, 'PENDING');
 
     deferred.resolve();
@@ -184,7 +184,7 @@ describe('Unit | TrackedAsyncData', function() {
 
   test('it returns loading state and then error state', async function() {
     const deferred = defer();
-    const result = new TrackedAsyncData(deferred.promise);
+    const result = new SignalAsyncData(deferred.promise);
     assert.strictEqual(result.state, 'PENDING');
 
     // eslint-disable-next-line ember/no-array-prototype-extensions
@@ -199,14 +199,14 @@ describe('Unit | TrackedAsyncData', function() {
 
   test('it returns loaded state for already-resolved promises', async function() {
     const promise = Promise.resolve('hello');
-    const result = new TrackedAsyncData(promise);
+    const result = new SignalAsyncData(promise);
     await promise;
     assert.strictEqual(result.state, 'RESOLVED');
   });
 
   test('it returns error state for already-rejected promises', async function() {
     const promise = Promise.reject(new Error('foobar'));
-    const result = new TrackedAsyncData(promise);
+    const result = new SignalAsyncData(promise);
 
     // This handles the error thrown *locally*.
     await promise.catch((error: Error) => {

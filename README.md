@@ -112,12 +112,47 @@ wip
 A reactive WeakSet
 
 
-### `Promise`
-
-wip
+### `Promise` (wrapper)
 
 A reactive Promise handler that gives your reactive properties for when the promise resolves or rejects.
 
+```js
+import { SignalAsyncData } from 'signal-utils/async-data';
+
+const response = fetch('...');
+const signalResponse = new SignalAsyncData(response);
+
+// output: true
+// after the fetch finishes
+// output: false
+<template>
+  <output>{{signalResponse.isLoading}}</output>
+</template>
+```
+
+There is also a `load` export which does the construction for you.
+
+```js
+import { load } from 'signal-utils/async-data';
+
+const response = fetch('...');
+const signalResponse = load(response);
+
+// output: true
+// after the fetch finishes
+// output: false
+<template>
+  <output>{{signalResponse.isLoading}}</output>
+</template>
+```
+
+the `signalResponse` object has familiar properties on it:
+- `value`
+- `error`
+- `state`
+- `isResolved`
+- `isPending`
+- `isRejected`
 
 ### `async`
 

@@ -14,7 +14,7 @@ const PENDING = ['PENDING'] as [tag: 'PENDING'];
 // layer on additional safety. See below! Additionally, the docs for the class
 // itself are applied to the export, not to the class, so that they will appear
 // when users refer to *that*.
-class _TrackedAsyncData<T> {
+class _SignalAsyncData<T> {
   /**
     The internal state management for the promise.
 
@@ -31,7 +31,7 @@ class _TrackedAsyncData<T> {
   constructor(data: T | Promise<T>) {
     // SAFETY: do not let TS type-narrow this condition,
     //         else, `this` is of type `never`
-    if ((this.constructor as any) !== _TrackedAsyncData) {
+    if ((this.constructor as any) !== _SignalAsyncData) {
       throw new Error('tracked-async-data cannot be subclassed');
     }
 
@@ -192,7 +192,7 @@ export type JSONRepr<T> =
 //     shared implementations (i.e. `.toJSON()` and `.toString()`) are shared
 //     automatically.
 
-interface Pending<T> extends _TrackedAsyncData<T> {
+interface Pending<T> extends _SignalAsyncData<T> {
   state: 'PENDING';
   isPending: true;
   isResolved: false;
@@ -201,7 +201,7 @@ interface Pending<T> extends _TrackedAsyncData<T> {
   error: null;
 }
 
-interface Resolved<T> extends _TrackedAsyncData<T> {
+interface Resolved<T> extends _SignalAsyncData<T> {
   state: 'RESOLVED';
   isPending: false;
   isResolved: true;
@@ -210,7 +210,7 @@ interface Resolved<T> extends _TrackedAsyncData<T> {
   error: null;
 }
 
-interface Rejected<T> extends _TrackedAsyncData<T> {
+interface Rejected<T> extends _SignalAsyncData<T> {
   state: 'REJECTED';
   isPending: false;
   isResolved: false;
@@ -265,10 +265,10 @@ interface Rejected<T> extends _TrackedAsyncData<T> {
   {{/if}}
   ```
  */
-type TrackedAsyncData<T> = Pending<T> | Resolved<T> | Rejected<T>;
-export const TrackedAsyncData = _TrackedAsyncData as new <T>(
+type SignalAsyncData<T> = Pending<T> | Resolved<T> | Rejected<T>;
+export const SignalAsyncData = _SignalAsyncData as new <T>(
   data: T | Promise<T>,
-) => TrackedAsyncData<T>;
+) => SignalAsyncData<T>;
 
 /** Utility type to check whether the string `key` is a property on an object */
 function has<K extends PropertyKey, T extends object>(
@@ -343,6 +343,6 @@ function isPromiseLike(data: unknown): data is PromiseLike<unknown> {
   @note Prefer to use `TrackedAsyncData` directly! This function is provided
     simply for symmetry with the helper and backwards compatibility.
  */
-export function load<T>(data: T | Promise<T>): TrackedAsyncData<T> {
-  return new TrackedAsyncData(data);
+export function load<T>(data: T | Promise<T>): SignalAsyncData<T> {
+  return new SignalAsyncData(data);
 }
