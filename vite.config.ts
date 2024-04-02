@@ -63,6 +63,8 @@ export default defineConfig({
       // This can generate duplicate types in the d.ts files
       // rollupTypes: true,
       outDir: "declarations",
+      // ignore tests
+      include: ["src"],
     }),
   ],
 });

@@ -1,6 +1,6 @@
 import { describe, test, assert } from "vitest";
 import { defer } from "./helpers.ts";
-import { load, SignalAsyncData } from "signal-utils/async-data";
+import { load, SignalAsyncData } from "../src/async-data.ts";
 
 describe("Unit | load", function () {
   test("given a promise", async function () {

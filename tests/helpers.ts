@@ -1,4 +1,4 @@
-import { assert } from "vitest";
+import { assert, test } from "vitest";
 import { Signal } from "signal-polyfill";
 
 export function assertStable(access: () => unknown) {
@@ -64,4 +64,18 @@ export function defer(): Deferred {
   });
 
   return deferred as Deferred;
+}
+
+export function reactivityTest(
+  name: string,
+  State: new () => { value: unknown; update: () => void },
+) {
+  return test(name, () => {
+    let state = new State();
+
+    assertReactivelySettled({
+      access: () => state.value,
+      change: () => state.update(),
+    });
+  });
 }
