@@ -37,7 +37,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         dir: "dist",
-        entryFileNames: "[name]",
+        entryFileNames: "[name].js",
         experimentalMinChunkSize: 0,
         format: "es",
         hoistTransitiveImports: false,
