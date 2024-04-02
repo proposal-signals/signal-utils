@@ -57,8 +57,6 @@ let arr = new SignalArray([1, 2, 3]);
 </template>
 ```
 
-Inspo:
-- [`TrackedArray`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/array.ts#L1) from `tracked-built-ins` 
 
 ### `Object`
 
@@ -84,8 +82,6 @@ let obj = new SignalObject({
 
 In this example, we could use a reactive object for quickly and dynamically creating an object of signals -- useful for when we don't know all the keys boforehand, or if we want a shorthand to creating many named signals.
 
-Inspo:
-- [`TrackedObject`](https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js#L1) from `tracked-built-ins`
 
 ### `Map`
 
@@ -93,8 +89,6 @@ wip
 
 A reactive Map
 
-Inspo:
-- [`TrackedMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L8) from `tracked-built-ins`
 
 ### `WeakMap`
 
@@ -102,8 +96,6 @@ wip
 
 A reactive WeakMap
 
-Inspo:
-- [`TrackedWeakMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L134) from `tracked-built-ins`
 
 ### `Set`
 
@@ -112,8 +104,6 @@ wip
 A reactive Set
 
 
-Inspo:
-- [`TrackedSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L8) from `tracked-built-ins`
 
 ### `WeakSet`
 
@@ -121,8 +111,13 @@ wip
 
 A reactive WeakSet
 
-Inspo:
-- [`TrackedWeakSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L119) from `tracked-built-ins`
+
+### `Promise`
+
+wip
+
+A reactive Promise handler that gives your reactive properties for when the promise resolves or rejects.
+
 
 ### `async`
 
@@ -130,26 +125,18 @@ wip
 
 A reactive async function with pending/error state handling
 
-Inspo:
-- [`trackedFunction`](https://github.com/universal-ember/reactiveweb/blob/ba40c8a4417ec8b76bfb37754262f2829c6f7b26/reactiveweb/src/function.ts#L1) from `reactiveweb` 
-
 ### `localCopy` + `@localCopy`
 
 wip
 
 utilities for the [localCopy](https://github.com/tracked-tools/tracked-toolbox?tab=readme-ov-file#localcopy) pattern
 
-Inspo:
-- [`@localCopy`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L28) from `tracked-toolbox`
 
 ### `dedupe` + `@dedupe`
 
 wip
 
 utilities for the [dedupe](https://github.com/tracked-tools/tracked-toolbox?tab=readme-ov-file#dedupetracked) pattern.
-
-Inspo:
-- [`@dedupeTracked`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L148) from `tracked-toolbox`
 
 ## Contributing
 
@@ -163,3 +150,23 @@ pnpm start
 This will start a [concurrently](https://www.npmjs.com/package/concurrently) command that runs the vite build and vitest tests in parallel.
 
 Vitest isn't being used _within_ the package, because we want to exercise the public API, generated types, etc (through package.json#exports and all that).
+
+## Credits and Inspiration
+
+This library could not have been developed so quickly without borrowing from existing libraries that already built these patterns. This library, signal-utils, is an adaptation and aggregation of utilities found throughout the community.
+
+
+- `tracked-built-ins`
+  - [`TrackedArray`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/array.ts#L1) from `tracked-built-ins` 
+  - [`TrackedObject`](https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js#L1) from `tracked-built-ins`
+  - [`TrackedMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L8) from `tracked-built-ins`
+  - [`TrackedWeakMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L134) from `tracked-built-ins`
+  - [`TrackedSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L8) from `tracked-built-ins`
+  - [`TrackedWeakSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L119) from `tracked-built-ins`
+- `tracked-toolbox`
+  - [`@dedupeTracked`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L148) from `tracked-toolbox`
+  - [`@localCopy`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L28) from `tracked-toolbox`
+- `ember-async-data`
+  - [`TrackedAsyncData`](https://github.com/tracked-tools/ember-async-data/blob/1346f03c7fa677342408a9811916b916e3c4ad54/ember-async-data/src/tracked-async-data.ts#L31) from `ember-async-data`
+- `reactiveweb`
+  - [`trackedFunction`](https://github.com/universal-ember/reactiveweb/blob/ba40c8a4417ec8b76bfb37754262f2829c6f7b26/reactiveweb/src/function.ts#L1) from `reactiveweb` 
