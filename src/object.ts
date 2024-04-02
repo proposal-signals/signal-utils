@@ -5,11 +5,11 @@ import { createStorage } from "./-private/util.ts";
  * Implementation based of tracked-built-ins' TrackedObject
  * https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js
  */
-export class ReactiveObjectImpl {
+export class SignalObjectImpl {
   static fromEntries<T = unknown>(
     entries: Iterable<readonly [PropertyKey, T]>,
   ) {
-    return new ReactiveObjectImpl(Object.fromEntries(entries)) as T;
+    return new SignalObjectImpl(Object.fromEntries(entries)) as T;
   }
   #storages = new Map<PropertyKey, Signal.State<null>>();
   #collection = createStorage();
@@ -71,7 +71,7 @@ export class ReactiveObjectImpl {
       },
 
       getPrototypeOf() {
-        return ReactiveObjectImpl.prototype;
+        return SignalObjectImpl.prototype;
       },
     });
   }
@@ -100,7 +100,7 @@ export class ReactiveObjectImpl {
   }
 }
 
-interface ReactiveObject {
+interface SignalObject {
   fromEntries<T = unknown>(
     entries: Iterable<readonly [PropertyKey, T]>,
   ): { [k: string]: T };
@@ -110,14 +110,14 @@ interface ReactiveObject {
   ): T;
 }
 // Types are too hard in proxy-implementation
-// we want TS to think the ReactiveObject is Object-like
+// we want TS to think the SignalObject is Object-like
 
 /**
  * Create a reactive Object, backed by Signals, using a Proxy.
  * This allows dynamic creation and deletion of signals using the object primitive
  * APIs that most folks are familiar with -- the only difference is instantiation.
  * ```js
- * const obj = new ReactiveObject({ foo: 123 });
+ * const obj = new SignalObject({ foo: 123 });
  *
  * obj.foo // 123
  * obj.foo = 456
@@ -126,5 +126,5 @@ interface ReactiveObject {
  * obj.bar // 2
  * ```
  */
-export const ReactiveObject: ReactiveObject =
-  ReactiveObjectImpl as unknown as ReactiveObject;
+export const SignalObject: SignalObject =
+  SignalObjectImpl as unknown as SignalObject;

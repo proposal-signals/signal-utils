@@ -1,14 +1,14 @@
 import { describe, it, assert } from "vitest";
-import { ReactiveObject } from "signal-utils/object";
+import { SignalObject } from "signal-utils/object";
 import { expectTypeOf } from "expect-type";
 import { assertReactivelySettled } from "./helpers.ts";
 
-describe("ReactiveObject", () => {
+describe("SignalObject", () => {
   it("works", () => {
     let original = { foo: 123 };
-    let obj = new ReactiveObject(original);
+    let obj = new SignalObject(original);
 
-    assert.ok(obj instanceof ReactiveObject);
+    assert.ok(obj instanceof SignalObject);
     expectTypeOf(obj).toEqualTypeOf<{ foo: number }>();
     assert.deepEqual(Object.keys(obj), ["foo"]);
     assert.equal(obj.foo, 123);
@@ -24,7 +24,7 @@ describe("ReactiveObject", () => {
   });
 
   it("preserves getters", () => {
-    let obj = new ReactiveObject({
+    let obj = new SignalObject({
       foo: 123,
       get bar(): number {
         return this.foo;
@@ -49,7 +49,7 @@ describe("ReactiveObject", () => {
   });
 
   it("works with methods", () => {
-    let obj = new ReactiveObject({
+    let obj = new SignalObject({
       foo: 123,
 
       method() {
@@ -69,14 +69,14 @@ describe("ReactiveObject", () => {
 
   it("fromEntries", () => {
     const entries = Object.entries({ foo: 123 });
-    let obj = ReactiveObject.fromEntries(entries);
+    let obj = SignalObject.fromEntries(entries);
     // We will lose the specific key, becuase `Object.entries` does not preserve
     // it, but the type produced by `TrackedObject.fromEntries` should match the
     // type produced by `Object.fromEntries`.
     let underlying = Object.fromEntries(entries);
     expectTypeOf(obj).toEqualTypeOf(underlying);
 
-    assert.ok(obj instanceof ReactiveObject);
+    assert.ok(obj instanceof SignalObject);
     assert.deepEqual(Object.keys(obj), ["foo"]);
 
     assertReactivelySettled({
