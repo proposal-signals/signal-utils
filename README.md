@@ -154,6 +154,9 @@ the `signalResponse` object has familiar properties on it:
 - `isPending`
 - `isRejected`
 
+
+The important thing to note about using `load` / `SignalAsyncData`, is that you must already have a `PromiseLike`. For reactive-invocation of async functions, see the section below on `signalFunction`
+
 ### `async`
 
 wip
