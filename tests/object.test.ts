@@ -1,5 +1,5 @@
 import { describe, it, assert } from "vitest";
-import { SignalObject } from "signal-utils/object";
+import { SignalObject } from "../src/object";
 import { expectTypeOf } from "expect-type";
 import { assertReactivelySettled } from "./helpers.ts";
 

@@ -1,4 +1,4 @@
-import { assert } from "vitest";
+import { assert, test } from "vitest";
 import { Signal } from "signal-polyfill";
 
 export function assertStable(access: () => unknown) {
@@ -47,4 +47,35 @@ export function assertReactivelySettled(options: {
     2,
     "No additional evaluation is made after repeat get() call",
   );
+}
+
+interface Deferred {
+  resolve: (value?: unknown) => void;
+  reject: (value?: unknown) => void;
+  promise: Promise<unknown>;
+}
+
+export function defer(): Deferred {
+  const deferred = {} as Partial<Deferred>;
+
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+
+  return deferred as Deferred;
+}
+
+export function reactivityTest(
+  name: string,
+  State: new () => { value: unknown; update: () => void },
+) {
+  return test(name, () => {
+    let state = new State();
+
+    assertReactivelySettled({
+      access: () => state.value,
+      change: () => state.update(),
+    });
+  });
 }

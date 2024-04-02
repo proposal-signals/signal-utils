@@ -1,8 +1,7 @@
-import { describe, it, assert } from "vitest";
+import { describe, it } from "vitest";
 
 import { assertStable, assertReactivelySettled } from "./helpers.ts";
-import { signal } from "signal-utils";
-import { Signal } from "signal-polyfill";
+import { signal } from "../src/index.ts";
 
 describe("@signal", () => {
   it("works", () => {

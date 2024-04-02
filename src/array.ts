@@ -51,12 +51,23 @@ function convertToInt(prop: number | string | symbol): number | null {
   return num % 1 === 0 ? num : null;
 }
 
-class SignalArrayImpl<T = unknown> {
+// This rule is correct in the general case, but it doesn't understand
+// declaration merging, which is how we're using the interface here. This says
+// `SignalArray` acts just like `Array<T>`, but also has the properties
+// declared via the `class` declaration above -- but without the cost of a
+// subclass, which is much slower than the proxied array behavior. That is: a
+// `SignalArray` *is* an `Array`, just with a proxy in front of accessors and
+// setters, rather than a subclass of an `Array` which would be de-optimized by
+// the browsers.
+//
+export interface SignalArray<T = unknown> extends Array<T> {}
+
+export class SignalArray<T = unknown> {
   /**
    * Creates an array from an iterable object.
    * @param iterable An iterable object to convert to an array.
    */
-  static from<T>(iterable: Iterable<T> | ArrayLike<T>): SignalArrayImpl<T>;
+  static from<T>(iterable: Iterable<T> | ArrayLike<T>): SignalArray<T>;
 
   /**
    * Creates an array from an iterable object.
@@ -68,20 +79,20 @@ class SignalArrayImpl<T = unknown> {
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn: (v: T, k: number) => U,
     thisArg?: unknown,
-  ): SignalArrayImpl<U>;
+  ): SignalArray<U>;
 
   static from<T, U>(
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn?: (v: T, k: number) => U,
     thisArg?: unknown,
-  ): SignalArrayImpl<T> | SignalArrayImpl<U> {
+  ): SignalArray<T> | SignalArray<U> {
     return mapfn
-      ? new SignalArrayImpl(Array.from(iterable, mapfn, thisArg))
-      : new SignalArrayImpl(Array.from(iterable));
+      ? new SignalArray(Array.from(iterable, mapfn, thisArg))
+      : new SignalArray(Array.from(iterable));
   }
 
-  static of<T>(...arr: T[]): SignalArrayImpl<T> {
-    return new SignalArrayImpl(arr);
+  static of<T>(...arr: T[]): SignalArray<T> {
+    return new SignalArray(arr);
   }
 
   constructor(arr: T[] = []) {
@@ -168,9 +179,9 @@ class SignalArrayImpl<T = unknown> {
       },
 
       getPrototypeOf() {
-        return SignalArrayImpl.prototype;
+        return SignalArray.prototype;
       },
-    }) as SignalArrayImpl<T>;
+    }) as SignalArray<T>;
   }
 
   #collection = createStorage();
@@ -197,22 +208,5 @@ class SignalArrayImpl<T = unknown> {
   }
 }
 
-// This rule is correct in the general case, but it doesn't understand
-// declaration merging, which is how we're using the interface here. This says
-// `SignalArray` acts just like `Array<T>`, but also has the properties
-// declared via the `class` declaration above -- but without the cost of a
-// subclass, which is much slower that the proxied array behavior. That is: a
-// `SignalArray` *is* an `Array`, just with a proxy in front of accessors and
-// setters, rather than a subclass of an `Array` which would be de-optimized by
-// the browsers.
-//
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface SignalArrayImpl<T = unknown> extends Array<T> {}
-
-type SignalArray = SignalArrayImpl;
-
-export const SignalArray: SignalArray =
-  SignalArrayImpl as unknown as SignalArray;
-
 // Ensure instanceof works correctly
-Object.setPrototypeOf(SignalArrayImpl.prototype, Array.prototype);
+Object.setPrototypeOf(SignalArray.prototype, Array.prototype);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/strictest",
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": ["dist", "declarations"],
   "compilerOptions": {
     "target": "esnext",
@@ -30,6 +30,17 @@
       own types. You  may wish to override this e.g. with `"types": ["node"]`
       if your project has build-time elements that use NodeJS APIs.
     */
-    "types": []
+    "types": [],
+
+    /**
+     for easier test authoring.
+     note that all imports under `src` should use relative or subpath-imports 
+     (defined in packaeg.json)
+     */
+    "baseUrl": "./src",
+    "paths": {
+      "signal-utils": ["./index.ts"],
+      "signal-utils/*": ["./*.ts"]
+    }
   }
 }
