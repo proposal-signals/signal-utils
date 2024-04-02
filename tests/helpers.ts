@@ -48,3 +48,20 @@ export function assertReactivelySettled(options: {
     "No additional evaluation is made after repeat get() call",
   );
 }
+
+interface Deferred {
+  resolve: (value?: unknown) => void;
+  reject: (value?: unknown) => void;
+  promise: Promise<unknown>;
+}
+
+export function defer(): Deferred {
+  const deferred = {} as Partial<Deferred>;
+
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+
+  return deferred as Deferred;
+}

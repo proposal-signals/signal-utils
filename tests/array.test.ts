@@ -1,4 +1,4 @@
-import { describe, it, test, assert } from "vitest";
+import { describe, test, assert } from "vitest";
 import { SignalArray } from "signal-utils/array";
 import { expectTypeOf } from "expect-type";
 import { assertReactivelySettled } from "./helpers";
@@ -42,7 +42,7 @@ const ARRAY_SETTER_METHODS = [
 // vice versa).
 expectTypeOf<SignalArray<unknown>>().toMatchTypeOf<Array<unknown>>();
 
-describe("SignalArray", function () {
+describe("SignalArray", function() {
   test("Can get values on array directly", () => {
     let arr = new SignalArray(["foo"]);
 
