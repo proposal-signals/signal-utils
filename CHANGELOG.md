@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-04-02)
+
+signal-utils 0.3.1 (patch)
+
+#### :bug: Bug Fix
+* `signal-utils`
+  * [#10](https://github.com/NullVoxPopuli/signal-utils/pull/10) Fix asset generation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-01)
 
 signal-utils 0.3.0 (minor)
