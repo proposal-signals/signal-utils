@@ -2,8 +2,8 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.3.1",
-      "newVersion": "0.4.0",
+      "oldVersion": "0.4.0",
+      "newVersion": "0.5.0",
       "constraints": [
         {
           "impact": "minor",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-02)\n\nsignal-utils 0.4.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#12](https://github.com/NullVoxPopuli/signal-utils/pull/12) Rename to Signal* instead of Reactive* ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-02)\n\nsignal-utils 0.5.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#14](https://github.com/NullVoxPopuli/signal-utils/pull/14) Implement SignalAsyncData/load ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
