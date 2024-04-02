@@ -1,7 +1,7 @@
 import { describe, it, assert } from "vitest";
 
 import { signal } from "signal-utils";
-import { ReactiveObject } from "signal-utils/object";
+import { SignalObject } from "signal-utils/object";
 
 describe("Public API", () => {
   it("exists", () => {
@@ -13,6 +13,6 @@ describe("Public API", () => {
     let state = new State();
 
     assert.ok(state);
-    assert.ok(new ReactiveObject());
+    assert.ok(new SignalObject());
   });
 });

@@ -51,12 +51,12 @@ function convertToInt(prop: number | string | symbol): number | null {
   return num % 1 === 0 ? num : null;
 }
 
-class ReactiveArrayImpl<T = unknown> {
+class SignalArrayImpl<T = unknown> {
   /**
    * Creates an array from an iterable object.
    * @param iterable An iterable object to convert to an array.
    */
-  static from<T>(iterable: Iterable<T> | ArrayLike<T>): ReactiveArrayImpl<T>;
+  static from<T>(iterable: Iterable<T> | ArrayLike<T>): SignalArrayImpl<T>;
 
   /**
    * Creates an array from an iterable object.
@@ -68,20 +68,20 @@ class ReactiveArrayImpl<T = unknown> {
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn: (v: T, k: number) => U,
     thisArg?: unknown,
-  ): ReactiveArrayImpl<U>;
+  ): SignalArrayImpl<U>;
 
   static from<T, U>(
     iterable: Iterable<T> | ArrayLike<T>,
     mapfn?: (v: T, k: number) => U,
     thisArg?: unknown,
-  ): ReactiveArrayImpl<T> | ReactiveArrayImpl<U> {
+  ): SignalArrayImpl<T> | SignalArrayImpl<U> {
     return mapfn
-      ? new ReactiveArrayImpl(Array.from(iterable, mapfn, thisArg))
-      : new ReactiveArrayImpl(Array.from(iterable));
+      ? new SignalArrayImpl(Array.from(iterable, mapfn, thisArg))
+      : new SignalArrayImpl(Array.from(iterable));
   }
 
-  static of<T>(...arr: T[]): ReactiveArrayImpl<T> {
-    return new ReactiveArrayImpl(arr);
+  static of<T>(...arr: T[]): SignalArrayImpl<T> {
+    return new SignalArrayImpl(arr);
   }
 
   constructor(arr: T[] = []) {
@@ -168,9 +168,9 @@ class ReactiveArrayImpl<T = unknown> {
       },
 
       getPrototypeOf() {
-        return ReactiveArrayImpl.prototype;
+        return SignalArrayImpl.prototype;
       },
-    }) as ReactiveArrayImpl<T>;
+    }) as SignalArrayImpl<T>;
   }
 
   #collection = createStorage();
@@ -199,20 +199,20 @@ class ReactiveArrayImpl<T = unknown> {
 
 // This rule is correct in the general case, but it doesn't understand
 // declaration merging, which is how we're using the interface here. This says
-// `ReactiveArray` acts just like `Array<T>`, but also has the properties
+// `SignalArray` acts just like `Array<T>`, but also has the properties
 // declared via the `class` declaration above -- but without the cost of a
 // subclass, which is much slower that the proxied array behavior. That is: a
-// `ReactiveArray` *is* an `Array`, just with a proxy in front of accessors and
+// `SignalArray` *is* an `Array`, just with a proxy in front of accessors and
 // setters, rather than a subclass of an `Array` which would be de-optimized by
 // the browsers.
 //
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface ReactiveArrayImpl<T = unknown> extends Array<T> {}
+interface SignalArrayImpl<T = unknown> extends Array<T> {}
 
-type ReactiveArray = ReactiveArrayImpl;
+type SignalArray = SignalArrayImpl;
 
-export const ReactiveArray: ReactiveArray =
-  ReactiveArrayImpl as unknown as ReactiveArray;
+export const SignalArray: SignalArray =
+  SignalArrayImpl as unknown as SignalArray;
 
 // Ensure instanceof works correctly
-Object.setPrototypeOf(ReactiveArrayImpl.prototype, Array.prototype);
+Object.setPrototypeOf(SignalArrayImpl.prototype, Array.prototype);

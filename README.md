@@ -44,9 +44,9 @@ let state = new State();
 A reactive Array
 
 ```jsx
-import { ReactiveArray } from 'signal-utils/array';
+import { SignalArray } from 'signal-utils/array';
 
-let arr = new ReactiveArray([1, 2, 3]);
+let arr = new SignalArray([1, 2, 3]);
 
 // output: 3
 // button clicked
@@ -57,14 +57,17 @@ let arr = new ReactiveArray([1, 2, 3]);
 </template>
 ```
 
+Inspo:
+- [`TrackedArray`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/array.ts#L1) from `tracked-built-ins` 
+
 ### `Object`
 
 A reactive Object
 
 ```js
-import { ReactiveObject } from 'signal-utils/object';
+import { SignalObject } from 'signal-utils/object';
 
-let obj = new ReactiveObject({
+let obj = new SignalObject({
     isLoading: true,
     error: null,
     result: null,
@@ -81,11 +84,17 @@ let obj = new ReactiveObject({
 
 In this example, we could use a reactive object for quickly and dynamically creating an object of signals -- useful for when we don't know all the keys boforehand, or if we want a shorthand to creating many named signals.
 
+Inspo:
+- [`TrackedObject`](https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js#L1) from `tracked-built-ins`
+
 ### `Map`
 
 wip
 
 A reactive Map
+
+Inspo:
+- [`TrackedMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L8) from `tracked-built-ins`
 
 ### `WeakMap`
 
@@ -93,11 +102,18 @@ wip
 
 A reactive WeakMap
 
+Inspo:
+- [`TrackedWeakMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L134) from `tracked-built-ins`
+
 ### `Set`
 
 wip
 
 A reactive Set
+
+
+Inspo:
+- [`TrackedSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L8) from `tracked-built-ins`
 
 ### `WeakSet`
 
@@ -105,11 +121,17 @@ wip
 
 A reactive WeakSet
 
+Inspo:
+- [`TrackedWeakSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L119) from `tracked-built-ins`
+
 ### `async`
 
 wip
 
 A reactive async function with pending/error state handling
+
+Inspo:
+- [`trackedFunction`](https://github.com/universal-ember/reactiveweb/blob/ba40c8a4417ec8b76bfb37754262f2829c6f7b26/reactiveweb/src/function.ts#L1) from `reactiveweb` 
 
 ### `localCopy` + `@localCopy`
 
@@ -117,12 +139,17 @@ wip
 
 utilities for the [localCopy](https://github.com/tracked-tools/tracked-toolbox?tab=readme-ov-file#localcopy) pattern
 
+Inspo:
+- [`@localCopy`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L28) from `tracked-toolbox`
+
 ### `dedupe` + `@dedupe`
 
 wip
 
 utilities for the [dedupe](https://github.com/tracked-tools/tracked-toolbox?tab=readme-ov-file#dedupetracked) pattern.
 
+Inspo:
+- [`@dedupeTracked`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L148) from `tracked-toolbox`
 
 ## Contributing
 
