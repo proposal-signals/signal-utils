@@ -2,6 +2,17 @@
 
 ## Release (2024-04-02)
 
+signal-utils 0.4.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#12](https://github.com/NullVoxPopuli/signal-utils/pull/12) Rename to Signal* instead of Reactive* ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-04-02)
+
 signal-utils 0.3.1 (patch)
 
 #### :bug: Bug Fix

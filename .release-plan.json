@@ -1,17 +1,17 @@
 {
   "solution": {
     "signal-utils": {
-      "impact": "patch",
-      "oldVersion": "0.3.0",
-      "newVersion": "0.3.1",
+      "impact": "minor",
+      "oldVersion": "0.3.1",
+      "newVersion": "0.4.0",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-02)\n\nsignal-utils 0.3.1 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#10](https://github.com/NullVoxPopuli/signal-utils/pull/10) Fix asset generation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-02)\n\nsignal-utils 0.4.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#12](https://github.com/NullVoxPopuli/signal-utils/pull/12) Rename to Signal* instead of Reactive* ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
