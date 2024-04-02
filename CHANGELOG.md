@@ -2,6 +2,17 @@
 
 ## Release (2024-04-02)
 
+signal-utils 0.6.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#17](https://github.com/NullVoxPopuli/signal-utils/pull/17) Add utilities for avoiding the new keyword ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-04-02)
+
 signal-utils 0.5.0 (minor)
 
 #### :rocket: Enhancement
