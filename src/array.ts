@@ -60,7 +60,7 @@ function convertToInt(prop: number | string | symbol): number | null {
 // setters, rather than a subclass of an `Array` which would be de-optimized by
 // the browsers.
 //
-export interface SignalArray<T = unknown> extends Array<T> {}
+export interface SignalArray<T = unknown> extends Array<T> { }
 
 export class SignalArray<T = unknown> {
   /**
@@ -211,6 +211,6 @@ export class SignalArray<T = unknown> {
 // Ensure instanceof works correctly
 Object.setPrototypeOf(SignalArray.prototype, Array.prototype);
 
-export function signalArray<Item>(x: Item[]) {
+export function signalArray<Item>(x?: Item[]) {
   return new SignalArray(x);
 }
