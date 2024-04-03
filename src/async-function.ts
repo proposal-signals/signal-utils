@@ -1,5 +1,4 @@
 import { Signal } from "signal-polyfill";
-import { signal } from "./index.ts";
 import { SignalAsyncData } from "./async-data.ts";
 
 /**
@@ -27,7 +26,7 @@ export function signalFunction<Return>(fn: () => Return): State<Return> {
      * signal APIs, and just worry about dealing with our `State` API.
      */
     return new Proxy(state, {
-      get(target, property, receiver) {
+      get(_, property, receiver) {
         computed.get();
         return Reflect.get(state, property, receiver);
       },
