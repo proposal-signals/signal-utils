@@ -269,9 +269,9 @@ interface Rejected<T> extends _SignalAsyncData<T> {
   ```
  */
 type SignalAsyncData<T> = Pending<T> | Resolved<T> | Rejected<T>;
-export const SignalAsyncData = _SignalAsyncData as new <T>(
-  data: T | Promise<T>,
-) => SignalAsyncData<T>;
+export const SignalAsyncData = _SignalAsyncData as {
+  new <T>(data: T | Promise<T>): SignalAsyncData<T>;
+};
 
 /** Utility type to check whether the string `key` is a property on an object */
 function has<K extends PropertyKey, T extends object>(

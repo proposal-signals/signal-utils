@@ -179,7 +179,7 @@ the `signalResponse` object has familiar properties on it:
 
 The important thing to note about using `load` / `SignalAsyncData`, is that you must already have a `PromiseLike`. For reactive-invocation of async functions, see the section below on `signalFunction`
 
-### `async`
+### `async` `function`
 
 A reactive async function with pending/error state handling
 
@@ -210,6 +210,11 @@ the `signalResponse` object has familiar properties on it:
 - `isResolved`
 - `isPending`
 - `isRejected`
+- `isError` (alias)
+- `isSettled` (alias)
+- `isLoading` (alias)
+- `isFinished` (alias)
+- `retry()`
 
 ### `localCopy` + `@localCopy`
 

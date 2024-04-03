@@ -9,10 +9,10 @@
   "author": "NullVoxPopuli",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.24.3",
+    "@babel/core": "^7.24.4",
     "@babel/plugin-proposal-decorators": "^7.24.1",
     "@babel/plugin-syntax-decorators": "^7.24.1",
-    "@babel/plugin-transform-typescript": "^7.24.1",
+    "@babel/plugin-transform-typescript": "^7.24.4",
     "@babel/preset-typescript": "^7.24.1",
     "@rollup/plugin-babel": "^6.0.4",
     "@tsconfig/strictest": "^2.0.5",
@@ -24,7 +24,7 @@
     "signal-polyfill": "^0.1.0",
     "signal-utils": "workspace:*",
     "typescript": "^5.4.3",
-    "vite": "^5.2.7",
+    "vite": "^5.2.8",
     "vitest": "^1.4.0",
     "webdriverio": "^8.35.1"
   }

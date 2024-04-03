@@ -1,83 +1,68 @@
-import { Signal } from 'signal-polyfill';
-import { signal } from './index.ts';
-import { SignalAsyncData } from './async-data.ts';
+import { Signal } from "signal-polyfill";
+import { signal } from "./index.ts";
+import { SignalAsyncData } from "./async-data.ts";
 
 /**
  * Any tracked data accessed in a tracked function _before_ an `await`
  * will "entangle" with the function -- we can call these accessed tracked
  * properties, the "tracked prelude". If any properties within the tracked
  * payload  change, the function will re-run.
- *
- * ```js
- * import Component from '@glimmer/component';
- * import { tracked } from '@glimmer/tracking';
- * import { resourceFactory, resource, use } from 'ember-resources';
- * import { trackedFunction }  from 'reactiveweb/function';
- * import { on } from '@ember/modifier';
- *
- * const Request = resourceFactory((idFn) => {
- *   return resource(({use}) => {
- *     let trackedRequest = use(trackedFunction(async () => {
- *       let id = idFn();
- *       let response = await fetch(`https://swapi.dev/api/people/${id}`);
- *       let data = await response.json();
- *
- *       return data; // { name: 'Luke Skywalker', ... }
- *     }));
- *
- *     return trackedRequest;
- *   });
- * });
- *
- * class Demo extends Component {
- *   @tracked id = 1;
- *
- *   updateId = (event) => this.id = event.target.value;
- *
- *   request = use(this, Request(() => this.id));
- *
- *   // Renders "Luke Skywalker"
- *   <template>
- *     {{this.request.current.value.name}}
- *
- *     <input value={{this.id}} {{on 'input' this.updateId}}>
- *   </template>
- * }
- * ```
  */
-export function trackedFunction<Return>(fn: () => Return): State<Return>;
-export function trackedFunction<Return>(
-  ...args: Parameters<typeof classUsable<Return>>
-): State<Return> {
-  if (args.length === 1) {
-    if (typeof args[0] !== 'function') {
-      throw new Error('trackedFunction must be called with a function passed');
+export function signalFunction<Return>(fn: () => Return): State<Return> {
+  if (arguments.length === 1) {
+    if (typeof fn !== "function") {
+      throw new Error("signalFunction must be called with a function passed");
     }
 
-    return classUsable(...args);
+    const state = new State(fn);
+    const computed = new Signal.Computed(() => {
+      state.retry();
+
+      return state;
+    });
+
+    /**
+     * We have to use a proxy here so that we re-get on each property acess.
+     * this allows the consumers of this signalFunction to not have to bother with
+     * signal APIs, and just worry about dealing with our `State` API.
+     */
+    return new Proxy(state, {
+      get(target, property, receiver) {
+        computed.get();
+        return Reflect.get(state, property, receiver);
+      },
+    });
   }
 
-  throw new Error('Unknown arity: trackedFunction must be called with 1 argument');
-}
-
-function classUsable<Return>(fn: () => Return) {
-  const state = new State(fn);
-
-  let hack = new Signal.Computed(() => {
-    state.retry();
-
-    return state;
-  })
-
-  return hack.get();
+  throw new Error(
+    "Unknown arity: signalFunction must be called with 1 argument",
+  );
 }
 
 /**
- * State container that represents the asynchrony of a `trackedFunction`
+ * State container that represents the asynchrony of a `signalFunction`
  */
 export class State<Value> {
-  @signal accessor data: SignalAsyncData<Value> | null = null;
-  @signal accessor promise: Value | undefined;
+  /**
+   * NOTE: #private fields are incompatible with proxies,
+   *       even if accessed via Reflect through a getter first...
+   *
+   */
+  private _data = new Signal.State<SignalAsyncData<Value> | null>(null);
+  private _promise = new Signal.State<Value | undefined>(undefined);
+
+  get data() {
+    return this._data.get();
+  }
+  set data(value) {
+    this._data.set(value);
+  }
+  get promise() {
+    return this._promise.get();
+  }
+  set promise(value) {
+    this._promise.set(value);
+  }
 
   /**
    * ember-async-data doesn't catch errors,
@@ -86,7 +71,13 @@ export class State<Value> {
    *
    * See also: https://github.com/qunitjs/qunit/issues/1736
    */
-  @signal accessor caughtError: unknown;
+  private _caughtError = new Signal.State<unknown>(undefined);
+  get caughtError() {
+    return this._caughtError.get();
+  }
+  set caughtError(value) {
+    this._caughtError.set(value);
+  }
 
   #fn: () => Value;
 
@@ -94,8 +85,8 @@ export class State<Value> {
     this.#fn = fn;
   }
 
-  get state(): SignalAsyncData<Value>['state'] | 'UNSTARTED' {
-    return this.data?.state ?? 'UNSTARTED';
+  get state(): "PENDING" | "RESOLVED" | "REJECTED" | "UNSTARTED" {
+    return this.data?.state ?? "UNSTARTED";
   }
 
   /**
@@ -131,7 +122,7 @@ export class State<Value> {
   }
 
   /**
-   * When true, the function passed to `trackedFunction` has resolved
+   * When true, the function passed to `signalFunction` has resolved
    */
   get isResolved() {
     return this.data?.isResolved ?? false;
@@ -145,7 +136,7 @@ export class State<Value> {
   }
 
   /**
-   * When true, the function passed to `trackedFunction` has errored
+   * When true, the function passed to `signalFunction` has errored
    */
   get isRejected() {
     return this.data?.isRejected ?? Boolean(this.caughtError) ?? false;
@@ -161,11 +152,11 @@ export class State<Value> {
    * From a correctness standpoint, this is perfectly reasonable,
    * as it forces folks to handle the states involved with async functions.
    *
-   * The original version of `trackedFunction` did not use TrackedAsyncData,
+   * The original version of `signalFunction` did not use TrackedAsyncData,
    * and did not have these strictnesses upon property access, leaving folks
    * to be as correct or as fast/prototype-y as they wished.
    *
-   * For now, `trackedFunction` will retain that flexibility.
+   * For now, `signalFunction` will retain that flexibility.
    */
   get value(): Awaited<Value> | null {
     if (this.data?.isResolved) {
@@ -178,15 +169,15 @@ export class State<Value> {
   }
 
   /**
-   * When the function passed to `trackedFunction` throws an error,
+   * When the function passed to `signalFunction` throws an error,
    * that error will be the value returned by this property
    */
   get error() {
-    if (this.state === 'UNSTARTED' && this.caughtError) {
+    if (this.state === "UNSTARTED" && this.caughtError) {
       return this.caughtError;
     }
 
-    if (this.data?.state !== 'REJECTED') {
+    if (this.data?.state !== "REJECTED") {
       return null;
     }
 
@@ -198,10 +189,10 @@ export class State<Value> {
   }
 
   /**
-   * Will re-invoke the function passed to `trackedFunction`
+   * Will re-invoke the function passed to `signalFunction`
    * this will also re-set some properties on the `State` instance.
    * This is the same `State` instance as before, as the `State` instance
-   * is tied to the `fn` passed to `trackedFunction`
+   * is tied to the `fn` passed to `signalFunction`
    *
    * `error` or `resolvedValue` will remain as they were previously
    * until this promise resolves, and then they'll be updated to the new values.
@@ -227,13 +218,11 @@ export class State<Value> {
     //       we can't *read* data here.
     this.data = null;
 
-    // this._internalError = null;
-
     // We need to invoke this before going async so that tracked properties are consumed (entangled with) synchronously
     this.promise = this.#fn();
 
     // TrackedAsyncData interacts with tracked data during instantiation.
-    // We don't want this internal state to entangle with `trackedFunction`
+    // We don't want this internal state to entangle with `signalFunction`
     // so that *only* the tracked data in `fn` can be entangled.
     await Promise.resolve();
 
@@ -243,8 +232,6 @@ export class State<Value> {
      * se the UI can update accordingly, without causing us to refetch
      */
     this.caughtError = null;
-
-    // TrackedAsyncData manages the destroyable child association for us
     this.data = new SignalAsyncData(this.promise);
 
     return this.promise;
