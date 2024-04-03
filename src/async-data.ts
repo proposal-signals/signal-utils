@@ -14,7 +14,7 @@ const PENDING = ["PENDING"] as [tag: "PENDING"];
 // layer on additional safety. See below! Additionally, the docs for the class
 // itself are applied to the export, not to the class, so that they will appear
 // when users refer to *that*.
-class _SignalAsyncData<T> {
+export class SignalAsyncData<T> {
   /**
     The internal state management for the promise.
 
@@ -31,7 +31,7 @@ class _SignalAsyncData<T> {
   constructor(data: T | Promise<T>) {
     // SAFETY: do not let TS type-narrow this condition,
     //         else, `this` is of type `never`
-    if ((this.constructor as any) !== _SignalAsyncData) {
+    if ((this.constructor as any) !== SignalAsyncData) {
       throw new Error("tracked-async-data cannot be subclassed");
     }
 
@@ -194,84 +194,6 @@ export type JSONRepr<T> =
 //     base type still work, and (c) that the types which are *common* to the
 //     shared implementations (i.e. `.toJSON()` and `.toString()`) are shared
 //     automatically.
-
-interface Pending<T> extends _SignalAsyncData<T> {
-  state: "PENDING";
-  isPending: true;
-  isResolved: false;
-  isRejected: false;
-  value: null;
-  error: null;
-}
-
-interface Resolved<T> extends _SignalAsyncData<T> {
-  state: "RESOLVED";
-  isPending: false;
-  isResolved: true;
-  isRejected: false;
-  value: T;
-  error: null;
-}
-
-interface Rejected<T> extends _SignalAsyncData<T> {
-  state: "REJECTED";
-  isPending: false;
-  isResolved: false;
-  isRejected: true;
-  value: null;
-  error: unknown;
-}
-
-/**
-  An autotracked `Promise` handler, representing asynchronous data.
-
-  Given a `Promise` instance, a `TrackedAsyncData` behaves exactly lik the
-  original `Promise`, except that it makes the state of the `Promise` visible
-  via tracked state, so you can check whether the promise is pending, resolved,
-  or rejected; and so you can get the value if it has resolved or the error if
-  it has rejected.
-
-  Every `Promise` in the system is guaranteed to be associated with at most a
-  single `TrackedAsyncData`.
-
-  ## Example
-
-  ```ts
-  import Component from '@glimmer/component';
-  import { cached } from '@glimmer/tracking';
-  import { inject as service } from '@ember/service';
-  import TrackedAsyncData from 'ember-async-data/tracked-async-data';
-
-  export default class SmartProfile extends Component<{ id: number }> {
-    @service store;
-
-    @cached
-    get someData() {
-      let recordPromise = this.store.findRecord('user', this.args.id);
-      return new TrackedAsyncData(recordPromise);
-    }
-  }
-  ```
-
-  And a corresponding template:
-
-  ```hbs
-  {{#if this.someData.isResolved}}
-    <PresentTheData @data={{this.someData.data}} />
-  {{else if this.someData.isPending}}
-    <LoadingSpinner />
-  {{else if this.someData.isRejected}}
-    <p>
-      Whoops! Looks like something went wrong!
-      {{this.someData.error.message}}
-    </p>
-  {{/if}}
-  ```
- */
-type SignalAsyncData<T> = Pending<T> | Resolved<T> | Rejected<T>;
-export const SignalAsyncData = _SignalAsyncData as new <T>(
-  data: T | Promise<T>,
-) => SignalAsyncData<T>;
 
 /** Utility type to check whether the string `key` is a property on an object */
 function has<K extends PropertyKey, T extends object>(

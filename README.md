@@ -179,11 +179,42 @@ the `signalResponse` object has familiar properties on it:
 
 The important thing to note about using `load` / `SignalAsyncData`, is that you must already have a `PromiseLike`. For reactive-invocation of async functions, see the section below on `signalFunction`
 
-### `async`
-
-wip
+### `async` `function`
 
 A reactive async function with pending/error state handling
+
+```js
+import { Signal } from 'signal-polyfill';
+import { signalFunction } from 'signal-utils/async-function';
+
+const url = new Signal.State('...');
+const signalResponse = signalFunction(async () => {
+  const response = await fetch(url.get()); // entangles with `url`
+  // after an away, you've detatched from the signal-auto-tracking
+  return response.json(); 
+});
+
+// output: true
+// after the fetch finishes
+// output: false
+<template>
+  <output>{{signalResponse.isLoading}}</output>
+</template>
+
+```
+
+the `signalResponse` object has familiar properties on it:
+- `value`
+- `error`
+- `state`
+- `isResolved`
+- `isPending`
+- `isRejected`
+- `isError` (alias)
+- `isSettled` (alias)
+- `isLoading` (alias)
+- `isFinished` (alias)
+- `retry()`
 
 ### `localCopy` + `@localCopy`
 

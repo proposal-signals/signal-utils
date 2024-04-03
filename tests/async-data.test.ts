@@ -25,8 +25,6 @@ describe("Unit | load", function () {
 
 describe("Unit | TrackedAsyncData", function () {
   test("cannot be subclassed", function () {
-    // @ts-expect-error: The type is not statically subclassable, either, so
-    //   this fails both at the type-checking level and dynamically at runtime.
     class Subclass extends SignalAsyncData<unknown> {}
 
     assert.throws(() => new Subclass(Promise.resolve("nope")));

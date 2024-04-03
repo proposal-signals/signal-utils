@@ -49,6 +49,25 @@ export function assertReactivelySettled(options: {
   );
 }
 
+export function waitFor(fn: () => unknown) {
+  let waiter = new Promise((resolve) => {
+    let interval = setInterval(() => {
+      let result = fn();
+      if (result) {
+        (async () => {
+          await result;
+          clearInterval(interval);
+          resolve(result);
+        })();
+      }
+    }, 5);
+  });
+
+  let timeout = new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return Promise.race([waiter, timeout]);
+}
+
 interface Deferred {
   resolve: (value?: unknown) => void;
   reject: (value?: unknown) => void;
