@@ -2,8 +2,8 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.5.0",
-      "newVersion": "0.6.0",
+      "oldVersion": "0.6.0",
+      "newVersion": "0.7.0",
       "constraints": [
         {
           "impact": "minor",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-02)\n\nsignal-utils 0.6.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#17](https://github.com/NullVoxPopuli/signal-utils/pull/17) Add utilities for avoiding the new keyword ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-03)\n\nsignal-utils 0.7.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#19](https://github.com/NullVoxPopuli/signal-utils/pull/19) Signal-based automatic async function ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
