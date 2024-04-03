@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-04-03)
+
+signal-utils 0.7.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#19](https://github.com/NullVoxPopuli/signal-utils/pull/19) Signal-based automatic async function ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-02)
 
 signal-utils 0.6.0 (minor)
