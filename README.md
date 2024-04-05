@@ -242,6 +242,10 @@ This will start a [concurrently](https://www.npmjs.com/package/concurrently) com
 
 Vitest isn't being used _within_ the package, because we want to exercise the public API, generated types, etc (through package.json#exports and all that).
 
+## Is this bug free?
+
+Likely not, code (and tests!) are copied from pre-existing implementations, and those implementations change over time. If you find a bug, please file an issue or open a PR, thanks!!
+
 ## Credits and Inspiration
 
 This library could not have been developed so quickly without borrowing from existing libraries that already built these patterns. This library, signal-utils, is an adaptation and aggregation of utilities found throughout the community.
