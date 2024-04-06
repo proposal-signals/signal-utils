@@ -52,6 +52,13 @@ export class SignalSet<T = unknown> implements Set<T> {
 
     return new Proxy(self, {
       get(target, property, receiver) {
+        if (!(property in this)) {
+          if (QUERYING_METHODS.includes(property)) {
+
+          }
+
+        }
+
         return Reflect.get(target, property, receiver);
       }
     });
