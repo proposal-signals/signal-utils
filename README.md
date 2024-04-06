@@ -284,3 +284,4 @@ This library could not have been developed so quickly without borrowing from exi
 - [Svelte's Runes](https://svelte-5-preview.vercel.app/docs/runes#$state-frozen-reactive-map-set-and-date)
 - [`@vue-reactivity/use`](https://github.com/vue-reactivity/use)
 - [Metron](https://github.com/robbiespeed/metron/tree/0.0.3/packages/core#list)
+- [Solid's Utils](https://www.solidjs.com/docs/latest/api#getters)

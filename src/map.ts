@@ -1,7 +1,9 @@
-export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
-  private collection = createStorage(null, () => false);
+import { createStorage, type StorageMap } from "./-private/util.ts";
 
-  private storages: Map<K, TrackedStorage<null>> = new Map();
+export class SignalMap<K = unknown, V = unknown> implements Map<K, V> {
+  private collection = createStorage();
+
+  private storages: StorageMap<K> = new Map();
 
   private vals: Map<K, V>;
 
@@ -10,18 +12,18 @@ export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
     let storage = storages.get(key);
 
     if (storage === undefined) {
-      storage = createStorage(null, () => false);
+      storage = createStorage();
       storages.set(key, storage);
     }
 
-    getValue(storage);
+    storage.get();
   }
 
   private dirtyStorageFor(key: K): void {
     const storage = this.storages.get(key);
 
     if (storage) {
-      setValue(storage, null);
+      storage.set(null);
     }
   }
 
@@ -33,7 +35,7 @@ export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
       | readonly (readonly [K, V])[]
       | Iterable<readonly [K, V]>
       | null
-      | undefined
+      | undefined,
   ) {
     // TypeScript doesn't correctly resolve the overloads for calling the `Map`
     // constructor for the no-value constructor. This resolves that.
@@ -56,37 +58,37 @@ export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
 
   // **** ALL GETTERS ****
   entries(): IterableIterator<[K, V]> {
-    getValue(this.collection);
+    this.collection.get();
 
     return this.vals.entries();
   }
 
   keys(): IterableIterator<K> {
-    getValue(this.collection);
+    this.collection.get();
 
     return this.vals.keys();
   }
 
   values(): IterableIterator<V> {
-    getValue(this.collection);
+    this.collection.get();
 
     return this.vals.values();
   }
 
   forEach(fn: (value: V, key: K, map: Map<K, V>) => void): void {
-    getValue(this.collection);
+    this.collection.get();
 
     this.vals.forEach(fn);
   }
 
   get size(): number {
-    getValue(this.collection);
+    this.collection.get();
 
     return this.vals.size;
   }
 
   [Symbol.iterator](): IterableIterator<[K, V]> {
-    getValue(this.collection);
+    this.collection.get();
 
     return this.vals[Symbol.iterator]();
   }
@@ -98,7 +100,7 @@ export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
   // **** KEY SETTERS ****
   set(key: K, value: V): this {
     this.dirtyStorageFor(key);
-    setValue(this.collection, null);
+    this.collection.set(null);
 
     this.vals.set(key, value);
 
@@ -107,25 +109,26 @@ export class TrackedMap<K = unknown, V = unknown> implements Map<K, V> {
 
   delete(key: K): boolean {
     this.dirtyStorageFor(key);
-    setValue(this.collection, null);
+    this.collection.set(null);
 
     return this.vals.delete(key);
   }
 
   // **** ALL SETTERS ****
   clear(): void {
-    this.storages.forEach((s) => setValue(s, null));
-    setValue(this.collection, null);
+    this.storages.forEach((s) => s.set(null));
+    this.collection.set(null);
 
     this.vals.clear();
   }
 }
 
 // So instanceof works
-Object.setPrototypeOf(TrackedMap.prototype, Map.prototype);
+Object.setPrototypeOf(SignalMap.prototype, Map.prototype);
 
 export class TrackedWeakMap<K extends object = object, V = unknown>
-  implements WeakMap<K, V> {
+  implements WeakMap<K, V>
+{
   private storages: WeakMap<K, TrackedStorage<null>> = new WeakMap();
 
   private vals: WeakMap<K, V>;
@@ -154,7 +157,7 @@ export class TrackedWeakMap<K extends object = object, V = unknown>
   constructor(iterable: Iterable<readonly [K, V]>);
   constructor(entries: readonly [K, V][] | null);
   constructor(
-    existing?: readonly [K, V][] | Iterable<readonly [K, V]> | null | undefined
+    existing?: readonly [K, V][] | Iterable<readonly [K, V]> | null | undefined,
   ) {
     // TypeScript doesn't correctly resolve the overloads for calling the `Map`
     // constructor for the no-value constructor. This resolves that.

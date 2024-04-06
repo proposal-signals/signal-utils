@@ -1,41 +1,32 @@
-import Component from '@glimmer/component';
-import { TrackedMap } from 'tracked-built-ins';
+import { SignalMap } from "../src/map.ts";
+import { describe, test, assert } from "vitest";
+import { expectTypeOf } from "expect-type";
 
-import { setupRenderingTest } from 'ember-qunit';
-import { module, test } from 'qunit';
-import { expectTypeOf } from 'expect-type';
+import { reactivityTest } from "./helpers.ts";
 
-import { reactivityTest } from '../helpers/reactivity';
-import {
-  eachReactivityTest,
-  eachInReactivityTest,
-} from '../helpers/collection-reactivity';
-
-expectTypeOf<TrackedMap<string, number>>().toMatchTypeOf<Map<string, number>>();
+expectTypeOf<SignalMap<string, number>>().toMatchTypeOf<Map<string, number>>();
 expectTypeOf<Map<string, number>>().not.toMatchTypeOf<
-  TrackedMap<string, number>
+  SignalMap<string, number>
 >();
 
-module('TrackedMap', function(hooks) {
-  setupRenderingTest(hooks);
+describe("SignalMap", function () {
+  test("constructor", () => {
+    const map = new SignalMap([["foo", 123]]);
 
-  test('constructor', (assert) => {
-    const map = new TrackedMap([['foo', 123]]);
-
-    assert.equal(map.get('foo'), 123);
+    assert.equal(map.get("foo"), 123);
     assert.equal(map.size, 1);
     assert.ok(map instanceof Map);
   });
 
-  test('works with all kinds of keys', (assert) => {
-    const map = new TrackedMap<unknown, unknown>([
-      ['foo', 123],
+  test("works with all kinds of keys", () => {
+    const map = new SignalMap<unknown, unknown>([
+      ["foo", 123],
       [{}, {}],
       [
         () => {
           /* no op! */
         },
-        'bar',
+        "bar",
       ],
       [123, true],
       [true, false],
@@ -45,26 +36,26 @@ module('TrackedMap', function(hooks) {
     assert.equal(map.size, 6);
   });
 
-  test('get/set', (assert) => {
-    const map = new TrackedMap();
+  test("get/set", () => {
+    const map = new SignalMap();
 
-    map.set('foo', 123);
-    assert.equal(map.get('foo'), 123);
+    map.set("foo", 123);
+    assert.equal(map.get("foo"), 123);
 
-    map.set('foo', 456);
-    assert.equal(map.get('foo'), 456);
+    map.set("foo", 456);
+    assert.equal(map.get("foo"), 456);
   });
 
-  test('has', (assert) => {
-    const map = new TrackedMap();
+  test("has", () => {
+    const map = new SignalMap();
 
-    assert.equal(map.has('foo'), false);
-    map.set('foo', 123);
-    assert.equal(map.has('foo'), true);
+    assert.equal(map.has("foo"), false);
+    map.set("foo", 123);
+    assert.equal(map.has("foo"), true);
   });
 
-  test('entries', (assert) => {
-    const map = new TrackedMap();
+  test("entries", () => {
+    const map = new SignalMap();
     map.set(0, 1);
     map.set(1, 2);
     map.set(2, 3);
@@ -77,8 +68,8 @@ module('TrackedMap', function(hooks) {
     assert.equal(iter.next().done, true);
   });
 
-  test('keys', (assert) => {
-    const map = new TrackedMap();
+  test("keys", () => {
+    const map = new SignalMap();
     map.set(0, 1);
     map.set(1, 2);
     map.set(2, 3);
@@ -91,8 +82,8 @@ module('TrackedMap', function(hooks) {
     assert.equal(iter.next().done, true);
   });
 
-  test('values', (assert) => {
-    const map = new TrackedMap();
+  test("values", () => {
+    const map = new SignalMap();
     map.set(0, 1);
     map.set(1, 2);
     map.set(2, 3);
@@ -105,14 +96,14 @@ module('TrackedMap', function(hooks) {
     assert.equal(iter.next().done, true);
   });
 
-  test('forEach', (assert) => {
-    const map = new TrackedMap();
+  test("forEach", () => {
+    const map = new SignalMap();
     map.set(0, 1);
     map.set(1, 2);
     map.set(2, 3);
 
     let count = 0;
-    let values = '';
+    let values = "";
 
     map.forEach((v, k) => {
       count++;
@@ -121,11 +112,11 @@ module('TrackedMap', function(hooks) {
     });
 
     assert.equal(count, 3);
-    assert.equal(values, '011223');
+    assert.equal(values, "011223");
   });
 
-  test('size', (assert) => {
-    const map = new TrackedMap();
+  test("size", () => {
+    const map = new SignalMap();
     assert.equal(map.size, 0);
 
     map.set(0, 1);
@@ -141,8 +132,8 @@ module('TrackedMap', function(hooks) {
     assert.equal(map.size, 1);
   });
 
-  test('delete', (assert) => {
-    const map = new TrackedMap();
+  test("delete", () => {
+    const map = new SignalMap();
 
     assert.equal(map.has(0), false);
 
@@ -153,8 +144,8 @@ module('TrackedMap', function(hooks) {
     assert.equal(map.has(0), false);
   });
 
-  test('clear', (assert) => {
-    const map = new TrackedMap();
+  test("clear", () => {
+    const map = new SignalMap();
 
     map.set(0, 1);
     map.set(1, 2);
@@ -167,230 +158,189 @@ module('TrackedMap', function(hooks) {
   });
 
   reactivityTest(
-    'get/set',
-    class extends Component {
-      map = new TrackedMap();
+    "get/set",
+    class {
+      map = new SignalMap();
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'get/set existing value',
-    class extends Component {
-      map = new TrackedMap([['foo', 456]]);
+    "get/set existing value",
+    class {
+      map = new SignalMap([["foo", 456]]);
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'get/set unrelated value',
-    class extends Component {
-      map = new TrackedMap([['foo', 456]]);
+    "get/set unrelated value",
+    class {
+      map = new SignalMap([["foo", 456]]);
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
-        this.map.set('bar', 123);
+        this.map.set("bar", 123);
       }
     },
     false,
   );
 
   reactivityTest(
-    'has',
-    class extends Component {
-      map = new TrackedMap();
+    "has",
+    class {
+      map = new SignalMap();
 
       get value() {
-        return this.map.has('foo');
+        return this.map.has("foo");
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'entries',
-    class extends Component {
-      map = new TrackedMap();
+    "entries",
+    class {
+      map = new SignalMap();
 
       get value() {
         return this.map.entries();
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'keys',
-    class extends Component {
-      map = new TrackedMap();
+    "keys",
+    class {
+      map = new SignalMap();
 
       get value() {
         return this.map.keys();
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'values',
-    class extends Component {
-      map = new TrackedMap();
+    "values",
+    class {
+      map = new SignalMap();
 
       get value() {
         return this.map.values();
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'forEach',
-    class extends Component {
-      map = new TrackedMap();
+    "forEach",
+    class {
+      map = new SignalMap();
 
       get value() {
         this.map.forEach(() => {
           /* no op! */
         });
-        return 'test';
+        return "test";
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'size',
-    class extends Component {
-      map = new TrackedMap();
+    "size",
+    class {
+      map = new SignalMap();
 
       get value() {
         return this.map.size;
       }
 
       update() {
-        this.map.set('foo', 123);
+        this.map.set("foo", 123);
       }
     },
   );
 
   reactivityTest(
-    'delete',
-    class extends Component {
-      map = new TrackedMap([['foo', 123]]);
+    "delete",
+    class {
+      map = new SignalMap([["foo", 123]]);
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
-        this.map.delete('foo');
+        this.map.delete("foo");
       }
     },
   );
 
   reactivityTest(
-    'delete unrelated value',
-    class extends Component {
-      map = new TrackedMap([
-        ['foo', 123],
-        ['bar', 456],
+    "delete unrelated value",
+    class {
+      map = new SignalMap([
+        ["foo", 123],
+        ["bar", 456],
       ]);
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
-        this.map.delete('bar');
+        this.map.delete("bar");
       }
     },
     false,
   );
 
   reactivityTest(
-    'clear',
-    class extends Component {
-      map = new TrackedMap([['foo', 123]]);
+    "clear",
+    class {
+      map = new SignalMap([["foo", 123]]);
 
       get value() {
-        return this.map.get('foo');
+        return this.map.get("foo");
       }
 
       update() {
         this.map.clear();
-      }
-    },
-  );
-
-  eachReactivityTest(
-    'set',
-    class extends Component {
-      collection = new TrackedMap([['foo', 123]]);
-      update() {
-        this.collection.set('bar', 456);
-      }
-    },
-  );
-  eachReactivityTest(
-    'set existing value',
-    class extends Component {
-      collection = new TrackedMap([['foo', 123]]);
-      update() {
-        this.collection.set('foo', 789);
-      }
-    },
-  );
-
-  eachInReactivityTest(
-    'set',
-    class extends Component {
-      collection = new TrackedMap([['foo', 123]]);
-
-      update() {
-        this.collection.set('bar', 456);
-      }
-    },
-  );
-
-  eachInReactivityTest(
-    'set existing value',
-    class extends Component {
-      collection = new TrackedMap([['foo', 123]]);
-
-      update() {
-        this.collection.set('foo', 789);
       }
     },
   );

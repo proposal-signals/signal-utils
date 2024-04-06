@@ -1,4 +1,8 @@
-import { createStorage, type StorageMap, type Storage } from "./-private/util.ts";
+import {
+  createStorage,
+  type StorageMap,
+  type Storage,
+} from "./-private/util.ts";
 
 export class SignalSet<T = unknown> implements Set<T> {
   private collection = createStorage();
@@ -110,4 +114,3 @@ export class SignalSet<T = unknown> implements Set<T> {
 
 // So instanceof works
 Object.setPrototypeOf(SignalSet.prototype, Set.prototype);
-

@@ -1,10 +1,10 @@
-import { describe, test, assert } from 'vitest';
+import { describe, test, assert } from "vitest";
 
-import { SignalSet } from '../src/set.ts';
+import { SignalSet } from "../src/set.ts";
 
-import { expectTypeOf } from 'expect-type';
+import { expectTypeOf } from "expect-type";
 
-import { reactivityTest } from './helpers.ts';
+import { eachReactivityTest, reactivityTest } from "./helpers.ts";
 
 expectTypeOf<SignalSet<string>>().toMatchTypeOf<Set<string>>();
 expectTypeOf<Set<string>>().not.toEqualTypeOf<SignalSet<string>>();
@@ -12,30 +12,30 @@ expectTypeOf<Set<string>>().not.toEqualTypeOf<SignalSet<string>>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFn = (...args: any[]) => any;
 
-describe('SignalSet', function() {
-  test('constructor', () => {
-    const set = new SignalSet(['foo', 123]);
+describe("SignalSet", function () {
+  test("constructor", () => {
+    const set = new SignalSet(["foo", 123]);
 
-    assert.equal(set.has('foo'), true);
+    assert.equal(set.has("foo"), true);
     assert.equal(set.size, 2);
     assert.ok(set instanceof Set);
 
     const setFromSet = new SignalSet(set);
-    assert.equal(setFromSet.has('foo'), true);
+    assert.equal(setFromSet.has("foo"), true);
     assert.equal(setFromSet.size, 2);
     assert.ok(setFromSet instanceof Set);
 
     const setFromEmpty = new SignalSet();
-    assert.equal(setFromEmpty.has('anything'), false);
+    assert.equal(setFromEmpty.has("anything"), false);
     assert.equal(setFromEmpty.size, 0);
     assert.ok(setFromEmpty instanceof Set);
   });
 
-  test('works with all kinds of values', () => {
+  test("works with all kinds of values", () => {
     const set = new SignalSet<
       string | Record<PropertyKey, unknown> | AnyFn | number | boolean | null
     >([
-      'foo',
+      "foo",
       {},
       () => {
         /* no op */
@@ -48,14 +48,14 @@ describe('SignalSet', function() {
     assert.equal(set.size, 6);
   });
 
-  test('add/has', () => {
+  test("add/has", () => {
     const set = new SignalSet();
 
-    set.add('foo');
-    assert.equal(set.has('foo'), true);
+    set.add("foo");
+    assert.equal(set.has("foo"), true);
   });
 
-  test('entries', () => {
+  test("entries", () => {
     const set = new SignalSet();
     set.add(0);
     set.add(2);
@@ -69,7 +69,7 @@ describe('SignalSet', function() {
     assert.equal(iter.next().done, true);
   });
 
-  test('keys', () => {
+  test("keys", () => {
     const set = new SignalSet();
     set.add(0);
     set.add(2);
@@ -83,7 +83,7 @@ describe('SignalSet', function() {
     assert.equal(iter.next().done, true);
   });
 
-  test('values', () => {
+  test("values", () => {
     const set = new SignalSet();
     set.add(0);
     set.add(2);
@@ -97,14 +97,14 @@ describe('SignalSet', function() {
     assert.equal(iter.next().done, true);
   });
 
-  test('forEach', () => {
+  test("forEach", () => {
     const set = new SignalSet();
     set.add(0);
     set.add(1);
     set.add(2);
 
     let count = 0;
-    let values = '';
+    let values = "";
 
     set.forEach((v, k) => {
       count++;
@@ -113,10 +113,10 @@ describe('SignalSet', function() {
     });
 
     assert.equal(count, 3);
-    assert.equal(values, '001122');
+    assert.equal(values, "001122");
   });
 
-  test('size', () => {
+  test("size", () => {
     const set = new SignalSet();
     assert.equal(set.size, 0);
 
@@ -133,7 +133,7 @@ describe('SignalSet', function() {
     assert.equal(set.size, 1);
   });
 
-  test('delete', () => {
+  test("delete", () => {
     const set = new SignalSet();
 
     assert.equal(set.has(0), false);
@@ -145,7 +145,7 @@ describe('SignalSet', function() {
     assert.equal(set.has(0), false);
   });
 
-  test('clear', () => {
+  test("clear", () => {
     const set = new SignalSet();
 
     set.add(0);
@@ -159,52 +159,53 @@ describe('SignalSet', function() {
   });
 
   reactivityTest(
-    'add/has',
+    "add/has",
     class {
       set = new SignalSet();
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'add/has existing value',
+    "add/has existing value",
     class {
-      set = new SignalSet(['foo']);
+      set = new SignalSet(["foo"]);
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'add/has unrelated value',
+    "add/has unrelated value",
     class {
       set = new SignalSet();
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
-        this.set.add('bar');
+        this.set.add("bar");
       }
     },
+    false,
   );
 
   reactivityTest(
-    'entries',
+    "entries",
     class {
       set = new SignalSet();
 
@@ -213,13 +214,13 @@ describe('SignalSet', function() {
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'keys',
+    "keys",
     class {
       set = new SignalSet();
 
@@ -228,13 +229,13 @@ describe('SignalSet', function() {
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'values',
+    "values",
     class {
       set = new SignalSet();
 
@@ -243,13 +244,13 @@ describe('SignalSet', function() {
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'forEach',
+    "forEach",
     class {
       set = new SignalSet();
 
@@ -257,17 +258,17 @@ describe('SignalSet', function() {
         this.set.forEach(() => {
           /* no-op */
         });
-        return 'test';
+        return "test";
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'size',
+    "size",
     class {
       set = new SignalSet();
 
@@ -276,48 +277,49 @@ describe('SignalSet', function() {
       }
 
       update() {
-        this.set.add('foo');
+        this.set.add("foo");
       }
     },
   );
 
   reactivityTest(
-    'delete',
+    "delete",
     class {
-      set = new SignalSet(['foo', 123]);
+      set = new SignalSet(["foo", 123]);
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
-        this.set.delete('foo');
+        this.set.delete("foo");
       }
     },
   );
 
   reactivityTest(
-    'delete unrelated value',
+    "delete unrelated value",
     class {
-      set = new SignalSet(['foo', 123]);
+      set = new SignalSet(["foo", 123]);
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
         this.set.delete(123);
       }
     },
+    false,
   );
 
   reactivityTest(
-    'clear',
+    "clear",
     class {
-      set = new SignalSet(['foo', 123]);
+      set = new SignalSet(["foo", 123]);
 
       get value() {
-        return this.set.has('foo');
+        return this.set.has("foo");
       }
 
       update() {
@@ -325,51 +327,4 @@ describe('SignalSet', function() {
       }
     },
   );
-
-  eachReactivityTest(
-    'add',
-    class extends Component {
-      collection = new SignalSet(['foo', 123]);
-
-      update() {
-        this.collection.add('bar');
-      }
-    },
-  );
-
-  eachReactivityTest(
-    'add existing value',
-    class extends Component {
-      collection = new SignalSet(['foo', 123]);
-
-      update() {
-        this.collection.add('foo');
-      }
-    },
-  );
-
-  // TODO: These tests are currently unstable on release, turn back on once
-  // behavior is fixed
-
-  // eachInReactivityTest(
-  //   'add',
-  //   class extends Component {
-  //     collection = new SignalSet(['foo', 123]);
-
-  //     update() {
-  //       this.collection.add('bar');
-  //     }
-  //   }
-  // );
-
-  // eachInReactivityTest(
-  //   'add existing value',
-  //   class extends Component {
-  //     collection = new SignalSet(['foo', 123]);
-
-  //     update() {
-  //       this.collection.add('foo');
-  //     }
-  //   }
-  // );
 });

@@ -1,4 +1,8 @@
-import { createStorage, type StorageWeakMap, type Storage } from "./-private/util.ts";
+import {
+  createStorage,
+  type StorageWeakMap,
+  type Storage,
+} from "./-private/util.ts";
 
 export class SignalWeakSet<T extends object = object> implements WeakSet<T> {
   private storages: StorageWeakMap<T> = new WeakMap();
@@ -30,7 +34,7 @@ export class SignalWeakSet<T extends object = object> implements WeakSet<T> {
   }
 
   has(value: T): boolean {
-    (this.storageFor(value)).get();
+    this.storageFor(value).get();
 
     return this.vals.has(value);
   }
