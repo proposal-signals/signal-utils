@@ -18,8 +18,11 @@ export function assertStable(access: () => unknown) {
 export function assertReactivelySettled(options: {
   access: () => unknown;
   change: () => unknown;
+  shouldUpdate?: boolean;
 }) {
-  let { access, change } = options;
+  let { access, change, shouldUpdate } = options;
+
+  shouldUpdate ??= true;
 
   let calls = 0;
 
@@ -39,20 +42,30 @@ export function assertReactivelySettled(options: {
 
   change();
 
-  computed.get();
-  assert.equal(calls, 2, "After a change, a second evaluation is made");
+  if (shouldUpdate) {
+    computed.get();
+    assert.equal(calls, 2, "After a change, a second evaluation is made");
+    computed.get();
+    assert.equal(
+      calls,
+      2,
+      "No additional evaluation is made after repeat get() call",
+    );
+    return;
+  }
+
   computed.get();
   assert.equal(
     calls,
-    2,
-    "No additional evaluation is made after repeat get() call",
+    1,
+    "After an unrelated change, a second evaluation is not made",
   );
 }
 
 export function waitFor(fn: () => unknown) {
   let waiter = new Promise((resolve) => {
     let interval = setInterval(() => {
-      let result = fn();
+      let result = fn() as Promise<unknown>;
       if (result) {
         (async () => {
           await result;
@@ -88,6 +101,7 @@ export function defer(): Deferred {
 export function reactivityTest(
   name: string,
   State: new () => { value: unknown; update: () => void },
+  shouldUpdate = true,
 ) {
   return test(name, () => {
     let state = new State();
@@ -95,6 +109,7 @@ export function reactivityTest(
     assertReactivelySettled({
       access: () => state.value,
       change: () => state.update(),
+      shouldUpdate,
     });
   });
 }
