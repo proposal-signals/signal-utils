@@ -229,6 +229,14 @@ wip
 
 utilities for the [dedupe](https://github.com/tracked-tools/tracked-toolbox?tab=readme-ov-file#dedupetracked) pattern.
 
+### Draft
+
+wip
+
+Forking a reactive tree and optionally sync it back to the original -- useful for forms / fields where you want to edit the state, but don't want to mutate the reactive root right away.
+
+Inspo: https://github.com/chriskrycho/tracked-draft
+
 ## Contributing
 
 **Starting dev**
@@ -252,16 +260,27 @@ This library could not have been developed so quickly without borrowing from exi
 
 
 - `tracked-built-ins`
-  - [`TrackedArray`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/array.ts#L1) from `tracked-built-ins` 
-  - [`TrackedObject`](https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js#L1) from `tracked-built-ins`
-  - [`TrackedMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L8) from `tracked-built-ins`
-  - [`TrackedWeakMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L134) from `tracked-built-ins`
-  - [`TrackedSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L8) from `tracked-built-ins`
-  - [`TrackedWeakSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L119) from `tracked-built-ins`
+  - [`TrackedArray`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/array.ts#L1)
+  - [`TrackedObject`](https://github.com/tracked-tools/tracked-built-ins/blob/master/addon/src/-private/object.js#L1) 
+  - [`TrackedMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L8)
+  - [`TrackedWeakMap`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/map.ts#L134)
+  - [`TrackedSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L8)
+  - [`TrackedWeakSet`](https://github.com/tracked-tools/tracked-built-ins/blob/25f886d3d60ea3876f3ceaf31756e9f06eda49d7/addon/src/-private/set.ts#L119) 
 - `tracked-toolbox`
-  - [`@dedupeTracked`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L148) from `tracked-toolbox`
-  - [`@localCopy`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L28) from `tracked-toolbox`
+  - [`@dedupeTracked`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L148) 
+  - [`@localCopy`](https://github.com/tracked-tools/tracked-toolbox/blob/master/tracked-toolbox/src/index.js#L28) 
 - `ember-async-data`
-  - [`TrackedAsyncData`](https://github.com/tracked-tools/ember-async-data/blob/1346f03c7fa677342408a9811916b916e3c4ad54/ember-async-data/src/tracked-async-data.ts#L31) from `ember-async-data`
+  - [`TrackedAsyncData`](https://github.com/tracked-tools/ember-async-data/blob/1346f03c7fa677342408a9811916b916e3c4ad54/ember-async-data/src/tracked-async-data.ts#L31) 
 - `reactiveweb`
-  - [`trackedFunction`](https://github.com/universal-ember/reactiveweb/blob/ba40c8a4417ec8b76bfb37754262f2829c6f7b26/reactiveweb/src/function.ts#L1) from `reactiveweb` 
+  - [`trackedFunction`](https://github.com/universal-ember/reactiveweb/blob/ba40c8a4417ec8b76bfb37754262f2829c6f7b26/reactiveweb/src/function.ts#L1) 
+- `tracked-draft`
+  - [`draftFor`](https://github.com/chriskrycho/tracked-draft)
+
+## Related Projects 
+
+- [Jotai](https://jotai.org/)
+- [Pota](https://pota.quack.uy) 
+- [`@preact-signals/*`](https://github.com/XantreDev/preact-signals)
+- [Svelte's Runes](https://svelte-5-preview.vercel.app/docs/runes#$state-frozen-reactive-map-set-and-date)
+- [`@vue-reactivity/use`](https://github.com/vue-reactivity/use)
+- [Metron](https://github.com/robbiespeed/metron/tree/0.0.3/packages/core#list)

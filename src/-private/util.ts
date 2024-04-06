@@ -13,3 +13,10 @@ import { Signal } from "signal-polyfill";
  */
 export const createStorage = () =>
   new Signal.State(null, { equals: () => false });
+
+/**
+ * Just an alias for brevity
+ */
+export type Storage = Signal.State<null>;
+export type StorageMap<T> = Map<T, Storage>;
+export type StorageWeakMap<T extends object> = WeakMap<T, Storage>;

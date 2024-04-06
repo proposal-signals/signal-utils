@@ -52,7 +52,7 @@ export function assertReactivelySettled(options: {
 export function waitFor(fn: () => unknown) {
   let waiter = new Promise((resolve) => {
     let interval = setInterval(() => {
-      let result = fn();
+      let result = fn() as Promise<unknown>;
       if (result) {
         (async () => {
           await result;
