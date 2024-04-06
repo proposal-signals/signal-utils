@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-04-06)
+
+signal-utils 0.8.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#22](https://github.com/NullVoxPopuli/signal-utils/pull/22) Impelement Map, WeakMap, Set, WeakSet ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-03)
 
 signal-utils 0.7.0 (minor)
