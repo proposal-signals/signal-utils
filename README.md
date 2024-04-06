@@ -107,31 +107,93 @@ Note that [`.fromEntries`](https://developer.mozilla.org/en-US/docs/Web/JavaScri
 
 ### `Map`
 
-wip
 
 A reactive Map
+
+```js
+import { SignalMap } from 'signal-utils/map';
+
+let map = new SignalMap();
+
+map.set('isLoading', true);
+
+// output: true
+// button clicked
+// output: false
+<template>
+  <output>{{map.get('isLoading')}}</output>
+  <button onclick={{() => map.set('isLoading', false)}}>finish</button>
+</template>
+```
+
 
 
 ### `WeakMap`
 
-wip
-
 A reactive WeakMap
+
+```js
+import { SignalWeakMap } from 'signal-utils/weak-map';
+
+let map = new SignalWeakMap();
+
+let obj = { greeting: 'hello' };
+
+map.set(obj, true);
+
+// output: true
+// button clicked
+// output: false
+<template>
+  <output>{{map.get(obj)}}</output>
+  <button onclick={{() => map.set(obj, false)}}>finish</button>
+</template>
+```
+
 
 
 ### `Set`
 
-wip
-
 A reactive Set
 
+```js
+import { SignalSet } from 'signal-utils/set';
+
+let set = new SignalSet();
+
+set.add(123);
+
+// output: true
+// button clicked
+// output: false
+<template>
+  <output>{{set.has(123)}}</output>
+  <button onclick={{() => set.delete(123)}}>finish</button>
+</template>
+```
 
 
 ### `WeakSet`
 
-wip
-
 A reactive WeakSet
+
+```js
+import { SignalWeakSet } from 'signal-utils/weak-set';
+
+let set = new SignalWeakSet();
+
+let obj = { greeting: 'hello' };
+
+set.add(obj);
+
+// output: true
+// button clicked
+// output: false
+<template>
+  <output>{{set.has(obj)}}</output>
+  <button onclick={{() => set.delete(obj)}}>finish</button>
+</template>
+```
 
 
 ### `Promise` (wrapper)
