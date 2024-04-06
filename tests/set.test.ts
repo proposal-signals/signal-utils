@@ -4,7 +4,7 @@ import { SignalSet } from "../src/set.ts";
 
 import { expectTypeOf } from "expect-type";
 
-import { eachReactivityTest, reactivityTest } from "./helpers.ts";
+import { reactivityTest } from "./helpers.ts";
 
 expectTypeOf<SignalSet<string>>().toMatchTypeOf<Set<string>>();
 expectTypeOf<Set<string>>().not.toEqualTypeOf<SignalSet<string>>();
