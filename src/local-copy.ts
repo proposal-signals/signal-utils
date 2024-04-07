@@ -1,3 +1,4 @@
+import type { Signal } from "signal-polyfill";
 import { signal } from "./index.ts";
 
 class Meta<Value> {
@@ -46,11 +47,101 @@ function get(obj: any, path: string) {
 }
 
 /**
+ * Forks remote state for local modification
  *
+ * ```js
+ * import { Signal } from 'signal-polyfill';
+ * import { localCopy } from 'signal-utils';
+ *
+ * const remote = new Signal.State(0);
+ *
+ * const local = localCopy(() => remote.get());
+ * ```
+ */
+export function localCopy<Value = any>(fn: () => Value): Signal.State<Value>;
+
+/**
+ * Forks remote state for local modification
+ *
+ * ```js
+ * import { localCopy } from 'signal-utils';
+ *
+ * class Demo {
+ *    @localCopy('remote.value') accessor localValue;
+ * }
+ * ```
  */
 export function localCopy<Value = any, This extends WeakKey = WeakKey>(
   memo: string,
   initializer?: Value | (() => Value),
+): () => ClassAccessorDecoratorResult<This, Value>;
+
+/**
+ * Forks remote state for local modification
+ *
+ * ```js
+ * import { localCopy } from 'signal-utils';
+ *
+ * class Demo {
+ *    @localCopy('remote.value') accessor localValue;
+ * }
+ * ```
+ */
+export function localCopy<Value = any, This extends WeakKey = WeakKey>(
+  ...args:
+    | Parameters<typeof localCopyDecorator>
+    | Parameters<typeof localCopyFn>
+) {
+  if (typeof args[0] === "function") {
+    return localCopyFn(args[0]);
+  }
+
+  let [first, second] = args;
+
+  return localCopyDecorator<Value, This>(
+    first,
+    second as undefined | Value | (() => Value),
+  );
+}
+
+function localCopyFn<Value = any, This extends WeakKey = WeakKey>(
+  memoFn: () => Value,
+) {
+  let metas = new WeakMap<WeakKey, Meta<Value>>();
+
+  return {
+    get(this: This): Value {
+      let meta = getOrCreateMeta<Value>(this, metas);
+      let { prevRemote } = meta;
+
+      let incomingValue = memoFn();
+
+      if (prevRemote !== incomingValue) {
+        // If the incoming value is not the same as the previous incoming value,
+        // update the local value to match the new incoming value, and update
+        // the previous incoming value.
+        meta.value = meta.prevRemote = incomingValue;
+      }
+
+      return meta.value as Value;
+    },
+
+    set(this: WeakKey, value: Value) {
+      if (!metas.has(this)) {
+        let meta = getOrCreateMeta(this, metas);
+        meta.prevRemote = memoFn();
+        meta.value = value;
+        return;
+      }
+
+      getOrCreateMeta(this, metas).value = value;
+    },
+  };
+}
+
+function localCopyDecorator<Value = any, This extends WeakKey = WeakKey>(
+  memo: string,
+  initializer: undefined | Value | (() => Value),
 ) {
   if (typeof memo !== "string") {
     throw new Error(
