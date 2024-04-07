@@ -2,6 +2,17 @@
 
 ## Release (2024-04-07)
 
+signal-utils 0.12.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#30](https://github.com/NullVoxPopuli/signal-utils/pull/30) Implement: microtask effect ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-04-07)
+
 signal-utils 0.11.0 (minor)
 
 #### :rocket: Enhancement
