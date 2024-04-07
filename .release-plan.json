@@ -2,8 +2,8 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.10.0",
-      "newVersion": "0.11.0",
+      "oldVersion": "0.11.0",
+      "newVersion": "0.12.0",
       "constraints": [
         {
           "impact": "minor",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-07)\n\nsignal-utils 0.11.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#29](https://github.com/NullVoxPopuli/signal-utils/pull/29) Implement `localCopy()` for use outside of classes ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-07)\n\nsignal-utils 0.12.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#30](https://github.com/NullVoxPopuli/signal-utils/pull/30) Implement: microtask effect ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
