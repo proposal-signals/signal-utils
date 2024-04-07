@@ -1,4 +1,4 @@
-import { signal } from './index.ts';
+import { signal } from "./index.ts";
 
 class Meta {
   prevRemote;
@@ -14,7 +14,7 @@ function getOrCreateMeta(instance, metas, initializer) {
     metas.set(instance, meta);
 
     meta.value = meta.peek =
-      typeof initializer === 'function'
+      typeof initializer === "function"
         ? initializer.call(instance)
         : initializer;
   }
@@ -24,36 +24,41 @@ function getOrCreateMeta(instance, metas, initializer) {
 
 function get(obj, path) {
   let current = obj;
-  let parts = path.split('.');
+  let parts = path.split(".");
 
   for (let part of parts) {
     if (!(part in current)) {
-      throw new Error(`sub-path ${part} (from ${path}) does not exist on ${JSON.stringify(current)}.`);
+      throw new Error(
+        `sub-path ${part} (from ${path}) does not exist on ${JSON.stringify(current)}.`,
+      );
     }
 
     current = current[part];
-
   }
 
   return current;
 }
 
 /**
- * 
+ *
  */
-export function localCopy(memo: string, initializer?: unknown | (() => unknown)) {
-  if (typeof memo !== 'string') {
+export function localCopy(
+  memo: string,
+  initializer?: unknown | (() => unknown),
+) {
+  if (typeof memo !== "string") {
     throw new Error(
       `@localCopy() must be given a memo path as its first argument, received \`${String(
-        memo
-      )}\``);
+        memo,
+      )}\``,
+    );
   }
 
   let metas = new WeakMap();
 
   return function localCopyDecorator<Value = any>(
     target: ClassAccessorDecoratorTarget<unknown, Value>,
-    context: ClassAccessorDecoratorContext<unknown, Value>
+    context: ClassAccessorDecoratorContext<unknown, Value>,
   ): ClassAccessorDecoratorResult<unknown, Value> {
     let memoFn = (obj) => get(obj, memo);
 
@@ -87,4 +92,3 @@ export function localCopy(memo: string, initializer?: unknown | (() => unknown))
     };
   };
 }
-
