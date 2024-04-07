@@ -2,6 +2,17 @@
 
 ## Release (2024-04-07)
 
+signal-utils 0.12.1 (patch)
+
+#### :bug: Bug Fix
+* `signal-utils`
+  * [#33](https://github.com/NullVoxPopuli/signal-utils/pull/33) effect(): Fix bug where the watcher stops watching ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
+## Release (2024-04-07)
+
 signal-utils 0.12.0 (minor)
 
 #### :rocket: Enhancement
