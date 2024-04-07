@@ -1,5 +1,6 @@
 import { describe, test, assert } from "vitest";
 import { localCopy } from "../src/local-copy.ts";
+import { assertReactivelySettled } from "./helpers.ts";
 
 describe("@localCopy", () => {
   test("it works", function () {
@@ -19,7 +20,10 @@ describe("@localCopy", () => {
 
     assert.strictEqual(local.value, 123, "defaults to the remote value");
 
-    local.value = 456;
+    assertReactivelySettled({
+      access: () => local.value,
+      change: () => (local.value = 456),
+    });
 
     assert.strictEqual(local.value, 456, "local value updates correctly");
     assert.strictEqual(remote.value, 123, "remote value does not update");
@@ -55,7 +59,7 @@ describe("@localCopy", () => {
     class Local {
       remote = remote;
 
-      @localCopy("remote.value", 123) accessor value!: unknown;
+      @localCopy("remote.value", 123) accessor value!: number;
     }
 
     let local = new Local();
@@ -88,7 +92,7 @@ describe("@localCopy", () => {
     class Local {
       remote = remote;
 
-      @localCopy("remote.value", () => 123) accessor value: unknown;
+      @localCopy("remote.value", () => 123) accessor value!: number;
     }
 
     let local = new Local();

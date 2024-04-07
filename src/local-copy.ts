@@ -1,16 +1,20 @@
 import { signal } from "./index.ts";
 
-class Meta {
-  prevRemote;
-  peek;
-  @signal accessor value;
+class Meta<Value> {
+  prevRemote?: Value;
+  peek?: () => Value;
+  @signal accessor value: Value | undefined;
 }
 
-function getOrCreateMeta(instance, metas, initializer) {
+function getOrCreateMeta<Value>(
+  instance: WeakKey,
+  metas: WeakMap<WeakKey, Meta<Value>>,
+  initializer?: Value | Function,
+) {
   let meta = metas.get(instance);
 
   if (meta === undefined) {
-    meta = new Meta();
+    meta = new Meta<Value>();
     metas.set(instance, meta);
 
     meta.value = meta.peek =
@@ -22,11 +26,13 @@ function getOrCreateMeta(instance, metas, initializer) {
   return meta;
 }
 
-function get(obj, path) {
+function get(obj: any, path: string) {
   let current = obj;
   let parts = path.split(".");
 
   for (let part of parts) {
+    if (!current) return current;
+
     if (!(part in current)) {
       throw new Error(
         `sub-path ${part} (from ${path}) does not exist on ${JSON.stringify(current)}.`,
@@ -42,9 +48,9 @@ function get(obj, path) {
 /**
  *
  */
-export function localCopy(
+export function localCopy<Value = any, This extends WeakKey = WeakKey>(
   memo: string,
-  initializer?: unknown | (() => unknown),
+  initializer?: Value | (() => Value),
 ) {
   if (typeof memo !== "string") {
     throw new Error(
@@ -54,20 +60,20 @@ export function localCopy(
     );
   }
 
-  let metas = new WeakMap();
+  let metas = new WeakMap<WeakKey, Meta<Value>>();
 
-  return function localCopyDecorator<Value = any>(
-    target: ClassAccessorDecoratorTarget<unknown, Value>,
-    context: ClassAccessorDecoratorContext<unknown, Value>,
-  ): ClassAccessorDecoratorResult<unknown, Value> {
-    let memoFn = (obj) => get(obj, memo);
+  return function localCopyDecorator(
+    _target: ClassAccessorDecoratorTarget<This, Value>,
+    _context: ClassAccessorDecoratorContext<This, Value>,
+  ): ClassAccessorDecoratorResult<This, Value> {
+    let memoFn = (obj: any) => get(obj, memo);
 
     return {
-      get() {
-        let meta = getOrCreateMeta(this, metas, initializer);
+      get(this: This): Value {
+        let meta = getOrCreateMeta<Value>(this, metas, initializer);
         let { prevRemote } = meta;
 
-        let incomingValue = memoFn(this, prevRemote);
+        let incomingValue = memoFn(this);
 
         if (prevRemote !== incomingValue) {
           // If the incoming value is not the same as the previous incoming value,
@@ -76,10 +82,10 @@ export function localCopy(
           meta.value = meta.prevRemote = incomingValue;
         }
 
-        return meta.value;
+        return meta.value as Value;
       },
 
-      set(value) {
+      set(this: WeakKey, value: Value) {
         if (!metas.has(this)) {
           let meta = getOrCreateMeta(this, metas, initializer);
           meta.prevRemote = memoFn(this);
