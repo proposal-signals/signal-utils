@@ -2,8 +2,8 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.7.0",
-      "newVersion": "0.8.0",
+      "oldVersion": "0.8.0",
+      "newVersion": "0.9.0",
       "constraints": [
         {
           "impact": "minor",
@@ -13,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-06)\n\nsignal-utils 0.8.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#22](https://github.com/NullVoxPopuli/signal-utils/pull/22) Impelement Map, WeakMap, Set, WeakSet ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-07)\n\nsignal-utils 0.9.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#24](https://github.com/NullVoxPopuli/signal-utils/pull/24) Implement `@cached` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
