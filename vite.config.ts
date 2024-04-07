@@ -1,4 +1,4 @@
-import { basename } from "node:path";
+import path, { basename } from "node:path";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -8,7 +8,7 @@ import { babel } from "@rollup/plugin-babel";
 const require = createRequire(import.meta.url);
 const manifest = require("./package.json");
 
-let entryFiles = globbySync("src/*.ts", { ignore: ["**/*.d.ts"] });
+let entryFiles = globbySync(["src/**/*.ts"], { ignore: ["**/*.d.ts"] });
 
 let entries: Record<string, string> = {};
 
@@ -37,11 +37,22 @@ export default defineConfig({
     rollupOptions: {
       output: {
         dir: "dist",
-        entryFileNames: "[name].js",
         experimentalMinChunkSize: 0,
         format: "es",
         hoistTransitiveImports: false,
         sourcemap: true,
+        entryFileNames: (entry) => {
+          const { name, facadeModuleId } = entry;
+          const fileName = `${name}.js`;
+          if (!facadeModuleId) {
+            return fileName;
+          }
+          const relativeDir = path.relative(
+            path.resolve(__dirname, "src"),
+            path.dirname(facadeModuleId),
+          );
+          return path.join(relativeDir, fileName);
+        },
       },
       external: [
         ...Object.keys(manifest.dependencies || {}),
