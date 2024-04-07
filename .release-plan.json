@@ -1,17 +1,17 @@
 {
   "solution": {
     "signal-utils": {
-      "impact": "minor",
-      "oldVersion": "0.11.0",
-      "newVersion": "0.12.0",
+      "impact": "patch",
+      "oldVersion": "0.12.0",
+      "newVersion": "0.12.1",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-07)\n\nsignal-utils 0.12.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#30](https://github.com/NullVoxPopuli/signal-utils/pull/30) Implement: microtask effect ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-07)\n\nsignal-utils 0.12.1 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#33](https://github.com/NullVoxPopuli/signal-utils/pull/33) effect(): Fix bug where the watcher stops watching ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
