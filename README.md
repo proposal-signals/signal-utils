@@ -39,6 +39,38 @@ let state = new State();
 </template>
 ```
 
+### `@cached`
+
+A utility decorator for caching getters in classes. Useful for caching expensive computations. 
+
+```js
+import { signal } from 'signal-utils';
+import { cached } from 'signal-utils/cached';
+
+class State {
+    @signal accessor #value = 3;
+
+    @cached
+    get doubled() {
+        // imagine an expensive operation
+        return this.#value * 2;
+    }
+
+    increment = () => this.#value++;
+}
+
+let state = new State();
+
+
+// output: 6
+// button clicked
+// output: 8
+<template>
+  <output>{{state.doubled}}</output>
+  <button onclick={{state.increment}}>+</button>
+</template>
+```
+
 ### `Array`
 
 A reactive Array.
