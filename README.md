@@ -10,6 +10,20 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 
 [^syntax-based-off]: The syntax is based of a mix of [Glimmer-flavored Javascript](https://tutorial.glimdown.com) and [Svelte](https://svelte.dev/). The main thing being focused around JavaScript without having a custom file format. The `<template>...</template>` blocks may as well be HTML, and `{{ }}` escapes out to JS. I don't have a strong preference on `{{ }}` vs `{ }`, the important thing is only to be consistent within an ecosystem.
 
+- data structures
+  - [Array](#array)
+  - [Object](#object)
+  - [Map](#map)
+  - [Set](#Set)
+  - [WeakMap](#weakmap)
+  - [WeakSet](#weakset)
+- general utilities
+  - [Promise](#promise)
+  - [async function](#async-function) 
+- class utilities
+  - [@signal](#%40signal)
+  - [@cached](#$40cached)
+
 ### `@signal`
 
 A utility decorator for easily creating signals 
@@ -38,6 +52,40 @@ let state = new State();
   <button onclick={{state.increment}}>+</button>
 </template>
 ```
+
+### `@cached`
+
+A utility decorator for caching getters in classes. Useful for caching expensive computations. 
+
+```js
+import { signal } from 'signal-utils';
+import { cached } from 'signal-utils/cached';
+
+class State {
+    @signal accessor #value = 3;
+
+    @cached
+    get doubled() {
+        // imagine an expensive operation
+        return this.#value * 2;
+    }
+
+    increment = () => this.#value++;
+}
+
+let state = new State();
+
+
+// output: 6
+// button clicked
+// output: 8
+<template>
+  <output>{{state.doubled}}</output>
+  <button onclick={{state.increment}}>+</button>
+</template>
+```
+
+Note that the impact of maintaining a cache is often more expensive than re-deriving the data in the getter. Use sparingly, or to return non-primitive values and maintain referential integrity between repeat accesses.
 
 ### `Array`
 
@@ -196,7 +244,7 @@ set.add(obj);
 ```
 
 
-### `Promise` (wrapper)
+### `Promise`
 
 A reactive Promise handler that gives your reactive properties for when the promise resolves or rejects.
 
