@@ -97,37 +97,24 @@ import { signal } from 'signal-utils';
 import { localCopy } from 'signal-utils/local-copy';
 
 class Remote {
-    @signal accessor value = 3;
+  @signal accessor value = 3;
 }
 
 class Demo {
-    // pretend this data is from a parent component
-    remote = new Remote();
-
-    @localCopy('remote.value') localValue;
-
-    updateLocalValue = 
-        (inputEvent) => this.localValue = inputEvent.target.value;
-
-    handleSubmit = 
-        (submitEvent) => {
-          submitEvent.preventDefault();
-          this.args.onSubmit({ value: this.localValue });
-        }
-
-    // A controlled input
-    <template>
-        <form onsubmit={{this.handleSubmit}}>
-            <label>
-                Edit Name:   
-                <input value={{this.localValue}} oninput={{this.updateLocalValue}} />
-            </label>
-
-            <button>Submit</button>
-        </form>
-
-        <pre>localValue: {{this.localValue}}<br>remote @value: {{@value}}</pre>
-    </template>
+  // pretend this data is from a parent component
+  remote = new Remote();
+  
+  @localCopy('remote.value') localValue;
+  
+  updateLocalValue = (inputEvent) => this.localValue = inputEvent.target.value;
+  
+  // A controlled input
+  <template>
+    <label>
+      Edit Name:   
+      <input value={{this.localValue}} oninput={{this.updateLocalValue}} />
+    </label>
+  </template>
 }
 ```
 
