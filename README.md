@@ -20,6 +20,7 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 - general utilities
   - [Promise](#promise)
   - [async function](#async-function) 
+  - [localCopy](#localcopy-function)
 - class utilities
   - [@signal](#signal)
   - [@cached](#cached)
@@ -119,6 +120,26 @@ class Demo {
 ```
 
 In this demo, the localValue can fork from the remote value, but the `localValue` property will re-set to the remote value if it changes.
+
+#### `localCopy` function
+
+```js
+import { Signal } from 'signal-polyfill';
+import { localCopy } from 'signal-utils/local-copy';
+
+const remote = new Signal.State(3);
+
+const local = localCopy(() => remote.get());
+const updateLocal = (inputEvent) => local.set(inputEvent.target.value);
+
+// A controlled input
+<template>
+  <label>
+    Edit Name:   
+    <input value={{local.get()}} oninput={{updateLocal}} />
+  </label>
+</template>
+```
 
 Live, interactive demos of this concept:
 - [Ember](https://limber.glimdown.com/edit?c=MQAgYg9gTg1glgOwOYgMoBcCG6CmIDuc6AFiAEo4C2EuIAqgA4Am2OAzgFAfHroNsAuAPRD0hXjigA6AMYRKQgPpQ2M4lDht0cTAiFbsAVzZCAjAHZzABgAcNgGwP7ATgDMAVlfnXzgCw2uAANgpAArNhAAGzgANxwOOEoGaHQQAG8oiBlMSIBhCAYATwBfEAAzKHkQAHJ0KEwZGBwmAFp0CAhIgCMIAA9qgG4EpJSQfJGEHARUiqrqgAEkaMpKSSE5Can0QeHkqFSMuoamphBS2coaxeXVqFF6xsQkHcS9g5AIBDPyysuFqi6a2oTDgZTgkh2HBkkUwbAiABEqBAQDhergEEwIuNkpNpukOCAQPNIlkcvkigAKaqYKBINhSGI5Qw4aoASky2UiADUmTghgSQIZmKwADKk7m8kAAXhAAsJFMQDEM6AAonFpuypQA%2BEAkTRSEmcnmRZnSkCK5VqrZSLC0nDoBm8-mE4i6JiRHCoQxdShEM1ykAUtje32q9XoTU6tIBwnBn1EK3TKQMKA4cOIsqYQyRdAU1lDQmF3XEfU0ulST5e%2BO5jKMk04ATF-WGnLG03FfMB4pcQkiEAAQRAcmmlUiHtOFvQAoAPLgkjDcFqA9OytBLmk0p8anHQ9Um-TXRiPVXQ8Vikui4TpzDAZEL5fCSqQakAHKYVaNwkxwvTycgOvMlKG56vSLYSvWZ7pJuXzVJOe4gVIQosLgYpGrykFCPeRbTkIN44HePaXtOXTKu0CBaieRA4SRvCfFhIA4auUCUEuy4pjgWpgW2DYPpewElqB4rcWexFQFqqbULQ8wATxG7SehxQ4exrHYVohQevRhJ-hkPRQEwkiNqYDC9CAbCdHATADGcy76Og6kcTOohUAwC4Od2HCom8ID6Zm2apNCsIRP2DAMCiaJTJiYzyDiWz4oS8xHI0zT-pKMoAEQALINHgADqiBMIYaUFkSiUnN52CYM6LpuseIZ%2BjKFLIZgkb7lITVmk1xVDoeSA4G%2Bqxmnm0o6ghMkgAA1DK1QAISQlec4uaw9HToi1BEjJQFpKNClEpWdXoJtCGHu6nr7RhKk-uoF2ErkWZsHgqK4FACA5N1ui9YGlCYIUgKmYk2bYE8ICYCAqYVOwpAQGUoNIrQTWsgIy40WRUFbtU0JwI08ECbIPV9e%2BOBnlqt3GHgKrhc9r25Hj1GkXRhFXldAYirCqSURITACKJy3KRuABSqAAPIvlIWgaMgoKFK17UINmkQgK4IlCMpjkLa5S7dsEgQcEAA&format=glimdown)
