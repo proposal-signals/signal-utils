@@ -21,9 +21,9 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
   - [Promise](#promise)
   - [async function](#async-function) 
 - class utilities
-  - [@signal](#%40signal)
-  - [@cached](#%40cached)
-  - [@localCopy](#%40localcopy)
+  - [@signal](#signal)
+  - [@cached](#cached)
+  - [@localCopy](#localcopy)
 
 ### `@signal`
 
