@@ -17,9 +17,11 @@ describe("effect (via queueMicrotask)", () => {
     assert.strictEqual(callCount, 1);
 
     count.set(count.get() + 1);
-
     await waitForMicrotask();
-
     assert.strictEqual(callCount, 2);
+
+    count.set(count.get() + 1);
+    await waitForMicrotask();
+    assert.strictEqual(callCount, 3);
   });
 });

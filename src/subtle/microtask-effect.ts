@@ -18,6 +18,8 @@ let watcher = new Signal.subtle.Watcher(() => {
 function flushPending() {
   for (const signal of watcher.getPending()) {
     signal.get();
+    // Keep watching... we don't know when we're allowed to stop watching
+    watcher.watch(signal);
   }
 }
 
