@@ -25,6 +25,8 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
   - [@signal](#signal)
   - [@cached](#cached)
   - [@localCopy](#localcopy)
+- subtle utilities
+  - [effect](#leaky-effect-via-queuemicrotask)
 
 ### `@signal`
 
@@ -397,6 +399,27 @@ wip
 Forking a reactive tree and optionally sync it back to the original -- useful for forms / fields where you want to edit the state, but don't want to mutate the reactive root right away.
 
 Inspo: https://github.com/chriskrycho/tracked-draft
+
+### subtle utilities
+
+Utilities that can easily lead to subtle bugs and edge cases.
+
+#### Leaky Effect via queueMicrotask
+
+```js
+import { Signal } from 'signal-polyfill';
+import { effect } from 'signal-utils/subtle/microtask-effect';
+
+let count = new Signal.State(0);
+
+let callCount = 0;
+
+effect(() => console.log(count.get());
+// => 0 logs
+
+count.set(1);
+// => 1 logs
+```
 
 ## Contributing
 
