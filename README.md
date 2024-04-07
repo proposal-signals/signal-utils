@@ -22,7 +22,8 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
   - [async function](#async-function) 
 - class utilities
   - [@signal](#%40signal)
-  - [@cached](#$40cached)
+  - [@cached](#%40cached)
+  - [@localCopy](#%40localcopy)
 
 ### `@signal`
 
@@ -86,6 +87,55 @@ let state = new State();
 ```
 
 Note that the impact of maintaining a cache is often more expensive than re-deriving the data in the getter. Use sparingly, or to return non-primitive values and maintain referential integrity between repeat accesses.
+
+### `@localCopy`
+
+A utility decorator for maintaining local state that gets re-set to a "remote" value when it changes. Useful for editable controlled fields with an initial remote data that can also change.
+
+```gjs
+import { signal } from 'signal-utils';
+import { localCopy } from 'signal-utils/local-copy';
+
+class Remote {
+    @signal accessor value = 3;
+}
+
+class Demo {
+    // pretend this data is from a parent component
+    remote = new Remote();
+
+    @localCopy('remote.value') localValue;
+
+    updateLocalValue = 
+        (inputEvent) => this.localValue = inputEvent.target.value;
+
+    handleSubmit = 
+        (submitEvent) => {
+          submitEvent.preventDefault();
+          this.args.onSubmit({ value: this.localValue });
+        }
+
+    // A controlled input
+    <template>
+        <form onsubmit={{this.handleSubmit}}>
+            <label>
+                Edit Name:   
+                <input value={{this.localValue}} oninput={{this.updateLocalValue}} />
+            </label>
+
+            <button>Submit</button>
+        </form>
+
+        <pre>localValue: {{this.localValue}}<br>remote @value: {{@value}}</pre>
+    </template>
+}
+```
+
+In this demo, the localValue can fork from the remote value, but the `localValue` property will re-set to the remote value if it changes.
+
+Live, interactive demos of this concept:
+- [Embebr](https://limber.glimdown.com/edit?c=MQAgYg9gTg1glgOwOYgMoBcCG6CmIDuc6AFiAEo4C2EuIAqgA4Am2OAzgFAfHroNsAuAPRD0hXjigA6AMYRKQgPpQ2M4lDht0cTAiFbsAVzZCAjAHZzABgAcNgGwP7ATgDMAVlfnXzgCw2uAANgpAArNhAAGzgANxwOOEoGaHQQAG8oiBlMSIBhCAYATwBfEAAzKHkQAHJ0KEwZGBwmAFp0CAhIgCMIAA9qgG4EpJSQfJGEHARUiqrqgAEkaMpKSSE5Can0QeHkqFSMuoamphBS2coaxeXVqFF6xsQkHcS9g5AIBDPyysuFqi6a2oTDgZTgkh2HBkkUwbAiABEqBAQDhergEEwIuNkpNpukOCAQPNIlkcvkigAKaqYKBINhSGI5Qw4aoASky2UiADUmTghgSQIZmKwADKk7m8kAAXhAAsJFMQDEM6AAonFpuypQA%2BEAkTRSEmcnmRZnSkCK5VqrZSLC0nDoBm8-mE4i6JiRHCoQxdShEM1ykAUtje32q9XoTU6tIBwnBn1EK3TKQMKA4cOIsqYQyRdAU1lDQmF3XEfU0ulST5e%2BO5jKMk04ATF-WGnLG03FfMB4pcQkiEAAQRAcmmlUiHtOFvQAoAPLgkjDcFqA9OytBLmk0p8anHQ9Um-TXRiPVXQ8Vikui4TpzDAZEL5fCSqQakAHKYVaNwkxwvTycgOvMlKG56vSLYSvWZ7pJuXzVJOe4gVIQosLgYpGrykFCPeRbTkIN44HePaXtOXTKu0CBaieRA4SRvCfFhIA4auUCUEuy4pjgWpgW2DYPpewElqB4rcWexFQFqqbULQ8wATxG7SehxQ4exrHYVohQevRhJ-hkPRQEwkiNqYDC9CAbCdHATADGcy76Og6kcTOohUAwC4Od2HCom8ID6Zm2apNCsIRP2DAMCiaJTJiYzyDiWz4oS8xHI0zT-pKMoAEQALINHgADqiBMIYaUFkSiUnN52CYM6LpuseIZ%2BjKFLIZgkb7lITVmk1xVDoeSA4G%2Bqxmnm0o6ghMkgAA1DK1QAISQlec4uaw9HToi1BEjJQFpKNClEpWdXoJtCGHu6nr7RhKk-uoF2ErkWZsHgqK4FACA5N1ui9YGlCYIUgKmYk2bYE8ICYCAqYVOwpAQGUoNIrQTWsgIy40WRUFbtU0JwI08ECbIPV9e%2BOBnlqt3GHgKrhc9r25Hj1GkXRhFXldAYirCqSURITACKJy3KRuABSqAAPIvlIWgaMgoKFK17UINmkQgK4IlCMpjkLa5S7dsEgQcEAA&format=glimdown)
+- [Solid](https://preactjs.com/repl?code=aW1wb3J0IHsgcmVuZGVyIH0gZnJvbSAncHJlYWN0JzsKaW1wb3J0IHsgdXNlUmVmLCB1c2VFZmZlY3QgfSBmcm9tICdwcmVhY3QvaG9va3MnOwppbXBvcnQgeyBzaWduYWwsIGVmZmVjdCwgdXNlU2lnbmFsIH0gZnJvbSAnQHByZWFjdC9zaWduYWxzJzsKaW1wb3J0IHsgaHRtbCB9IGZyb20gJ2h0bS9wcmVhY3QnOwoKZnVuY3Rpb24gdXNlTG9jYWxDb3B5KHJlbW90ZSkgewoJY29uc3QgbG9jYWwgPSB1c2VSZWYoKTsKCWlmICghbG9jYWwuY3VycmVudCkgewoJCWxvY2FsLmN1cnJlbnQgPSBzaWduYWwocmVtb3RlLnBlZWsoKSk7Cgl9CgoJdXNlRWZmZWN0KCgpID0%2BIHsKCSAgLy8gU3luY2hyb25vdXNseSB1cGRhdGUgdGhlIGxvY2FsIGNvcHkgd2hlbiByZW1vdGUgY2hhbmdlcy4KCSAgLy8gQ29yZSBlZmZlY3RzIGFyZSBqdXN0IGEgd2F5IHRvIGhhdmUgc3luY2hyb25vdXMgY2FsbGJhY2tzCgkgIC8vIHJlYWN0IHRvIHNpZ25hbCBjaGFuZ2VzIGluIGEgcHJldHR5IGVmZmljaWVudCB3YXkuCgkJcmV0dXJuIGVmZmVjdCgoKSA9PiB7CgkJCWxvY2FsLmN1cnJlbnQudmFsdWUgPSByZW1vdGUudmFsdWU7CgkJfSk7Cgl9LCBbcmVtb3RlXSk7CgoJcmV0dXJuIGxvY2FsLmN1cnJlbnQ7Cn0KCmZ1bmN0aW9uIERlbW8oeyBuYW1lLCBvblN1Ym1pdCB9KSB7CgkJY29uc3QgbG9jYWxOYW1lID0gdXNlTG9jYWxDb3B5KG5hbWUpOwoKICAgIGNvbnN0IHVwZGF0ZUxvY2FsTmFtZSA9IChpbnB1dEV2ZW50KSA9PiBsb2NhbE5hbWUudmFsdWUgPSBpbnB1dEV2ZW50LnRhcmdldC52YWx1ZTsKCiAgICBjb25zdCBoYW5kbGVTdWJtaXQgPSAoc3VibWl0RXZlbnQpID0%2BIHsKICAgICAgICBzdWJtaXRFdmVudC5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgIG9uU3VibWl0KHsgdmFsdWU6IGxvY2FsTmFtZS52YWx1ZSB9KTsKICAgIH0KCiAgICByZXR1cm4gaHRtbGAKICAgICAgICA8Zm9ybSBvblN1Ym1pdD0ke2hhbmRsZVN1Ym1pdH0%2BCiAgICAgICAgICAgIDxsYWJlbD4KICAgICAgICAgICAgICAgIEVkaXQgTmFtZTogICAKICAgICAgICAgICAgICAgIDxpbnB1dCB2YWx1ZT0ke2xvY2FsTmFtZS52YWx1ZX0gb25JbnB1dD0ke3VwZGF0ZUxvY2FsTmFtZX0gLz4KICAgICAgICAgICAgPC9sYWJlbD4KCiAgICAgICAgICAgIDxidXR0b24%2BU3VibWl0PC9idXR0b24%2BCiAgICAgICAgPC9mb3JtPgoKICAgICAgICA8cHJlPmxvY2FsVmFsdWU6ICR7bG9jYWxOYW1lfTxiciAvPnBhcmVudCB2YWx1ZTogJHtuYW1lfTwvcHJlPmA7Cn0KCmV4cG9ydCBmdW5jdGlvbiBBcHAoKSB7CiAgICBjb25zdCBuYW1lID0gdXNlU2lnbmFsKCdNYWNlIFdpbmR1Jyk7CiAgICBjb25zdCBkYXRhID0gdXNlU2lnbmFsKCcnKTsKCiAgICBjb25zdCBoYW5kbGVTdWJtaXQgPSAoZCkgPT4gZGF0YS52YWx1ZSA9IGQ7CiAgICBjb25zdCBjaGFuZ2VOYW1lID0gKCkgPT4gbmFtZS52YWx1ZSArPSAnISc7CgogICAgcmV0dXJuIGh0bWxgCiAgICAgICAgPCR7RGVtb30gbmFtZT0ke25hbWV9IG9uU3VibWl0PSR7aGFuZGxlU3VibWl0fSAvPgoKICAgICAgICA8aHIgLz4KCiAgICAgICAgQ2F1c2UgZXh0ZXJuYWwgY2hhbmdlIChtYXliZSBzaW11bGF0aW5nIGEgcmVmcmVzaCBvZiByZW1vdGUgZGF0YSk6CiAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPSR7Y2hhbmdlTmFtZX0%2BQ2F1c2UgRXh0ZXJuYWwgQ2hhbmdlPC9idXR0b24%2BCgogICAgICAgIDxociAvPgogICAgICAgIExhc3QgU3VibWl0dGVkOjxiciAvPgogICAgICAgIDxwcmU%2BJHtKU09OLnN0cmluZ2lmeShkYXRhLnZhbHVlLCBudWxsLCAzKX08L3ByZT5gOwp9CgpyZW5kZXIoPEFwcCAvPiwgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcCcpKTsK)
 
 ### `Array`
 
