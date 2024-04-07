@@ -1,4 +1,3 @@
-import type { Signal } from "signal-polyfill";
 import { signal } from "./index.ts";
 
 class Meta<Value> {
@@ -58,7 +57,9 @@ function get(obj: any, path: string) {
  * const local = localCopy(() => remote.get());
  * ```
  */
-export function localCopy<Value = any>(fn: () => Value): Signal.State<Value>;
+export function localCopy<Value = any>(
+  fn: () => Value,
+): { get(): Value; set(v: Value): void };
 
 /**
  * Forks remote state for local modification
@@ -74,7 +75,10 @@ export function localCopy<Value = any>(fn: () => Value): Signal.State<Value>;
 export function localCopy<Value = any, This extends WeakKey = WeakKey>(
   memo: string,
   initializer?: Value | (() => Value),
-): () => ClassAccessorDecoratorResult<This, Value>;
+): (
+  _target: ClassAccessorDecoratorTarget<This, Value>,
+  _context: ClassAccessorDecoratorContext<This, Value>,
+) => ClassAccessorDecoratorResult<This, Value>;
 
 /**
  * Forks remote state for local modification
@@ -88,12 +92,10 @@ export function localCopy<Value = any, This extends WeakKey = WeakKey>(
  * ```
  */
 export function localCopy<Value = any, This extends WeakKey = WeakKey>(
-  ...args:
-    | Parameters<typeof localCopyDecorator>
-    | Parameters<typeof localCopyFn>
+  ...args: any[]
 ) {
   if (typeof args[0] === "function") {
-    return localCopyFn(args[0]);
+    return localCopyFn<Value, This>(args[0]);
   }
 
   let [first, second] = args;
