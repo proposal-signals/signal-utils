@@ -62,6 +62,18 @@ export function assertReactivelySettled(options: {
   );
 }
 
+export function waitForAnimationFrame() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+}
+
+export function waitForMicrotask() {
+  return new Promise((resolve) => {
+    queueMicrotask(() => resolve(null));
+  });
+}
+
 export function waitFor(fn: () => unknown) {
   let waiter = new Promise((resolve) => {
     let interval = setInterval(() => {

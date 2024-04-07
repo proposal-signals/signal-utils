@@ -3,7 +3,6 @@ import { Signal } from "signal-polyfill";
 // NOTE: this implementation *LEAKS*
 //       because there is nothing to unwatch a computed.
 
-
 let pending = false;
 
 let watcher = new Signal.subtle.Watcher(() => {
@@ -22,6 +21,10 @@ function flushPending() {
   }
 }
 
+/**
+ * ⚠️ WARNING: Nothing unwatches ⚠️
+ * This will produce a memory leak.
+ */
 export function effect(cb: () => void) {
   let c = new Signal.Computed(() => cb());
 
@@ -30,13 +33,14 @@ export function effect(cb: () => void) {
   c.get();
 
   // We don't have anything to run this unwatch
-  // because we don't have the concept 
+  // because we don't have the concept
   // of an owner/container/lifetime.
   //
   // We also *can't* really have a lifetime concept
-  // without encrouching on the goals of Starbeam.
-  // 
-  // (Starbeam is universal rectivity, 
+  // without encroaching on the goals of Starbeam.
+  // (Or a full-fledged framework)
+  //
+  // (Starbeam is universal rectivity,
   //   solving timing and lifetime semantics across frameworks)
   // return () => watcher.unwatch(c);
 }

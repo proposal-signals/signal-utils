@@ -48,7 +48,7 @@ export default defineConfig({
             return fileName;
           }
           const relativeDir = path.relative(
-            path.resolve(__dirname, 'src'),
+            path.resolve(__dirname, "src"),
             path.dirname(facadeModuleId),
           );
           return path.join(relativeDir, fileName);
