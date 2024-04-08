@@ -25,14 +25,21 @@ jobs:
         working-directory: tests-public 
 
   test:
-    name: "Tests"
+    name: "Test ${{ matrix.testenv.name }}"
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy: 
+      matrix:
+        testenv: 
+        - { name: "Node", args: '' }
+        - { name: "Chrome", args: '--browser.name=chrome --browser.headless' }
+        - { name: "Firefox", args: '--browser.name=firefox --browser.headless' }
+
     steps:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
       - run: pnpm install
       - run: pnpm build
-      - run: pnpm test
-      - run: pnpm test
+      - run: pnpm vitest ${{ matrix.testenv.args }}
+      - run: pnpm vitest ${{ matrix.testenv.args }}
         working-directory: tests-public 
