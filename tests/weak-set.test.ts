@@ -21,13 +21,13 @@ describe("SignalWeakSet", function () {
     const set = new SignalWeakSet();
 
     // @ts-expect-error -- point is testing constructor error
-    assert.throws(() => set.add("aoeu"), /Invalid value used in weak set/);
+    assert.throws(() => set.add("aoeu"), TypeError);
     // @ts-expect-error -- point is testing constructor error
-    assert.throws(() => set.add(true), /Invalid value used in weak set/);
+    assert.throws(() => set.add(true), TypeError);
     // @ts-expect-error -- point is testing constructor error
-    assert.throws(() => set.add(123), /Invalid value used in weak set/);
+    assert.throws(() => set.add(123), TypeError);
     // @ts-expect-error -- point is testing constructor error
-    assert.throws(() => set.add(undefined), /Invalid value used in weak set/);
+    assert.throws(() => set.add(undefined), TypeError);
   });
 
   test("add/has", () => {
