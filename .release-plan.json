@@ -2,16 +2,20 @@
   "solution": {
     "signal-utils": {
       "impact": "patch",
-      "oldVersion": "0.12.0",
-      "newVersion": "0.12.1",
+      "oldVersion": "0.12.1",
+      "newVersion": "0.12.2",
       "constraints": [
         {
           "impact": "patch",
           "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-07)\n\nsignal-utils 0.12.1 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#33](https://github.com/NullVoxPopuli/signal-utils/pull/33) effect(): Fix bug where the watcher stops watching ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-09)\n\nsignal-utils 0.12.2 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#37](https://github.com/NullVoxPopuli/signal-utils/pull/37) Fix effect hang / OOM issue ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#34](https://github.com/NullVoxPopuli/signal-utils/pull/34) Test against more environments ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }

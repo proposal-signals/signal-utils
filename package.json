@@ -1,6 +1,6 @@
 {
   "name": "signal-utils",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "keywords": [
     "signals",
