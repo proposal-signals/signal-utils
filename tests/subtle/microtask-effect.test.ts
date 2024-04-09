@@ -20,8 +20,11 @@ describe("effect (via queueMicrotask)", () => {
     await waitForMicrotask();
     assert.strictEqual(callCount, 2);
 
-    count.set(count.get() + 1);
-    await waitForMicrotask();
-    assert.strictEqual(callCount, 3);
+    // is good enough to not freeze / OOM
+    for (let i = 0; i < 25; i++) {
+      count.set(count.get() + 1);
+      await waitForMicrotask();
+      assert.strictEqual(callCount, 3 + i);
+    }
   });
 });
