@@ -18,22 +18,22 @@ describe("SignalWeakMap", function () {
     assert.throws(
       // @ts-expect-error -- point is testing constructor error
       () => map.set("aoeu", 123),
-      /Invalid value used as weak map key/,
+      TypeError,
     );
     assert.throws(
       // @ts-expect-error -- point is testing constructor error
       () => map.set(true, 123),
-      /Invalid value used as weak map key/,
+      TypeError,
     );
     assert.throws(
       // @ts-expect-error -- point is testing constructor error
       () => map.set(123, 123),
-      /Invalid value used as weak map key/,
+      TypeError,
     );
     assert.throws(
       // @ts-expect-error -- point is testing constructor error
       () => map.set(undefined, 123),
-      /Invalid value used as weak map key/,
+      TypeError,
     );
   });
 
