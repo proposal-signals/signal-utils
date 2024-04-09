@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2024-04-09)
+
+signal-utils 0.12.2 (patch)
+
+#### :bug: Bug Fix
+* `signal-utils`
+  * [#37](https://github.com/NullVoxPopuli/signal-utils/pull/37) Fix effect hang / OOM issue ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `signal-utils`
+  * [#34](https://github.com/NullVoxPopuli/signal-utils/pull/34) Test against more environments ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-07)
 
 signal-utils 0.12.1 (patch)
