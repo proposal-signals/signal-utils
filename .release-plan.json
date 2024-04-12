@@ -1,21 +1,17 @@
 {
   "solution": {
     "signal-utils": {
-      "impact": "patch",
-      "oldVersion": "0.12.1",
-      "newVersion": "0.12.2",
+      "impact": "minor",
+      "oldVersion": "0.12.2",
+      "newVersion": "0.13.0",
       "constraints": [
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-09)\n\nsignal-utils 0.12.2 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#37](https://github.com/NullVoxPopuli/signal-utils/pull/37) Fix effect hang / OOM issue ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#34](https://github.com/NullVoxPopuli/signal-utils/pull/34) Test against more environments ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-12)\n\nsignal-utils 0.13.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#39](https://github.com/NullVoxPopuli/signal-utils/pull/39) feat(effect): allow unsubscribe ([@nicojs](https://github.com/nicojs))\n\n#### Committers: 1\n- Nico Jansen ([@nicojs](https://github.com/nicojs))\n"
 }
