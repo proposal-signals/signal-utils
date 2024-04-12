@@ -1,4 +1,4 @@
-import { describe, test, assert, expect } from "vitest";
+import { describe, test, assert } from "vitest";
 import { Signal } from "signal-polyfill";
 import { effect } from "../../src/subtle/microtask-effect.ts";
 import { waitForMicrotask } from "../helpers.ts";
