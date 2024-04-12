@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-04-12)
+
+signal-utils 0.13.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#39](https://github.com/NullVoxPopuli/signal-utils/pull/39) feat(effect): allow unsubscribe ([@nicojs](https://github.com/nicojs))
+
+#### Committers: 1
+- Nico Jansen ([@nicojs](https://github.com/nicojs))
+
 ## Release (2024-04-09)
 
 signal-utils 0.12.2 (patch)
