@@ -35,15 +35,7 @@ export function effect(cb: () => void) {
 
   c.get();
 
-  // We don't have anything to run this unwatch
-  // because we don't have the concept
-  // of an owner/container/lifetime.
-  //
-  // We also *can't* really have a lifetime concept
-  // without encroaching on the goals of Starbeam.
-  // (Or a full-fledged framework)
-  //
-  // (Starbeam is universal rectivity,
-  //   solving timing and lifetime semantics across frameworks)
-  // return () => watcher.unwatch(c);
+  return () => {
+    watcher.unwatch(c);
+  };
 }

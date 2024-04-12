@@ -27,4 +27,23 @@ describe("effect (via queueMicrotask)", () => {
       assert.strictEqual(callCount, 3 + i);
     }
   });
+
+  test("it allows unsubscribe", async () => {
+    // Arrange
+    let state = new Signal.State(0);
+    let actualEffectedState = -1;
+    const unsubscribe = effect(() => {
+      actualEffectedState = state.get();
+    });
+    state.set(42);
+    await waitForMicrotask();
+
+    // Act
+    unsubscribe();
+    state.set(0);
+    await waitForMicrotask();
+
+    // Assert
+    assert.equal(actualEffectedState, 42);
+  });
 });
