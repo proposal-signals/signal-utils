@@ -1,4 +1,4 @@
-import { describe, test, assert } from "vitest";
+import { describe, test, assert, expect } from "vitest";
 import { Signal } from "signal-polyfill";
 import { effect } from "../../src/subtle/microtask-effect.ts";
 import { waitForMicrotask } from "../helpers.ts";
@@ -26,5 +26,24 @@ describe("effect (via queueMicrotask)", () => {
       await waitForMicrotask();
       assert.strictEqual(callCount, 3 + i);
     }
+  });
+
+  test("it allows unsubscribe", async () => {
+    // Arrange
+    let state = new Signal.State(0);
+    let actualEffectedState = -1;
+    const unsubscribe = effect(() => {
+      actualEffectedState = state.get();
+    });
+    state.set(42);
+    await waitForMicrotask();
+
+    // Act
+    unsubscribe();
+    state.set(0);
+    await waitForMicrotask();
+
+    // Assert
+    assert.equal(actualEffectedState, 42);
   });
 });
