@@ -6,25 +6,96 @@
  *       this file needs a lot of work
  *
  */
-import {
-  dirtyCollection,
-  fnCacheFor,
-  hasStorage,
-  initStorage,
-  readCollection,
-  readStorage,
-  updateStorage,
-} from './utils';
 import { Signal } from "signal-polyfill";
-import { createStorage } from "./-private/util.ts";
+import { createStorage, fnCacheFor, type Storage } from "./-private/util.ts";
+import { SignalObject } from './object.ts';
+import { SignalArray } from './array.ts';
 
 type DeepTrackedArgs<T> =
   | [T[]]
   | [Record<string, unknown>]
-  | [object, string | symbol, PropertyDescriptor];
+  | [ClassAccessorDecoratorTarget<unknown, T>, ClassAccessorDecoratorContext];
 
 type PropertyList = Array<string | number | Symbol>;
 type TrackedProxy<T> = T;
+
+const STORAGES_CACHE = new WeakMap<
+  object | Array<unknown>,
+  // The tracked storage for an object or array.
+  // ie: TrackedArray, TrackedObject, but all in one
+  Map<KeyType, Storage>
+>();
+
+const COLLECTION = Symbol('__ COLLECTION __') as unknown as KeyType;
+
+function ensureStorages(context: any) {
+  let existing = STORAGES_CACHE.get(context);
+
+  if (!existing) {
+    existing = new Map();
+    STORAGES_CACHE.set(context, existing);
+  }
+
+  return existing;
+}
+
+function storageFor(context: any, key: KeyType) {
+  let storages = ensureStorages(context);
+
+  return storages.get(key);
+}
+
+export function initStorage(context: any, key: KeyType, initial = null) {
+  let storages = ensureStorages(context);
+
+  let initialStorage = new Signal.State(initial, { equals: () => false });
+
+  storages.set(key, initialStorage);
+
+  return initialStorage.get();
+}
+
+export function hasStorage(context: any, key: KeyType) {
+  return Boolean(storageFor(context, key));
+}
+
+export function readStorage(context: any, key: KeyType) {
+  let storage = storageFor(context, key);
+
+  if (storage === undefined) {
+    return initStorage(context, key);
+  }
+
+  return storage.get();
+}
+
+export function updateStorage(context: any, key: KeyType, value: any = null) {
+  let storage = storageFor(context, key);
+
+  if (!storage) {
+    initStorage(context, key, value);
+
+    return;
+  }
+
+  storage.set(value);
+}
+
+export function readCollection(context: any) {
+  if (!hasStorage(context, COLLECTION)) {
+    initStorage(context, COLLECTION, context);
+  }
+
+  return readStorage(context, COLLECTION);
+}
+
+export function dirtyCollection(context: any) {
+  if (!hasStorage(context, COLLECTION)) {
+    initStorage(context, COLLECTION, context);
+  }
+
+  return updateStorage(context, COLLECTION, context);
+}
 
 /**
  * Deeply track an Array, and all nested objects/arrays within.
@@ -32,49 +103,59 @@ type TrackedProxy<T> = T;
  * If an element / value is ever a non-object or non-array, deep-tracking will exit
  *
  */
-export function tracked<T>(arr: T[]): TrackedProxy<T[]>;
+export function deepSignal<T>(arr: T[]): TrackedProxy<T[]>;
 /**
  * Deeply track an Object, and all nested objects/arrays within.
  *
  * If an element / value is ever a non-object or non-array, deep-tracking will exit
  *
  */
-export function tracked<T extends Record<string, unknown>>(obj: T): TrackedProxy<T>;
+export function deepSignal<T extends Record<string, unknown>>(obj: T): TrackedProxy<T>;
 /**
  * Deeply track an Object or Array, and all nested objects/arrays within.
  *
  * If an element / value is ever a non-object or non-array, deep-tracking will exit
  *
  */
-export function tracked(...args: any): any;
+export function deepSignal(...args: any): any;
 
-export function tracked<T>(...[obj, key, desc]: DeepTrackedArgs<T>): unknown {
-  if (key !== undefined && desc !== undefined) {
-    return deepTrackedForDescriptor(obj, key, desc);
+export function deepSignal<T>(...[target, context]: any[]): unknown {
+  if (target !== undefined && context !== undefined) {
+    return deepTrackedForDescriptor(target, context);
   }
 
-  return deepTracked(obj);
+  return deep(target);
 }
 
-function deepTrackedForDescriptor(_obj: object, key: string | symbol, desc: any): any {
-  let initializer = desc.initializer;
+function deepTrackedForDescriptor<Value = any>(
+  target: ClassAccessorDecoratorTarget<unknown, Value>,
+  context: ClassAccessorDecoratorContext,
+): ClassAccessorDecoratorResult<unknown, Value> {
+  const { get, set } = target;
+  const { name: key } = context;
 
-  delete desc.initializer;
-  delete desc.value;
-  delete desc.writable;
-  delete desc.configurable;
+  return {
+    get(): Value {
+      if (hasStorage(this, key)) {
+        return readStorage(this, key);
+      }
 
-  desc.get = function get() {
-    if (hasStorage(this, key)) {
-      return readStorage(this, key);
-    }
+      let value = get.call(this);
+      return initStorage(this, key, deep(value));
+    },
 
-    return initStorage(this, key, deepTracked(initializer?.call(this)));
-  };
+    set(value: Value) {
+      set(this, deep(value));
+      //updateStorage(this, key, deepTracked(value));
+      // SAFETY: does TS not allow us to have a different type internally?
+      //         maybe I did something goofy.
+      //(get.call(this) as Signal.State<Value>).set(value);
+    },
 
-  desc.set = function set(v: any) {
-    updateStorage(this, key, deepTracked(v));
-  };
+    init(value: Value) {
+      return deep(value);
+    },
+  }
 }
 
 const TARGET = Symbol('TARGET');
@@ -127,7 +208,7 @@ const ARRAY_DIRTY_METHODS = [
 
 const ARRAY_QUERY_METHODS: PropertyList = ['indexOf', 'contains', 'lastIndexOf', 'includes'];
 
-function deepTracked<T extends object>(obj?: T | undefined): T | undefined | null {
+export function deep<T>(obj: T): T {
   if (obj === null || obj === undefined) {
     return obj;
   }
@@ -168,7 +249,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
         readCollection(target);
         readStorage(target, parsed);
 
-        return deepTracked(value);
+        return deep(value);
       }
 
       if (ARRAY_COLLECTION_PROPERTIES.includes(property)) {
@@ -262,7 +343,7 @@ const objProxyHandler = {
 
     readStorage(target, prop);
 
-    return deepTracked(Reflect.get(target, prop, receiver));
+    return deep(Reflect.get(target, prop, receiver));
   },
   has<T extends object>(target: T, prop: keyof T) {
     if (SECRET_PROPERTIES.includes(prop)) {

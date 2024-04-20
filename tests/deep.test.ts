@@ -1,9 +1,28 @@
-import { cached } from '../src/cached';
+import { cached } from '../src/cached.ts';
 import { guard } from './helpers';
 import { describe, test, assert } from 'vitest';
-import { signal, deep } from '../src/deep.ts';
+import { deepSignal as signal, deep } from '../src/deep.ts';
+import { assertReactivelySettled } from "./helpers.ts";
 
-describe('deep signal', function() {
+describe('deep', () => {
+  test('object access', () => {
+    let reactive = deep({});
+
+
+    assert.notOk(reactive.obj?.foo?.bar);
+
+    reactive.obj = { foo: { bar: 2 } };
+
+    assert.strictEqual(reactive.obj?.foo?.bar, 2);
+
+    assertReactivelySettled({
+      access: () => reactive.foo,
+      change: () => (reactive.foo += 2),
+    });
+  });
+});
+
+describe('deepSignal', function() {
   describe('Objects', function() {
     test('object access', async function() {
       class Foo {
