@@ -18,15 +18,16 @@ type DeepTrackedArgs<T> =
 
 type PropertyList = Array<string | number | Symbol>;
 type TrackedProxy<T> = T;
+type Key = string | symbol;
 
 const STORAGES_CACHE = new WeakMap<
   object | Array<unknown>,
   // The tracked storage for an object or array.
   // ie: TrackedArray, TrackedObject, but all in one
-  Map<KeyType, Storage>
+  Map<Key, Storage>
 >();
 
-const COLLECTION = Symbol('__ COLLECTION __') as unknown as KeyType;
+const COLLECTION = Symbol('__ COLLECTION __');
 
 function ensureStorages(context: any) {
   let existing = STORAGES_CACHE.get(context);
@@ -39,13 +40,13 @@ function ensureStorages(context: any) {
   return existing;
 }
 
-function storageFor(context: any, key: KeyType) {
+function storageFor(context: any, key: Key) {
   let storages = ensureStorages(context);
 
   return storages.get(key);
 }
 
-export function initStorage(context: any, key: KeyType, initial = null) {
+export function initStorage(context: any, key: Key, initial = null) {
   let storages = ensureStorages(context);
 
   let initialStorage = new Signal.State(initial, { equals: () => false });
@@ -55,11 +56,11 @@ export function initStorage(context: any, key: KeyType, initial = null) {
   return initialStorage.get();
 }
 
-export function hasStorage(context: any, key: KeyType) {
+export function hasStorage(context: any, key: Key) {
   return Boolean(storageFor(context, key));
 }
 
-export function readStorage(context: any, key: KeyType) {
+export function readStorage(context: any, key: Key) {
   let storage = storageFor(context, key);
 
   if (storage === undefined) {
@@ -69,7 +70,7 @@ export function readStorage(context: any, key: KeyType) {
   return storage.get();
 }
 
-export function updateStorage(context: any, key: KeyType, value: any = null) {
+export function updateStorage(context: any, key: Key, value: any = null) {
   let storage = storageFor(context, key);
 
   if (!storage) {
@@ -137,11 +138,11 @@ function deepTrackedForDescriptor<Value = any>(
   return {
     get(): Value {
       if (hasStorage(this, key)) {
-        return readStorage(this, key);
+        return readStorage(this, key) as Value;
       }
 
       let value = get.call(this);
-      return initStorage(this, key, deep(value));
+      return initStorage(this, key, deep(value)) as Value;
     },
 
     set(value: Value) {
@@ -162,6 +163,7 @@ const TARGET = Symbol('TARGET');
 const IS_PROXIED = Symbol('IS_PROXIED');
 
 const SECRET_PROPERTIES: PropertyList = [TARGET, IS_PROXIED];
+
 
 const ARRAY_COLLECTION_PROPERTIES = ['length'];
 const ARRAY_CONSUME_METHODS = [
@@ -208,9 +210,9 @@ const ARRAY_DIRTY_METHODS = [
 
 const ARRAY_QUERY_METHODS: PropertyList = ['indexOf', 'contains', 'lastIndexOf', 'includes'];
 
-export function deep<T>(obj: T): T {
+export function deep<T>(obj: T | null | undefined): T {
   if (obj === null || obj === undefined) {
-    return obj;
+    return obj as T;
   }
 
   if (obj[IS_PROXIED as keyof T]) {
