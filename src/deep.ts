@@ -121,8 +121,12 @@ export function deepSignal<T extends Record<string, unknown>>(obj: T): TrackedPr
 export function deepSignal(...args: any): any;
 
 export function deepSignal<T>(...[target, context]: any[]): unknown {
-  if (target !== undefined && context !== undefined) {
-    return deepTrackedForDescriptor(target, context);
+  if ('kind' in context) {
+    if (context.kind === 'accessor') {
+      return deepTrackedForDescriptor(target, context);
+    }
+
+    throw new Error(`Decorators of kind ${context.kind} are not supported.`);
   }
 
   return deep(target);
@@ -132,8 +136,8 @@ function deepTrackedForDescriptor<Value = any>(
   target: ClassAccessorDecoratorTarget<unknown, Value>,
   context: ClassAccessorDecoratorContext,
 ): ClassAccessorDecoratorResult<unknown, Value> {
-  const { get, set } = target;
   const { name: key } = context;
+  const { get, set } = target;
 
   return {
     get(): Value {
@@ -141,12 +145,12 @@ function deepTrackedForDescriptor<Value = any>(
         return readStorage(this, key) as Value;
       }
 
-      let value = get.call(this);
-      return initStorage(this, key, deep(value)) as Value;
+      let value = get.call(this); // already deep, due to init
+      return initStorage(this, key, value) as Value;
     },
 
     set(value: Value) {
-      set(this, deep(value));
+      set.call(this, deep(value));
       //updateStorage(this, key, deepTracked(value));
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.

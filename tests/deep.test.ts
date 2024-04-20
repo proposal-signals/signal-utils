@@ -37,13 +37,17 @@ describe('deep', () => {
   });
 
   describe('unproxyable', () => {
-    let values = [undefined, null, true, false, 1, '', 'foo'];
+    let values = [undefined, null, true, false, 1, '', NaN, 'foo'];
 
     for (let value of values) {
       test(`'${value}' stays '${value}'`, () => {
         let reactive = deep(value);
 
-        assert.strictEqual(reactive, value);
+        if (Number.isNaN(value)) {
+          assert.ok(Number.isNaN(reactive));
+        } else {
+          assert.strictEqual(reactive, value);
+        }
       });
     }
   });
@@ -65,11 +69,11 @@ describe('deep', () => {
 
 });
 
-describe.skip('deepSignal', function() {
+describe('deepSignal', function() {
   describe('Objects', function() {
     test('object access', async function() {
       class Foo {
-        @signal obj = {} as any;
+        @signal accessor obj = {} as any;
 
         @cached
         get objDeep() {
@@ -96,7 +100,7 @@ describe.skip('deepSignal', function() {
 
     test('object access in an array', async function() {
       class Foo {
-        @signal arr: any[] = [];
+        @signal accessor arr: any[] = [];
 
         @cached
         get arrDeep() {
@@ -115,7 +119,7 @@ describe.skip('deepSignal', function() {
 
     test('undefined to object', async function() {
       class Foo {
-        @signal obj?: Record<string, any>;
+        @signal accessor obj: Record<string, any> | undefined = undefined;
       }
 
       let instance = new Foo();
@@ -129,7 +133,7 @@ describe.skip('deepSignal', function() {
 
     test('null to object', async function() {
       class Foo {
-        @signal obj: Record<string, any> | null = null;
+        @signal accessor obj: Record<string, any> | null = null;
       }
 
       let instance = new Foo();
@@ -146,7 +150,7 @@ describe.skip('deepSignal', function() {
     describe('#splice', function() {
       test('it works', async function() {
         class Foo {
-          @signal arr: any[] = [0, 1, 3];
+          @signal accessor arr: any[] = [0, 1, 3];
 
           @cached
           get arrDeep() {
@@ -163,7 +167,7 @@ describe.skip('deepSignal', function() {
 
       test('it works on deeply nested arrays', async function() {
         class Foo {
-          @signal obj = { children: [{ property: [0, 1, 3] }] };
+          @signal accessor obj = { children: [{ property: [0, 1, 3] }] };
 
           splice = () => {
             guard(`Test failed to define an array on obj.children`, this.obj.children[0]);
@@ -189,7 +193,7 @@ describe.skip('deepSignal', function() {
 
     test('#indexOf works', async function() {
       class Foo {
-        @signal arr = [] as any;
+        @signal accessor arr = [] as any;
 
         get item1() {
           return arr[0];
@@ -214,7 +218,7 @@ describe.skip('deepSignal', function() {
 
     test('#indexOf works multiple times', async function() {
       class Foo {
-        @signal arr = [] as any;
+        @signal accessor arr = [] as any;
       }
 
       let instance = new Foo();
@@ -234,7 +238,7 @@ describe.skip('deepSignal', function() {
 
   test('array data can be re-set', async function() {
     class Foo {
-      @signal arr: any[] = [0, 1, 3];
+      @signal accessor arr: any[] = [0, 1, 3];
 
       @cached
       get arrDeep() {
@@ -251,8 +255,7 @@ describe.skip('deepSignal', function() {
 
   test('array data can be immutably treated', async function() {
     class Foo {
-      @signal
-      arr: { id: number; prop: string }[] = [
+      @signal accessor arr: { id: number; prop: string }[] = [
         {
           id: 1,
           prop: 'foo',
