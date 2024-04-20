@@ -1,19 +1,13 @@
+import { cached } from '../src/cached';
+import { guard } from './helpers';
+import { describe, test, assert } from 'vitest';
+import { signal, deep } from '../src/deep.ts';
 
-import { cached } from '@glimmer/tracking';
-import { assert as debugAssert } from '@ember/debug';
-import { settled } from '@ember/test-helpers';
-import { module, test } from 'qunit';
-import { setupTest } from 'ember-qunit';
-
-import { tracked } from 'ember-deep-tracked';
-
-module('deep tracked', function(hooks) {
-  setupTest(hooks);
-
-  module('Objects', function() {
-    test('object access', async function(assert) {
+describe('deep signal', function() {
+  describe('Objects', function() {
+    test('object access', async function() {
       class Foo {
-        @tracked obj = {} as any;
+        @signal obj = {} as any;
 
         @cached
         get objDeep() {
@@ -26,25 +20,21 @@ module('deep tracked', function(hooks) {
       assert.notOk(instance.objDeep);
 
       instance.obj.foo = { bar: 3 };
-      await settled();
       assert.strictEqual(instance.objDeep, 3);
 
       instance.obj.foo = { bar: 4 };
-      await settled();
       assert.strictEqual(instance.objDeep, 4);
 
       instance.obj = { foo: { bar: 5 } };
-      await settled();
       assert.strictEqual(instance.objDeep, 5);
 
       instance.obj.foo = { bar: 4 };
-      await settled();
       assert.strictEqual(instance.objDeep, 4);
     });
 
-    test('object access in an array', async function(assert) {
+    test('object access in an array', async function() {
       class Foo {
-        @tracked arr: any[] = [];
+        @signal arr: any[] = [];
 
         @cached
         get arrDeep() {
@@ -57,14 +47,13 @@ module('deep tracked', function(hooks) {
       assert.notOk(instance.arrDeep);
 
       instance.arr.push({ foo: { bar: 2 } });
-      await settled();
 
       assert.strictEqual(instance.arrDeep, 2);
     });
 
-    test('undefined to object', async function(assert) {
+    test('undefined to object', async function() {
       class Foo {
-        @tracked obj?: Record<string, any>;
+        @signal obj?: Record<string, any>;
       }
 
       let instance = new Foo();
@@ -72,14 +61,13 @@ module('deep tracked', function(hooks) {
       assert.strictEqual(instance.obj, null);
 
       instance.obj = {};
-      await settled();
 
       assert.deepEqual(instance.obj, {});
     });
 
-    test('null to object', async function(assert) {
+    test('null to object', async function() {
       class Foo {
-        @tracked obj: Record<string, any> | null = null;
+        @signal obj: Record<string, any> | null = null;
       }
 
       let instance = new Foo();
@@ -87,17 +75,16 @@ module('deep tracked', function(hooks) {
       assert.strictEqual(instance.obj, null);
 
       instance.obj = {};
-      await settled();
 
       assert.deepEqual(instance.obj, {});
     });
   });
 
-  module('Arrays', function() {
-    module('#splice', function() {
-      test('it works', async function(assert) {
+  describe('Arrays', function() {
+    describe('#splice', function() {
+      test('it works', async function() {
         class Foo {
-          @tracked arr: any[] = [0, 1, 3];
+          @signal arr: any[] = [0, 1, 3];
 
           @cached
           get arrDeep() {
@@ -112,19 +99,19 @@ module('deep tracked', function(hooks) {
         assert.deepEqual(instance.arr, [0, 3]);
       });
 
-      test('it works on deeply nested arrays', async function(assert) {
+      test('it works on deeply nested arrays', async function() {
         class Foo {
-          @tracked obj = { children: [{ property: [0, 1, 3] }] };
+          @signal obj = { children: [{ property: [0, 1, 3] }] };
 
           splice = () => {
-            debugAssert(`Test failed to define an array on obj.children`, this.obj.children[0]);
+            guard(`Test failed to define an array on obj.children`, this.obj.children[0]);
 
             return this.obj.children[0].property.splice(1, 1);
           };
 
           @cached
           get output() {
-            debugAssert(`Test failed to define an array on obj.children`, this.obj.children[0]);
+            guard(`Test failed to define an array on obj.children`, this.obj.children[0]);
 
             return this.obj.children[0].property;
           }
@@ -138,11 +125,9 @@ module('deep tracked', function(hooks) {
       });
     });
 
-    test('#indexOf works', async function(assert) {
-      assert.expect(2);
-
+    test('#indexOf works', async function() {
       class Foo {
-        @tracked arr = [] as any;
+        @signal arr = [] as any;
 
         get item1() {
           return arr[0];
@@ -165,11 +150,9 @@ module('deep tracked', function(hooks) {
       assert.strictEqual(second, 1);
     });
 
-    test('#indexOf works multiple times', async function(assert) {
-      assert.expect(2);
-
+    test('#indexOf works multiple times', async function() {
       class Foo {
-        @tracked arr = [] as any;
+        @signal arr = [] as any;
       }
 
       let instance = new Foo();
@@ -187,9 +170,9 @@ module('deep tracked', function(hooks) {
     });
   });
 
-  test('array data can be re-set', async function(assert) {
+  test('array data can be re-set', async function() {
     class Foo {
-      @tracked arr: any[] = [0, 1, 3];
+      @signal arr: any[] = [0, 1, 3];
 
       @cached
       get arrDeep() {
@@ -204,9 +187,9 @@ module('deep tracked', function(hooks) {
     assert.deepEqual(instance.arr, [4, 8]);
   });
 
-  test('array data can be immutably treated', async function(assert) {
+  test('array data can be immutably treated', async function() {
     class Foo {
-      @tracked
+      @signal
       arr: { id: number; prop: string }[] = [
         {
           id: 1,
@@ -267,74 +250,4 @@ module('deep tracked', function(hooks) {
     ]);
   });
 });
-
-
-
-interface LegacyObject {
-  category: {
-    identifier: string;
-  };
-}
-
-interface ModernObject {
-  category: {
-    ident: string;
-  };
-}
-
-function transformLegacyToModern(old: LegacyObject, counter: () => void): ModernObject {
-  counter();
-
-  return {
-    category: {
-      ident: old.category.identifier,
-    },
-  };
-}
-
-module('retention test', function(hooks) {
-  setupRenderingTest(hooks);
-
-  // Must be defined outside of the beforeEach
-  class Foo extends Component<{ foo: LegacyObject; counter: () => void }> {
-    // @tracked obj = { category: { ident: this.args.foo.category.identifier } };
-    @tracked obj = transformLegacyToModern(this.args.foo, this.args.counter);
-  }
-  setComponentTemplate(hbs`<out>{{this.obj.category.ident}}</out>`, Foo);
-
-  hooks.beforeEach(function() {
-    this.setProperties({ Foo });
-  });
-
-  test('test a', async function(assert) {
-    const foo: LegacyObject = { category: { identifier: 'abc' } };
-    let counter = 0;
-
-    this.set('foo', foo);
-    this.set('counter', () => {
-      counter++;
-    });
-    assert.strictEqual(counter, 0);
-    await render(hbs`<this.Foo @foo={{this.foo}} @counter={{this.counter}}/>`);
-
-    assert.dom('out').hasText('abc');
-    assert.strictEqual(counter, 1);
-  });
-
-  test('test b', async function(assert) {
-    const foo: LegacyObject = { category: { identifier: 'def' } };
-    let counter = 0;
-
-    this.set('foo', foo);
-    this.set('counter', () => {
-      counter++;
-    });
-    assert.strictEqual(counter, 0);
-    await render(hbs`<this.Foo @foo={{this.foo}} @counter={{this.counter}}/>`);
-
-    assert.dom('out').hasText('def');
-    assert.strictEqual(counter, 1);
-  });
-});
-
 
