@@ -8,8 +8,8 @@
  */
 import { Signal } from "signal-polyfill";
 import { createStorage, fnCacheFor, type Storage } from "./-private/util.ts";
-import { SignalObject } from './object.ts';
-import { SignalArray } from './array.ts';
+import { SignalObject } from "./object.ts";
+import { SignalArray } from "./array.ts";
 
 type DeepTrackedArgs<T> =
   | [T[]]
@@ -18,7 +18,10 @@ type DeepTrackedArgs<T> =
 
 type PropertyList = Array<string | number | Symbol>;
 type TrackedProxy<T> = T;
-type Key = string | symbol;
+
+const COLLECTION = Symbol("__ COLLECTION __");
+
+type Key = number | string | symbol;
 
 const STORAGES_CACHE = new WeakMap<
   object | Array<unknown>,
@@ -26,8 +29,6 @@ const STORAGES_CACHE = new WeakMap<
   // ie: TrackedArray, TrackedObject, but all in one
   Map<Key, Storage>
 >();
-
-const COLLECTION = Symbol('__ COLLECTION __');
 
 function ensureStorages(context: any) {
   let existing = STORAGES_CACHE.get(context);
@@ -46,10 +47,10 @@ function storageFor(context: any, key: Key) {
   return storages.get(key);
 }
 
-export function initStorage(context: any, key: Key, initial = null) {
+export function initStorage(context: any, key: Key, initialValue: any = null) {
   let storages = ensureStorages(context);
 
-  let initialStorage = new Signal.State(initial, { equals: () => false });
+  let initialStorage = createStorage(initialValue);
 
   storages.set(key, initialStorage);
 
@@ -64,7 +65,7 @@ export function readStorage(context: any, key: Key) {
   let storage = storageFor(context, key);
 
   if (storage === undefined) {
-    return initStorage(context, key);
+    return initStorage(context, key, null);
   }
 
   return storage.get();
@@ -111,7 +112,9 @@ export function deepSignal<T>(arr: T[]): TrackedProxy<T[]>;
  * If an element / value is ever a non-object or non-array, deep-tracking will exit
  *
  */
-export function deepSignal<T extends Record<string, unknown>>(obj: T): TrackedProxy<T>;
+export function deepSignal<T extends Record<string, unknown>>(
+  obj: T,
+): TrackedProxy<T>;
 /**
  * Deeply track an Object or Array, and all nested objects/arrays within.
  *
@@ -121,8 +124,8 @@ export function deepSignal<T extends Record<string, unknown>>(obj: T): TrackedPr
 export function deepSignal(...args: any): any;
 
 export function deepSignal<T>(...[target, context]: any[]): unknown {
-  if ('kind' in context) {
-    if (context.kind === 'accessor') {
+  if ("kind" in context) {
+    if (context.kind === "accessor") {
       return deepTrackedForDescriptor(target, context);
     }
 
@@ -150,7 +153,9 @@ function deepTrackedForDescriptor<Value = any>(
     },
 
     set(value: Value) {
-      set.call(this, deep(value));
+      let deepValue = deep(value);
+      updateStorage(this, key, deepValue);
+      // set.call(this, deepValue);
       //updateStorage(this, key, deepTracked(value));
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.
@@ -160,59 +165,63 @@ function deepTrackedForDescriptor<Value = any>(
     init(value: Value) {
       return deep(value);
     },
-  }
+  };
 }
 
-const TARGET = Symbol('TARGET');
-const IS_PROXIED = Symbol('IS_PROXIED');
+const TARGET = Symbol("TARGET");
+const IS_PROXIED = Symbol("IS_PROXIED");
 
 const SECRET_PROPERTIES: PropertyList = [TARGET, IS_PROXIED];
 
-
-const ARRAY_COLLECTION_PROPERTIES = ['length'];
+const ARRAY_COLLECTION_PROPERTIES = ["length"];
 const ARRAY_CONSUME_METHODS = [
   Symbol.iterator,
-  'at',
-  'concat',
-  'entries',
-  'every',
-  'filter',
-  'find',
-  'findIndex',
-  'findLast',
-  'findLastIndex',
-  'flat',
-  'flatMap',
-  'forEach',
-  'group',
-  'groupToMap',
-  'includes',
-  'indexOf',
-  'join',
-  'keys',
-  'lastIndexOf',
-  'map',
-  'reduce',
-  'reduceRight',
-  'slice',
-  'some',
-  'toString',
-  'values',
-  'length',
+  "at",
+  "concat",
+  "entries",
+  "every",
+  "filter",
+  "find",
+  "findIndex",
+  "findLast",
+  "findLastIndex",
+  "flat",
+  "flatMap",
+  "forEach",
+  "group",
+  "groupToMap",
+  "includes",
+  "indexOf",
+  "join",
+  "keys",
+  "lastIndexOf",
+  "map",
+  "reduce",
+  "reduceRight",
+  "slice",
+  "some",
+  "toString",
+  "values",
+  "length",
 ];
 
 const ARRAY_DIRTY_METHODS = [
-  'sort',
-  'fill',
-  'pop',
-  'push',
-  'shift',
-  'splice',
-  'unshift',
-  'reverse',
+  "sort",
+  "fill",
+  "pop",
+  "push",
+  "shift",
+  "splice",
+  "unshift",
+  "reverse",
 ];
 
-const ARRAY_QUERY_METHODS: PropertyList = ['indexOf', 'contains', 'lastIndexOf', 'includes'];
+const ARRAY_QUERY_METHODS: PropertyList = [
+  "indexOf",
+  "contains",
+  "lastIndexOf",
+  "includes",
+];
 
 export function deep<T>(obj: T | null | undefined): T {
   if (obj === null || obj === undefined) {
@@ -227,7 +236,7 @@ export function deep<T>(obj: T | null | undefined): T {
     return deepProxy(obj, arrayProxyHandler) as unknown as T;
   }
 
-  if (typeof obj === 'object') {
+  if (typeof obj === "object") {
     return deepProxy(obj, objProxyHandler) as unknown as T;
   }
 
@@ -246,7 +255,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
       return true;
     }
 
-    if (typeof property === 'string') {
+    if (typeof property === "string") {
       let parsed = parseInt(property, 10);
 
       if (!isNaN(parsed)) {
@@ -265,19 +274,19 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
       }
     }
 
-    if (typeof value === 'function') {
+    if (typeof value === "function") {
       let fnCache = fnCacheFor(target);
       let existing = fnCache.get(property);
 
       if (!existing) {
         let fn = (...args: unknown[]) => {
-          if (typeof property === 'string') {
+          if (typeof property === "string") {
             if (ARRAY_QUERY_METHODS.includes(property)) {
               readCollection(target);
 
               let fn = target[property];
 
-              if (typeof fn === 'function') {
+              if (typeof fn === "function") {
                 return fn.call(target, ...args.map(unwrap));
               }
             } else if (ARRAY_CONSUME_METHODS.includes(property)) {
@@ -301,7 +310,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
     return value;
   },
   set(target, property, value, receiver) {
-    if (typeof property === 'string') {
+    if (typeof property === "string") {
       let parsed = parseInt(property, 10);
 
       if (!isNaN(parsed)) {
@@ -312,7 +321,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
         dirtyCollection(target);
 
         return Reflect.set(target, property, value, receiver);
-      } else if (property === 'length') {
+      } else if (property === "length") {
         dirtyCollection(target);
 
         return Reflect.set(target, property, value, receiver);
@@ -367,7 +376,12 @@ const objProxyHandler = {
     return Reflect.ownKeys(target);
   },
 
-  set<T extends object>(target: T, prop: keyof T, value: T[keyof T], receiver: T) {
+  set<T extends object>(
+    target: T,
+    prop: keyof T,
+    value: T[keyof T],
+    receiver: T,
+  ) {
     updateStorage(target, prop);
     dirtyCollection(target);
 
@@ -389,7 +403,10 @@ function unwrap<T>(obj: T) {
   return obj;
 }
 
-function deepProxy<T extends object>(obj: T, handler: ProxyHandler<T>): TrackedProxy<T> {
+function deepProxy<T extends object>(
+  obj: T,
+  handler: ProxyHandler<T>,
+): TrackedProxy<T> {
   let existing = PROXY_CACHE.get(obj);
 
   if (existing) {

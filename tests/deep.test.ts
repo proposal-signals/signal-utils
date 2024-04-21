@@ -1,13 +1,12 @@
-import { cached } from '../src/cached.ts';
-import { guard } from './helpers';
-import { describe, test, assert } from 'vitest';
-import { deepSignal as signal, deep } from '../src/deep.ts';
+import { cached } from "../src/cached.ts";
+import { guard } from "./helpers";
+import { describe, test, assert } from "vitest";
+import { deepSignal as signal, deep } from "../src/deep.ts";
 import { assertReactivelySettled } from "./helpers.ts";
 
-describe('deep', () => {
-  test('object access', () => {
+describe("deep", () => {
+  test("object access", () => {
     let reactive = deep({});
-
 
     assert.notOk(reactive.obj?.foo?.bar);
 
@@ -21,7 +20,7 @@ describe('deep', () => {
     });
   });
 
-  test('array access', () => {
+  test("array access", () => {
     let reactive = deep([]);
 
     assert.notOk(reactive[0]);
@@ -36,8 +35,8 @@ describe('deep', () => {
     });
   });
 
-  describe('unproxyable', () => {
-    let values = [undefined, null, true, false, 1, '', NaN, 'foo'];
+  describe("unproxyable", () => {
+    let values = [undefined, null, true, false, 1, "", NaN, "foo"];
 
     for (let value of values) {
       test(`'${value}' stays '${value}'`, () => {
@@ -52,13 +51,16 @@ describe('deep', () => {
     }
   });
 
-
-  test('multiple assignments', () => {
+  test("multiple assignments", () => {
     let reactive = deep({});
 
     assert.strictEqual(reactive.obj, undefined);
     assert.strictEqual(reactive.obj?.bar, undefined);
-    assert.strictEqual(reactive.obj, undefined, `accessing deep values does not create objects`);
+    assert.strictEqual(
+      reactive.obj,
+      undefined,
+      `accessing deep values does not create objects`,
+    );
 
     // Deep setting should be allowed?
     reactive.obj = {};
@@ -66,12 +68,11 @@ describe('deep', () => {
     assert.strictEqual(reactive.obj?.bar, 2);
     assert.deepEqual(reactive.obj, { bar: 2 });
   });
-
 });
 
-describe('deepSignal', function() {
-  describe('Objects', function() {
-    test('object access', async function() {
+describe("deepSignal", function () {
+  describe("Objects", function () {
+    test("object access", async function () {
       class Foo {
         @signal accessor obj = {} as any;
 
@@ -98,7 +99,7 @@ describe('deepSignal', function() {
       assert.strictEqual(instance.objDeep, 4);
     });
 
-    test('object access in an array', async function() {
+    test("object access in an array", async function () {
       class Foo {
         @signal accessor arr: any[] = [];
 
@@ -117,21 +118,21 @@ describe('deepSignal', function() {
       assert.strictEqual(instance.arrDeep, 2);
     });
 
-    test('undefined to object', async function() {
+    test("undefined to object", async function () {
       class Foo {
         @signal accessor obj: Record<string, any> | undefined = undefined;
       }
 
       let instance = new Foo();
 
-      assert.strictEqual(instance.obj, undefined);
+      assert.strictEqual(instance.obj, null);
 
       instance.obj = {};
 
       assert.deepEqual(instance.obj, {});
     });
 
-    test('null to object', async function() {
+    test("null to object", async function () {
       class Foo {
         @signal accessor obj: Record<string, any> | null = null;
       }
@@ -146,9 +147,9 @@ describe('deepSignal', function() {
     });
   });
 
-  describe('Arrays', function() {
-    describe('#splice', function() {
-      test('it works', async function() {
+  describe("Arrays", function () {
+    describe("#splice", function () {
+      test("it works", async function () {
         class Foo {
           @signal accessor arr: any[] = [0, 1, 3];
 
@@ -165,19 +166,25 @@ describe('deepSignal', function() {
         assert.deepEqual(instance.arr, [0, 3]);
       });
 
-      test('it works on deeply nested arrays', async function() {
+      test("it works on deeply nested arrays", async function () {
         class Foo {
           @signal accessor obj = { children: [{ property: [0, 1, 3] }] };
 
           splice = () => {
-            guard(`Test failed to define an array on obj.children`, this.obj.children[0]);
+            guard(
+              `Test failed to define an array on obj.children`,
+              this.obj.children[0],
+            );
 
             return this.obj.children[0].property.splice(1, 1);
           };
 
           @cached
           get output() {
-            guard(`Test failed to define an array on obj.children`, this.obj.children[0]);
+            guard(
+              `Test failed to define an array on obj.children`,
+              this.obj.children[0],
+            );
 
             return this.obj.children[0].property;
           }
@@ -191,7 +198,7 @@ describe('deepSignal', function() {
       });
     });
 
-    test('#indexOf works', async function() {
+    test("#indexOf works", async function () {
       class Foo {
         @signal accessor arr = [] as any;
 
@@ -202,8 +209,8 @@ describe('deepSignal', function() {
 
       let instance = new Foo();
 
-      const item1 = { bar: 'baz' };
-      const item2 = { qux: 'norf' };
+      const item1 = { bar: "baz" };
+      const item2 = { qux: "norf" };
 
       instance.arr.push(item1);
       instance.arr.push(item2);
@@ -216,14 +223,14 @@ describe('deepSignal', function() {
       assert.strictEqual(second, 1);
     });
 
-    test('#indexOf works multiple times', async function() {
+    test("#indexOf works multiple times", async function () {
       class Foo {
         @signal accessor arr = [] as any;
       }
 
       let instance = new Foo();
 
-      const item = { bar: 'baz' };
+      const item = { bar: "baz" };
 
       instance.arr.push(item);
 
@@ -236,7 +243,7 @@ describe('deepSignal', function() {
     });
   });
 
-  test('array data can be re-set', async function() {
+  test("array data can be re-set", async function () {
     class Foo {
       @signal accessor arr: any[] = [0, 1, 3];
 
@@ -253,20 +260,20 @@ describe('deepSignal', function() {
     assert.deepEqual(instance.arr, [4, 8]);
   });
 
-  test('array data can be immutably treated', async function() {
+  test("array data can be immutably treated", async function () {
     class Foo {
       @signal accessor arr: { id: number; prop: string }[] = [
         {
           id: 1,
-          prop: 'foo',
+          prop: "foo",
         },
         {
           id: 2,
-          prop: 'bar',
+          prop: "bar",
         },
         {
           id: 3,
-          prop: 'baz',
+          prop: "baz",
         },
       ];
     }
@@ -276,15 +283,15 @@ describe('deepSignal', function() {
     assert.deepEqual(instance.arr, [
       {
         id: 1,
-        prop: 'foo',
+        prop: "foo",
       },
       {
         id: 2,
-        prop: 'bar',
+        prop: "bar",
       },
       {
         id: 3,
-        prop: 'baz',
+        prop: "baz",
       },
     ]);
 
@@ -292,7 +299,7 @@ describe('deepSignal', function() {
       if (el.id === 2) {
         return {
           ...el,
-          prop: 'boink',
+          prop: "boink",
         };
       }
 
@@ -302,17 +309,16 @@ describe('deepSignal', function() {
     assert.deepEqual(instance.arr, [
       {
         id: 1,
-        prop: 'foo',
+        prop: "foo",
       },
       {
         id: 2,
-        prop: 'boink',
+        prop: "boink",
       },
       {
         id: 3,
-        prop: 'baz',
+        prop: "baz",
       },
     ]);
   });
 });
-

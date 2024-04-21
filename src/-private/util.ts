@@ -11,8 +11,8 @@ import { Signal } from "signal-polyfill";
  *
  * (though, see deep.ts for nested / deep behavior)
  */
-export const createStorage = () =>
-  new Signal.State(null, { equals: () => false });
+export const createStorage = (initial = null) =>
+  new Signal.State(initial, { equals: () => false });
 
 /**
  * Just an alias for brevity
@@ -20,7 +20,6 @@ export const createStorage = () =>
 export type Storage = Signal.State<null>;
 export type StorageMap<T> = Map<T, Storage>;
 export type StorageWeakMap<T extends object> = WeakMap<T, Storage>;
-
 
 const BOUND_FUNS = new WeakMap<object, Map<KeyType, unknown>>();
 

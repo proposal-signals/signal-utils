@@ -1,7 +1,7 @@
 import { assert, test } from "vitest";
 import { Signal } from "signal-polyfill";
 
-class GuardError extends Error { }
+class GuardError extends Error {}
 
 export function guard(msg: string, test: unknown): asserts test {
   if (!test) {
