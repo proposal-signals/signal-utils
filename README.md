@@ -30,7 +30,6 @@ npm add signal-utils
   - [deep](#deep-function)
 - class utilities
   - [@signal](#signal)
-  - [@cached](#cached)
   - [@localCopy](#localcopy)
   - [@deepSignal](#deepSignal)
 - subtle utilities
@@ -65,18 +64,16 @@ let state = new State();
 </template>
 ```
 
-### `@cached`
-
-A utility decorator for caching getters in classes. Useful for caching expensive computations. 
+This utility decorator can also be used for caching getters in classes. Useful for caching expensive computations. 
 
 ```js
 import { signal } from 'signal-utils';
-import { cached } from 'signal-utils/cached';
 
 class State {
     @signal accessor #value = 3;
 
-    @cached
+    // NOTE: read-only because there is no setter, and a setter is not allowed.
+    @signal
     get doubled() {
         // imagine an expensive operation
         return this.#value * 2;
