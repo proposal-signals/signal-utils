@@ -118,7 +118,7 @@ export function deepSignal<T extends Record<string, unknown>>(
  */
 export function deepSignal(...args: any): any;
 
-export function deepSignal<T>(...[target, context]: any[]): unknown {
+export function deepSignal(...[target, context]: any[]): unknown {
   if ("kind" in context) {
     if (context.kind === "accessor") {
       return deepTrackedForDescriptor(target, context);
@@ -135,7 +135,7 @@ function deepTrackedForDescriptor<Value = any>(
   context: ClassAccessorDecoratorContext,
 ): ClassAccessorDecoratorResult<unknown, Value> {
   const { name: key } = context;
-  const { get, set } = target;
+  const { get } = target;
 
   return {
     get(): Value {
