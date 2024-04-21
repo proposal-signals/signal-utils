@@ -1,6 +1,7 @@
+import { signal } from "../src/index.ts";
 import { guard } from "./helpers";
 import { describe, test, assert } from "vitest";
-import { deepSignal as signal, deep } from "../src/deep.ts";
+import { deepSignal, deep } from "../src/deep.ts";
 import { assertReactivelySettled } from "./helpers.ts";
 
 /**
@@ -76,7 +77,7 @@ describe("deepSignal", function () {
   describe("Objects", function () {
     test("object access", async function () {
       class Foo {
-        @signal accessor obj = {} as any;
+        @deepSignal accessor obj = {} as any;
 
         @signal
         get objDeep() {
@@ -103,7 +104,7 @@ describe("deepSignal", function () {
 
     test("object access in an array", async function () {
       class Foo {
-        @signal accessor arr: any[] = [];
+        @deepSignal accessor arr: any[] = [];
 
         @signal
         get arrDeep() {
@@ -122,7 +123,7 @@ describe("deepSignal", function () {
 
     test("undefined to object", async function () {
       class Foo {
-        @signal accessor obj: Record<string, any> | undefined = undefined;
+        @deepSignal accessor obj: Record<string, any> | undefined = undefined;
       }
 
       let instance = new Foo();
@@ -136,7 +137,7 @@ describe("deepSignal", function () {
 
     test("null to object", async function () {
       class Foo {
-        @signal accessor obj: Record<string, any> | null = null;
+        @deepSignal accessor obj: Record<string, any> | null = null;
       }
 
       let instance = new Foo();
@@ -153,7 +154,7 @@ describe("deepSignal", function () {
     describe("#splice", function () {
       test("it works", async function () {
         class Foo {
-          @signal accessor arr: any[] = [0, 1, 3];
+          @deepSignal accessor arr: any[] = [0, 1, 3];
 
           @signal
           get arrDeep() {
@@ -170,7 +171,7 @@ describe("deepSignal", function () {
 
       test("it works on deeply nested arrays", async function () {
         class Foo {
-          @signal accessor obj = { children: [{ property: [0, 1, 3] }] };
+          @deepSignal accessor obj = { children: [{ property: [0, 1, 3] }] };
 
           splice = () => {
             guard(
@@ -202,7 +203,7 @@ describe("deepSignal", function () {
 
     test("#indexOf works", async function () {
       class Foo {
-        @signal accessor arr = [] as any;
+        @deepSignal accessor arr = [] as any;
 
         get item1() {
           return arr[0];
@@ -227,7 +228,7 @@ describe("deepSignal", function () {
 
     test("#indexOf works multiple times", async function () {
       class Foo {
-        @signal accessor arr = [] as any;
+        @deepSignal accessor arr = [] as any;
       }
 
       let instance = new Foo();
@@ -247,7 +248,7 @@ describe("deepSignal", function () {
 
   test("array data can be re-set", async function () {
     class Foo {
-      @signal accessor arr: any[] = [0, 1, 3];
+      @deepSignal accessor arr: any[] = [0, 1, 3];
 
       @signal
       get arrDeep() {
@@ -264,7 +265,7 @@ describe("deepSignal", function () {
 
   test("array data can be immutably treated", async function () {
     class Foo {
-      @signal accessor arr: { id: number; prop: string }[] = [
+      @deepSignal accessor arr: { id: number; prop: string }[] = [
         {
           id: 1,
           prop: "foo",
