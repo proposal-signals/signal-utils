@@ -1,20 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 
-/**
- * TODO: decorators and TS are... fun
- *       this file needs a lot of work
- *
- */
-import { Signal } from "signal-polyfill";
+// import { Signal } from "signal-polyfill";
 import { createStorage, fnCacheFor, type Storage } from "./-private/util.ts";
-import { SignalObject } from "./object.ts";
-import { SignalArray } from "./array.ts";
 
-type DeepTrackedArgs<T> =
-  | [T[]]
-  | [Record<string, unknown>]
-  | [ClassAccessorDecoratorTarget<unknown, T>, ClassAccessorDecoratorContext];
+// TODO: see if we can utilize these existing implementations
+//       would these require yet another proxy?
+//       Array clones the whole array and deep object does not
+//       what are tradeoffs? does it matter much?
+// import { SignalObject } from "./object.ts";
+// import { SignalArray } from "./array.ts";
 
 type PropertyList = Array<string | number | Symbol>;
 type TrackedProxy<T> = T;
@@ -276,7 +271,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
 
     if (typeof value === "function") {
       let fnCache = fnCacheFor(target);
-      let existing = fnCache.get(property);
+      let existing = fnCache.get(property as KeyType);
 
       if (!existing) {
         let fn = (...args: unknown[]) => {
@@ -299,7 +294,7 @@ const arrayProxyHandler: ProxyHandler<Array<unknown>> = {
           return Reflect.apply(value, receiver, args);
         };
 
-        fnCache.set(property, fn);
+        fnCache.set(property as KeyType, fn);
 
         return fn;
       }
@@ -396,7 +391,7 @@ const objProxyHandler = {
 const PROXY_CACHE = new WeakMap<any, object>();
 
 function unwrap<T>(obj: T) {
-  if (TARGET in obj) {
+  if (typeof obj === "object" && obj && TARGET in obj) {
     return obj[TARGET as keyof T];
   }
 
