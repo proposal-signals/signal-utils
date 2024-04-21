@@ -2,16 +2,20 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.12.2",
-      "newVersion": "0.13.0",
+      "oldVersion": "0.13.0",
+      "newVersion": "0.14.0",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :memo: Documentation"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-12)\n\nsignal-utils 0.13.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#39](https://github.com/NullVoxPopuli/signal-utils/pull/39) feat(effect): allow unsubscribe ([@nicojs](https://github.com/nicojs))\n\n#### Committers: 1\n- Nico Jansen ([@nicojs](https://github.com/nicojs))\n"
+  "description": "## Release (2024-04-21)\n\nsignal-utils 0.14.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#47](https://github.com/proposal-signals/signal-utils/pull/47) deep and `@deepSignal` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* `signal-utils`\n  * [#46](https://github.com/proposal-signals/signal-utils/pull/46) Update README.md with install instructions  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#44](https://github.com/proposal-signals/signal-utils/pull/44) Update README.md ([@NesCafe62](https://github.com/NesCafe62))\n\n#### Committers: 2\n- [@NesCafe62](https://github.com/NesCafe62)\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
