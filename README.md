@@ -27,10 +27,12 @@ npm add signal-utils
   - [Promise](#promise)
   - [async function](#async-function) 
   - [localCopy](#localcopy-function)
+  - [deep](#deep-function)
 - class utilities
   - [@signal](#signal)
   - [@cached](#cached)
   - [@localCopy](#localcopy)
+  - [@deepSignal](#deepSignal)
 - subtle utilities
   - [effect](#leaky-effect-via-queuemicrotask)
 
@@ -96,6 +98,58 @@ let state = new State();
 ```
 
 Note that the impact of maintaining a cache is often more expensive than re-deriving the data in the getter. Use sparingly, or to return non-primitive values and maintain referential integrity between repeat accesses.
+
+### `@deepSignal`
+
+A utility decorator for recursively, deeply, and lazily auto-tracking JSON-serializable structures at any depth or size.
+
+```gjs
+import { deepSignal } from 'signal-utils/deep';
+
+class Foo {
+  @deepSignal accessor obj = {};
+}
+
+let instance = new Foo();
+let setData = () => instance.obj.foo = { bar: 3 };
+let inc = () => instance.obj.foo.bar++;
+
+<template>
+  {{instance.obj.foo.bar}}
+
+  <button onclick={{setData}}>Set initial data</button>
+  <button> onclick={{inc}}>increment</button>
+</template>
+```
+
+Note that this can be memory intensive, and should not be the default way to reach for reactivity. Due to the nature of nested proxies, it's also much harder to inspect.
+
+Inspiration for deep reactivity comes from:
+- [ember `@deepTracked`](https://github.com/NullVoxPopuli/ember-deep-tracked/blob/37c506d7f04c00c1f0ab31e740ef15a92bb99feb/ember-deep-tracked/src/-private/deep-tracked.ts#L1)
+- [solid `store`](https://github.com/solidjs/solid/blob/ae56299c8d4cdedc03b835fdcff1004355da742f/packages/solid/store/src/store.ts#L1)
+- [preact `deepSignal`](https://github.com/luisherranz/deepsignal?tab=readme-ov-file#deepsignal)
+- [vue `reactive`](https://github.com/vuejs/core/blob/6d066dd852f6dbd70eb221c7f3367665c081026e/packages/reactivity/src/reactive.ts#L139)
+
+### `deep` function
+
+A utility decorator for recursively, deeply, and lazily auto-tracking JSON-serializable structures at any depth or size.
+
+```gjs
+import { deep } from 'signal-utils/deep';
+
+let obj = deep({});
+let setData = () => obj.foo = { bar: 3 };
+let inc = () => obj.foo.bar++;
+
+<template>
+  {{obj.foo.bar}}
+
+  <button onclick={{setData}}>Set initial data</button>
+  <button> onclick={{inc}}>increment</button>
+</template>
+```
+
+Note that this can be memory intensive, and should not be the default way to reach for reactivity. Due to the nature of nested proxies, it's also much harder to inspect.
 
 ### `@localCopy`
 
