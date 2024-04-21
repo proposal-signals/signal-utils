@@ -118,6 +118,12 @@ let inc = () => instance.obj.foo.bar++;
 
 Note that this can be memory intensive, and should not be the default way to reach for reactivity. Due to the nature of nested proxies, it's also much harder to inspect.
 
+Inspiration for deep reactivity comes from:
+- [ember `@deepTracked`](https://github.com/NullVoxPopuli/ember-deep-tracked/blob/37c506d7f04c00c1f0ab31e740ef15a92bb99feb/ember-deep-tracked/src/-private/deep-tracked.ts#L1)
+- [solid `store`](https://github.com/solidjs/solid/blob/ae56299c8d4cdedc03b835fdcff1004355da742f/packages/solid/store/src/store.ts#L1)
+- [preact `deepSignal`](https://github.com/luisherranz/deepsignal?tab=readme-ov-file#deepsignal)
+- [vue `reactive`](https://github.com/vuejs/core/blob/6d066dd852f6dbd70eb221c7f3367665c081026e/packages/reactivity/src/reactive.ts#L139)
+
 ### `deep` function
 
 A utility decorator for recursively, deeply, and lazily auto-tracking JSON-serializable structures at any depth or size.
