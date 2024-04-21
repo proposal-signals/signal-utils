@@ -226,11 +226,11 @@ function isPromiseLike(data: unknown): data is PromiseLike<unknown> {
 
   ```js
   import Component from '@glimmer/component';
-  import { cached } from 'ember-cached-decorator-polyfill';
+  import { signal } from 'signal-utils';
   import { load } from 'ember-tracked-data/helpers/load';
 
   export default class ExtraInfo extends Component {
-    @cached
+    @signal
     get someData() {return load(fetch('some-url', this.args.someArg));
     }
   }

@@ -1,5 +1,22 @@
 # Changelog
 
+## Release (2024-04-21)
+
+signal-utils 0.14.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#47](https://github.com/proposal-signals/signal-utils/pull/47) deep and `@deepSignal` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* `signal-utils`
+  * [#46](https://github.com/proposal-signals/signal-utils/pull/46) Update README.md with install instructions  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#44](https://github.com/proposal-signals/signal-utils/pull/44) Update README.md ([@NesCafe62](https://github.com/NesCafe62))
+
+#### Committers: 2
+- [@NesCafe62](https://github.com/NesCafe62)
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-12)
 
 signal-utils 0.13.0 (minor)

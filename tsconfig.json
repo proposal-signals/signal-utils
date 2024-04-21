@@ -11,6 +11,11 @@
     "emitDeclarationOnly": true,
 
     /**
+     Stylistic / linting. Does not provide extra type safety.
+     */
+    "noPropertyAccessFromIndexSignature": false,
+
+    /**
       https://www.typescriptlang.org/tsconfig#allowImportingTsExtensions
 
       We want our tooling to know how to resolve our custom files so the appropriate plugins
