@@ -4,9 +4,12 @@ import { describe, test, assert } from "vitest";
 import { deepSignal as signal, deep } from "../src/deep.ts";
 import { assertReactivelySettled } from "./helpers.ts";
 
+/**
+ * How do you type deep objects? is it possible?
+ */
 describe("deep", () => {
   test("object access", () => {
-    let reactive = deep({});
+    let reactive = deep({}) as any;
 
     assert.notOk(reactive.obj?.foo?.bar);
 
@@ -21,7 +24,7 @@ describe("deep", () => {
   });
 
   test("array access", () => {
-    let reactive = deep([]);
+    let reactive = deep([]) as any;
 
     assert.notOk(reactive[0]);
 
@@ -52,7 +55,7 @@ describe("deep", () => {
   });
 
   test("multiple assignments", () => {
-    let reactive = deep({});
+    let reactive = deep({}) as any;
 
     assert.strictEqual(reactive.obj, undefined);
     assert.strictEqual(reactive.obj?.bar, undefined);
