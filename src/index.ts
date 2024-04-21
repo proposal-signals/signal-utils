@@ -101,7 +101,7 @@ function stateDecorator<Value = any>(
   };
 }
 
-export function computedDecorator<Value = any>(
+function computedDecorator<Value = any>(
   target: () => Value,
   context: ClassGetterDecoratorContext,
 ): () => Value {

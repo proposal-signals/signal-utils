@@ -1,4 +1,3 @@
-import { cached } from "../src/cached.ts";
 import { guard } from "./helpers";
 import { describe, test, assert } from "vitest";
 import { deepSignal as signal, deep } from "../src/deep.ts";
@@ -79,7 +78,7 @@ describe("deepSignal", function () {
       class Foo {
         @signal accessor obj = {} as any;
 
-        @cached
+        @signal
         get objDeep() {
           return this.obj.foo?.bar;
         }
@@ -106,7 +105,7 @@ describe("deepSignal", function () {
       class Foo {
         @signal accessor arr: any[] = [];
 
-        @cached
+        @signal
         get arrDeep() {
           return this.arr[0]?.foo?.bar;
         }
@@ -156,7 +155,7 @@ describe("deepSignal", function () {
         class Foo {
           @signal accessor arr: any[] = [0, 1, 3];
 
-          @cached
+          @signal
           get arrDeep() {
             return this.arr[0]?.foo?.bar;
           }
@@ -182,7 +181,7 @@ describe("deepSignal", function () {
             return this.obj.children[0].property.splice(1, 1);
           };
 
-          @cached
+          @signal
           get output() {
             guard(
               `Test failed to define an array on obj.children`,
@@ -250,7 +249,7 @@ describe("deepSignal", function () {
     class Foo {
       @signal accessor arr: any[] = [0, 1, 3];
 
-      @cached
+      @signal
       get arrDeep() {
         return this.arr[0]?.foo?.bar;
       }

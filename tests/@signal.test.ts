@@ -62,4 +62,25 @@ describe("@signal (getter)", () => {
     state.doubled;
     assert.strictEqual(cachedCalls, 2);
   });
+
+  it("errors when used with a setter", () => {
+    assert.throws(() => {
+      class State {
+        #value = 3;
+
+        @signal
+        get doubled() {
+          return this.#value * 2;
+        }
+        // Deliberate incorrect usage to test a runtime error
+        // @ts-expect-error
+        @signal
+        set doubled(_v) {
+          // what would we even set
+        }
+      }
+
+      new State();
+    }, /@signal can only be used on accessors or getters/);
+  });
 });
