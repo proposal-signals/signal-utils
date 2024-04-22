@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:NullVoxPopuli/signal-utils.git"
+    "url": "git@github.com:proposal-signals/signal-utils.git"
   },
   "license": "MIT",
   "author": "NullVoxPopuli",
