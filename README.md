@@ -5,8 +5,12 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 ## Install
 
 ```bash
-npm add signal-utils
+npm add signal-utils signal-polyfill
 ```
+
+> [!NOTE]
+> As of now, the Signals proposal isn't part of JavaScript, so you'll need to use a polyfill.
+> See [signal-utils's peerDependency section in the package.json](https://github.com/proposal-signals/signal-utils/blob/main/package.json#L59) for the supported version range.
 
 ## APIs 
 
