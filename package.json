@@ -56,7 +56,7 @@
     "start": "vite build --watch",
     "test": "vitest"
   },
-  "dependencies": {
+  "peerDependencies": {
     "signal-polyfill": "^0.1.0"
   },
   "devDependencies": {
