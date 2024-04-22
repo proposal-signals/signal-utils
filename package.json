@@ -77,5 +77,10 @@
     "vite": "^5.2.8",
     "vite-plugin-dts": "^3.8.1",
     "vitest": "^1.4.0"
+  },
+  "packageManager": "pnpm@9.0.5",
+  "volta": {
+    "node": "20.12.2",
+    "pnpm": "9.0.5"
   }
 }
