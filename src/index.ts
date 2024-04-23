@@ -85,13 +85,13 @@ export function signal<Value = any>(
 
 function optionsBuilder<Value = any>(options: Signal.Options<Value> = {}) {
 
-  return (...args: [...StateArgs<Value>] | [...ComputedArgs<Value>]) => {
+  return (...args: StateArgs<Value> | ComputedArgs<Value>) => {
     if (args[1].kind === "accessor") {
-      return signal(options, ...args);
+      return signal(options, args[0], args[1]);
     }
 
     if (args[1].kind === "getter") {
-      return signal(options, ...args);
+      return signal(options, args[0], args[1]);
     }
 
     throw new Error(`@signal can only be used on accessors or getters`);
