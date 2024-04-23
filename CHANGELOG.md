@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2024-04-22)
+
+signal-utils 0.15.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#49](https://github.com/proposal-signals/signal-utils/pull/49) Unify `@signal` to work on both accessors and getters ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `signal-utils`
+  * [#51](https://github.com/proposal-signals/signal-utils/pull/51) Update repo url ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## Release (2024-04-21)
 
 signal-utils 0.14.0 (minor)

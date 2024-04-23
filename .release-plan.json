@@ -2,8 +2,8 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.13.0",
-      "newVersion": "0.14.0",
+      "oldVersion": "0.14.0",
+      "newVersion": "0.15.0",
       "constraints": [
         {
           "impact": "minor",
@@ -11,11 +11,11 @@
         },
         {
           "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
+          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-21)\n\nsignal-utils 0.14.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#47](https://github.com/proposal-signals/signal-utils/pull/47) deep and `@deepSignal` ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* `signal-utils`\n  * [#46](https://github.com/proposal-signals/signal-utils/pull/46) Update README.md with install instructions  ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#44](https://github.com/proposal-signals/signal-utils/pull/44) Update README.md ([@NesCafe62](https://github.com/NesCafe62))\n\n#### Committers: 2\n- [@NesCafe62](https://github.com/NesCafe62)\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-04-22)\n\nsignal-utils 0.15.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#49](https://github.com/proposal-signals/signal-utils/pull/49) Unify `@signal` to work on both accessors and getters ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#51](https://github.com/proposal-signals/signal-utils/pull/51) Update repo url ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
 }
