@@ -7,7 +7,7 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
   /**
    * Array-index access to specific mapped data.
    *
-   * If the map function hasn't ran yet on the source data, it will be ran, an cached
+   * If the map function hasn't ran yet on the source data, it will be ran, and cached
    * for subsequent accesses.
    *
    * ```js
@@ -129,10 +129,10 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
  * }
  * ```
  *
- * Even though the above is `@cached`, if any tracked data accessed during the evaluation of `wrappedRecords`
+ * Even though the above is a cached computed (via `@signal`), if any signal data accessed during the evaluation of `wrappedRecords`
  * changes, the entire array.map will re-run, often doing duplicate work for every unchanged item in the array.
  *
- * @return {MappedArray} an object that behaves like an array. This shouldn't be modified directly. Instead, you can freely modify the data returned by the `data` function, which should be tracked in order to benefit from this abstraction.
+ * @return {MappedArray} an object that behaves like an array. This shouldn't be modified directly. Instead, you can freely modify the data returned by the `data` function, which should be auto-tracked in order to benefit from this abstraction.
  *
  * @example
  *
@@ -178,8 +178,7 @@ const AT = Symbol.for("__AT__");
  * @private
  */
 export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
-  implements MappedArray<Element[], MappedTo>
-{
+  implements MappedArray<Element[], MappedTo> {
   // Tells TS that we can array-index-access
   [index: number]: MappedTo;
 
@@ -275,9 +274,9 @@ export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
     if (!record) {
       throw new Error(
         `Expected record to exist at index ${i}, but it did not. ` +
-          `The array item is expected to exist, because the map utility resource lazily iterates along the indices of the original array passed as data. ` +
-          `This error could happen if the data array passed to map has been mutated while iterating. ` +
-          `To resolve this error, do not mutate arrays while iteration occurs.`,
+        `The array item is expected to exist, because the map utility resource lazily iterates along the indices of the original array passed as data. ` +
+        `This error could happen if the data array passed to map has been mutated while iterating. ` +
+        `To resolve this error, do not mutate arrays while iteration occurs.`,
       );
     }
 
