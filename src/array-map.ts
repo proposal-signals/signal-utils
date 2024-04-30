@@ -29,7 +29,7 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
    * Evaluate and return an array of all mapped items.
    *
    * This is useful when you need to do other Array-like operations
-   * on the mapped data, such as filter, or find
+   * on the mapped data, such as filter, or find.
    *
    * ```js
    *  class Foo {
