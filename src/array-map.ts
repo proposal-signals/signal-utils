@@ -7,7 +7,7 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
   /**
    * Array-index access to specific mapped data.
    *
-   * If the map function hasn't ran yet on the source data, it will be ran, and cached
+   * If the map function hasn't run yet on the source data, it will be run, and cached
    * for subsequent accesses.
    *
    * ```js
