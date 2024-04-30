@@ -2,6 +2,8 @@
 
 Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-signals).
 
+Try it out on JSBin: https://jsbin.com/safoqap/edit?html,output
+
 ## Install
 
 ```bash
