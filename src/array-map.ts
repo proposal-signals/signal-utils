@@ -185,14 +185,14 @@ export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
   // until @cached is a real decorator
   private _mapCache = new WeakMap<Element & object, MappedTo>();
   private _dataFn: () => readonly Element[];
-  private _map: (element: Element) => MappedTo;
+  private _mapFn: (element: Element) => MappedTo;
 
   constructor(
     data: () => readonly Element[],
     map: (element: Element) => MappedTo,
   ) {
     this._dataFn = data;
-    this._map = map;
+    this._mapFn = map;
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
@@ -282,7 +282,7 @@ export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
     let value = this._mapCache.get(record);
 
     if (!value) {
-      value = this._map(record);
+      value = this._mapFn(record);
       this._mapCache.set(record, value);
     }
 
