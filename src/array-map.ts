@@ -177,7 +177,8 @@ const AT = Symbol("__AT__");
  * @private
  */
 export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
-  implements MappedArray<Element[], MappedTo> {
+  implements MappedArray<Element[], MappedTo>
+{
   // Tells TS that we can array-index-access
   [index: number]: MappedTo;
 
@@ -273,9 +274,9 @@ export class TrackedArrayMap<Element = unknown, MappedTo = unknown>
     if (!record) {
       throw new Error(
         `Expected record to exist at index ${i}, but it did not. ` +
-        `The array item is expected to exist, because the map utility resource lazily iterates along the indices of the original array passed as data. ` +
-        `This error could happen if the data array passed to map has been mutated while iterating. ` +
-        `To resolve this error, do not mutate arrays while iteration occurs.`,
+          `The array item is expected to exist, because the map utility resource lazily iterates along the indices of the original array passed as data. ` +
+          `This error could happen if the data array passed to map has been mutated while iterating. ` +
+          `To resolve this error, do not mutate arrays while iteration occurs.`,
       );
     }
 
