@@ -158,8 +158,7 @@ export function arrayMap<
    */
   data: () => Elements;
   /**
-   * How to transform each element from `data`,
-   * similar to if you were to use Array map yourself.
+   * Transform each element from `data`, reactively equivalent to `Array.map`.
    *
    * This function will be called only when needed / on-demand / lazily.
    * - if iterating over part of the data, map will only be called for the elements observed
