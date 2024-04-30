@@ -48,7 +48,7 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
 
   /**
    * Without evaluating the map function on each element,
-   * provide the total number of elements
+   * provide the total number of elements.
    *
    * ```js
    *  class Foo {
