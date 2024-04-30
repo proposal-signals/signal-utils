@@ -26,7 +26,7 @@ export interface MappedArray<Elements extends readonly unknown[], MappedTo> {
   [index: number]: MappedTo;
 
   /**
-   * evaluate and return an array of all mapped items.
+   * Evaluate and return an array of all mapped items.
    *
    * This is useful when you need to do other Array-like operations
    * on the mapped data, such as filter, or find
