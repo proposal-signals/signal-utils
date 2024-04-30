@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#61](https://github.com/proposal-signals/signal-utils/pull/61) Add `reaction()` function to run effects when watched values change.
+
 ## Release (2024-04-22)
 
 signal-utils 0.15.0 (minor)
