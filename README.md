@@ -485,6 +485,10 @@ count.set(1);
 // => 1 logs
 ```
 
+## Contributing
+
+See: [./CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## Is this bug free?
 
 Likely not, code (and tests!) are copied from pre-existing implementations, and those implementations change over time. If you find a bug, please file an issue or open a PR, thanks!!
