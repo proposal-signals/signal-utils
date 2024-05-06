@@ -487,40 +487,7 @@ count.set(1);
 
 ## Contributing
 
-
-Have [pnpm installed](https://pnpm.io/installation).
-
-**Install dependencies**
-```bash
-pnpm install
-```
-
-**Start tests in watch mode**
-
-```bash
-pnpm vitest --watch
-```
-
-This is the primary way to work on this package. You can use relative imports in the tests to import source files to unit test whatever needs to be unit tested.
-
-**Start build in watch mode**
-
-This isn't needed unless you're preparing for release, or needing to debug how the package si built.
-```bash
-pnpm start
-```
-
-This will start a [concurrently](https://www.npmjs.com/package/concurrently) command that runs the vite build and vitest tests in parallel.
-
-Vitest isn't being used _within_ the package, because we want to exercise the public API, generated types, etc (through package.json#exports and all that).
-
-**Preparing a Pull Request**
-
-- ensure the build succeeds: `pnpm build`
-- ensure that formatting has ran: `pnpm format`
-- ensere that tests pass: `pnpm test`
-
-And that's it!
+See: [./CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Is this bug free?
 
