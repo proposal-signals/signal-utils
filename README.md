@@ -4,6 +4,12 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 
 Try it out on JSBin: https://jsbin.com/safoqap/edit?html,output
 
+------------
+
+_`signal-utils` is (currently) a place to experiment and see what works and what gaps there may be with the polyfill. Have an idea? feel free to submit a PR! 
+
+------------
+
 ## Install
 
 ```bash
