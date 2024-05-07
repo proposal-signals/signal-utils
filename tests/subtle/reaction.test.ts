@@ -3,28 +3,30 @@ import { Signal } from "signal-polyfill";
 import { reaction } from "../../src/subtle/reaction.ts";
 
 describe("reaction()", () => {
-
   test("calls the effect function when the data function return value changes", async () => {
     const count = new Signal.State(0);
 
     let callCount = 0;
     let value, previousValue;
 
-    reaction(() => count.get(), (_value, _previousValue) => {
-      callCount++;
-      value = _value;
-      previousValue = _previousValue;
-    });
+    reaction(
+      () => count.get(),
+      (_value, _previousValue) => {
+        callCount++;
+        value = _value;
+        previousValue = _previousValue;
+      },
+    );
 
     // Effect callbacks are not called immediately
     assert.strictEqual(callCount, 0);
 
     await 0;
-    
+
     // Effect callbacks are not called until the data function changes
     assert.strictEqual(callCount, 0);
 
-    // Effect callbacks are called when the data function changes    
+    // Effect callbacks are called when the data function changes
     count.set(count.get() + 1);
     await 0;
     assert.strictEqual(callCount, 1);
@@ -45,15 +47,18 @@ describe("reaction()", () => {
     const count = new Signal.State(0);
 
     let callCount = 0;
-    const unsubscribe = reaction(() => count.get(), () => {
-      callCount++;
-    });
+    const unsubscribe = reaction(
+      () => count.get(),
+      () => {
+        callCount++;
+      },
+    );
 
     // Check reaction is live
     count.set(count.get() + 1);
     await 0;
     assert.strictEqual(callCount, 1);
-    
+
     unsubscribe();
 
     // Check reaction is not live
@@ -66,15 +71,18 @@ describe("reaction()", () => {
     const count = new Signal.State(0);
 
     let callCount = 0;
-    const unsubscribe = reaction(() => count.get(), () => {
-      callCount++;
-    });
+    const unsubscribe = reaction(
+      () => count.get(),
+      () => {
+        callCount++;
+      },
+    );
 
     // Check reaction is live
     count.set(count.get() + 1);
     await 0;
     assert.strictEqual(callCount, 1);
-    
+
     // Check reaction is not live
     count.set(count.get() + 1);
     unsubscribe();
@@ -87,13 +95,13 @@ describe("reaction()", () => {
     const b = new Signal.State(0);
 
     let callCount = 0;
-    let value, previousValue;
 
-    reaction(() => a.get() + b.get(), (_value, _previousValue) => {
-      callCount++;
-      value = _value;
-      previousValue = _previousValue;
-    });
+    reaction(
+      () => a.get() + b.get(),
+      (_value, _previousValue) => {
+        callCount++;
+      },
+    );
 
     // 1 + -1 still equals 0
     a.set(1);
@@ -109,22 +117,25 @@ describe("reaction()", () => {
     let value, previousValue;
     let thrown = false;
 
-    if (typeof process !== 'undefined') {
-      process.on('uncaughtException', (error) => {
-        console.log('uncaughtException', error);
+    if (typeof process !== "undefined") {
+      process.on("uncaughtException", (error) => {
+        console.log("uncaughtException", error);
       });
     }
 
-    reaction(() => x.get(), (_value, _previousValue) => {
-      callCount++;
-      value = _value;
-      previousValue = _previousValue;
-      if (value === 1) {
-        thrown = true;
-        throw new Error("Oops");
-      }
-      thrown = false;
-    });
+    reaction(
+      () => x.get(),
+      (_value, _previousValue) => {
+        callCount++;
+        value = _value;
+        previousValue = _previousValue;
+        if (value === 1) {
+          thrown = true;
+          throw new Error("Oops");
+        }
+        thrown = false;
+      },
+    );
 
     x.set(1);
     await 0;
@@ -138,5 +149,4 @@ describe("reaction()", () => {
     assert.strictEqual(value, 2);
     assert.strictEqual(previousValue, 1);
   });
-
 });

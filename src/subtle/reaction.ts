@@ -15,7 +15,7 @@ import { Signal } from "signal-polyfill";
 export const reaction = <T>(
   data: () => T,
   effect: (value: T, previousValue: T) => void,
-  equals = Object.is
+  equals = Object.is,
 ) => {
   // Passing equals here doesn't seem to dedupe the effect calls.
   const computed: Signal.Computed<T> | undefined = new Signal.Computed(data, {
@@ -23,6 +23,7 @@ export const reaction = <T>(
   });
   let previousValue = computed.get();
   let notify: (() => Promise<void>) | undefined = async () => {
+    // await 0 is a cheap way to queue a microtask
     await 0;
     // Check if this reaction was unsubscribed
     if (notify === undefined) {

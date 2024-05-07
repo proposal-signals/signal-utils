@@ -40,6 +40,7 @@ npm add signal-utils signal-polyfill
   - [@deepSignal](#deepSignal)
 - subtle utilities
   - [effect](#leaky-effect-via-queuemicrotask)
+  - [reaction](#reaction)
 
 ### `@signal`
 
@@ -483,6 +484,27 @@ effect(() => console.log(count.get());
 
 count.set(1);
 // => 1 logs
+```
+
+#### Reactions
+
+A reaction tracks a computation and calls an effect function when the value of
+the computation changes.
+
+```js
+import { Signal } from 'signal-polyfill';
+import { reaction } from 'signal-utils/subtle/reaction.js';
+
+const a = new Signal.State(0);
+const b = new Signal.State(1);
+
+reaction(
+  () => a.get() + b.get(), 
+  (value, previousValue) => console.log(value, previousValue)
+);
+
+a.set(1);
+// after a microtask, logs: 2, 1
 ```
 
 ## Contributing
