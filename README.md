@@ -4,6 +4,16 @@ Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-s
 
 Try it out on JSBin: https://jsbin.com/safoqap/edit?html,output
 
+------------
+
+_`signal-utils` is (currently) a place to experiment and see what works and what gaps there may be with the polyfill. Have an idea? feel free to submit a PR!_
+
+Like the [signals polyfill](https://github.com/proposal-signals/signal-polyfill), this library is not meant to be used in production[^versions].
+
+[^versions]: The releases and versions specified by this package and npm are not an indicator of production readiness, nor stabilitiy. But releases _do_ follow [semver](https://semver.org/).
+
+------------
+
 ## Install
 
 ```bash
