@@ -1,5 +1,19 @@
 import { Signal } from "signal-polyfill";
 
+export const __internal_testing__ = {
+  active: false,
+  lastError: null,
+} as { active: boolean; lastError: null | unknown };
+
+class ReactionError {
+  original: unknown;
+  name = "ReactionError";
+
+  constructor(original: unknown) {
+    this.original = original;
+  }
+}
+
 /**
  * Reactions are a way to observe a value and run an effect when it changes.
  *
@@ -37,7 +51,12 @@ export const reaction = <T>(
         // TODO: we actually want this to be unhandled, but Vitest complains.
         // We probably don't want to enable dangerouslyIgnoreUnhandledErrors
         // for all tests
-        console.error(e);
+        if (__internal_testing__) {
+          console.error(e);
+          __internal_testing__.lastError = e;
+        } else {
+          throw new ReactionError(e);
+        }
       } finally {
         previousValue = value;
       }

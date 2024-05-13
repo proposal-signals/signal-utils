@@ -1,6 +1,10 @@
-import { describe, test, assert } from "vitest";
+import { describe, test, assert, afterEach } from "vitest";
 import { Signal } from "signal-polyfill";
-import { reaction } from "../../src/subtle/reaction.ts";
+import { reaction, __internal_testing__ } from "../../src/subtle/reaction.ts";
+
+afterEach(() => {
+  __internal_testing__.active = false;
+});
 
 describe("reaction()", () => {
   test("calls the effect function when the data function return value changes", async () => {
@@ -137,10 +141,15 @@ describe("reaction()", () => {
       },
     );
 
+    __internal_testing__.active = true;
     x.set(1);
     await 0;
     assert.strictEqual(callCount, 1);
     assert.strictEqual(thrown, true);
+    assert.strictEqual(
+      (__internal_testing__.lastError as Error).message,
+      "Oops",
+    );
 
     x.set(2);
     await 0;
