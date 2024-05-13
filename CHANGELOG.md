@@ -1,5 +1,37 @@
 # Changelog
 
+## Release (2024-05-13)
+
+signal-utils 0.16.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#61](https://github.com/proposal-signals/signal-utils/pull/61) Add reaction() utility ([@justinfagnani](https://github.com/justinfagnani))
+  * [#56](https://github.com/proposal-signals/signal-utils/pull/56) Implement reactive version of Array.prototype.map ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#53](https://github.com/proposal-signals/signal-utils/pull/53) fix(deps): mark `signal-polyfill` as a peer dependency ([@nicojs](https://github.com/nicojs))
+  * [#49](https://github.com/proposal-signals/signal-utils/pull/49) Unify `@signal` to work on both accessors and getters ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :memo: Documentation
+* `signal-utils`
+  * [#66](https://github.com/proposal-signals/signal-utils/pull/66) Add purpose, and encouragement to contribute ideas ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#60](https://github.com/proposal-signals/signal-utils/pull/60) Add JSBin link to README ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#58](https://github.com/proposal-signals/signal-utils/pull/58) Update the contributing section of the README ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* `signal-utils`
+  * [#63](https://github.com/proposal-signals/signal-utils/pull/63) Make release automation workflows more resiliant to pnpm major changes ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#64](https://github.com/proposal-signals/signal-utils/pull/64) Add CONTRIBUTING.md ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#62](https://github.com/proposal-signals/signal-utils/pull/62) Add license (MIT) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#50](https://github.com/proposal-signals/signal-utils/pull/50) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))
+  * [#54](https://github.com/proposal-signals/signal-utils/pull/54) Pin tooling versions, and upgrade lockfile ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+  * [#51](https://github.com/proposal-signals/signal-utils/pull/51) Update repo url ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 4
+- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))
+- Nico Jansen ([@nicojs](https://github.com/nicojs))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- [@github-actions[bot]](https://github.com/apps/github-actions)
+
 ## Release (2024-04-22)
 
 signal-utils 0.15.0 (minor)
