@@ -2,12 +2,16 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.14.0",
-      "newVersion": "0.15.0",
+      "oldVersion": "0.15.0",
+      "newVersion": "0.16.0",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :memo: Documentation"
         },
         {
           "impact": "patch",
@@ -17,5 +21,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-04-22)\n\nsignal-utils 0.15.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#49](https://github.com/proposal-signals/signal-utils/pull/49) Unify `@signal` to work on both accessors and getters ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#51](https://github.com/proposal-signals/signal-utils/pull/51) Update repo url ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 1\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-05-13)\n\nsignal-utils 0.16.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#61](https://github.com/proposal-signals/signal-utils/pull/61) Add reaction() utility ([@justinfagnani](https://github.com/justinfagnani))\n  * [#56](https://github.com/proposal-signals/signal-utils/pull/56) Implement reactive version of Array.prototype.map ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#53](https://github.com/proposal-signals/signal-utils/pull/53) fix(deps): mark `signal-polyfill` as a peer dependency ([@nicojs](https://github.com/nicojs))\n  * [#49](https://github.com/proposal-signals/signal-utils/pull/49) Unify `@signal` to work on both accessors and getters ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :memo: Documentation\n* `signal-utils`\n  * [#66](https://github.com/proposal-signals/signal-utils/pull/66) Add purpose, and encouragement to contribute ideas ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#60](https://github.com/proposal-signals/signal-utils/pull/60) Add JSBin link to README ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#58](https://github.com/proposal-signals/signal-utils/pull/58) Update the contributing section of the README ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#63](https://github.com/proposal-signals/signal-utils/pull/63) Make release automation workflows more resiliant to pnpm major changes ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#64](https://github.com/proposal-signals/signal-utils/pull/64) Add CONTRIBUTING.md ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#62](https://github.com/proposal-signals/signal-utils/pull/62) Add license (MIT) ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#50](https://github.com/proposal-signals/signal-utils/pull/50) Prepare Release ([@github-actions[bot]](https://github.com/apps/github-actions))\n  * [#54](https://github.com/proposal-signals/signal-utils/pull/54) Pin tooling versions, and upgrade lockfile ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n  * [#51](https://github.com/proposal-signals/signal-utils/pull/51) Update repo url ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 4\n- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))\n- Nico Jansen ([@nicojs](https://github.com/nicojs))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n- [@github-actions[bot]](https://github.com/apps/github-actions)\n"
 }
