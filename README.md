@@ -517,6 +517,30 @@ a.set(1);
 // after a microtask, logs: 2, 1
 ```
 
+#### Batched Effects
+
+Soetimes it may be very useful to run an effect _synchronously_ to signal updates. The proposed Signals API intentionally makes this very difficult, but it is possible as long as the effect runs after the nnotification phase has completed.
+
+Batched effects allow this by synchronously running as long as the signal changes are run within a `batch()` call. `batch()` keeps track of effects that are dirtied during the batch and runs them synchrnously before returning.
+
+```js
+const a = new Signal.State(0);
+const b = new Signal.State(0);
+
+batchedEffect(() => {
+  console.log("a + b =", a.get() + b.get());
+});
+
+// Logs: a + b = 0
+
+batch(() => {
+  a.set(1);
+  b.set(1);
+});
+
+// Logs: a + b = 2
+```
+
 ## Contributing
 
 See: [./CONTRIBUTING.md](CONTRIBUTING.md)
