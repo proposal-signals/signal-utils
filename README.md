@@ -517,6 +517,32 @@ a.set(1);
 // after a microtask, logs: 2, 1
 ```
 
+#### Batched Effects
+
+Sometimes it may be useful to run an effect _synchronously_ after updating signals. The proposed Signals API intentionally makes this difficult, because signals are not allowed to be read or written to within a watcher callback, but it is possible as long as signals are accessed after the watcher notification callbacks have completed.
+
+`batchedEffect()` and `batch()` allow you to create effects that run synchronously at the end of a `batch()` callback, if that callback updates any signals the effects depend on.
+
+```js
+const a = new Signal.State(0);
+const b = new Signal.State(0);
+
+batchedEffect(() => {
+  console.log("a + b =", a.get() + b.get());
+});
+
+// Logs: a + b = 0
+
+batch(() => {
+  a.set(1);
+  b.set(1);
+});
+
+// Logs: a + b = 2
+```
+
+Synchronous batched effects can be useful when abstracting over signals to use them as a backing storage mechanism. In some cases you may want the effect of a signal update to be synchronously observable, but also to allow batching when possible for the usual performacne and coherence reasons.
+
 ## Contributing
 
 See: [./CONTRIBUTING.md](CONTRIBUTING.md)
