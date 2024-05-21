@@ -519,9 +519,9 @@ a.set(1);
 
 #### Batched Effects
 
-Soetimes it may be very useful to run an effect _synchronously_ to signal updates. The proposed Signals API intentionally makes this very difficult, but it is possible as long as the effect runs after the nnotification phase has completed.
+Sometimes it may be useful to run an effect _synchronously_ after updating signals. The proposed Signals API intentionally makes this difficult, because signals are not allowed to be read or written to within a watcher callback, but it is possible as long as signals are accessed after the watcher notification callbacks have completed.
 
-Batched effects allow this by synchronously running as long as the signal changes are run within a `batch()` call. `batch()` keeps track of effects that are dirtied during the batch and runs them synchrnously before returning.
+`batchedEffect()` and `batch()` allow you to create effects that run synchronously at the end of a `batch()` callback, if that callback updates any signals the effects depend on.
 
 ```js
 const a = new Signal.State(0);
@@ -540,6 +540,8 @@ batch(() => {
 
 // Logs: a + b = 2
 ```
+
+Synchronous batched effects can be useful when abstracting over signals to use them as a backing storage mechanism. In some cases you may want the effect of a signal update to be synchronously observable, but also to allow batching when possible for the usual performacne and coherence reasons.
 
 ## Contributing
 
