@@ -1,4 +1,5 @@
 import { Signal } from "signal-polyfill";
+import { signalTransactionSetter } from "./transaction";
 
 /**
  * Usage:
@@ -90,7 +91,9 @@ function stateDecorator<Value = any>(
     set(value: Value) {
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.
-      (get.call(this) as Signal.State<Value>).set(value);
+      const signal = get.call(this) as Signal.State<Value>;
+      signalTransactionSetter(signal);
+      signal.set(value);
     },
 
     init(value: Value) {
