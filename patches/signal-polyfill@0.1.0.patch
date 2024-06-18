@@ -1,0 +1,78 @@
+diff --git a/dist/index.js b/dist/index.js
+index ac1ae216236d55b0a31ca78915f45997b32a5e8b..9edf329d851e0c294cc6e1c9c9f21f934e646c43 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -81,7 +81,11 @@ function L(r) {
+ function nr() {
+   A++;
+ }
+-function H(r) {
++function H(r, shouldForceRecompute) {
++  if (shouldForceRecompute) {
++    r.producerRecomputeValue(r), r.dirty = !1, r.lastCleanEpoch = A;
++    return
++  }
+   if (!(D(r) && !r.dirty) && !(!r.dirty && r.lastCleanEpoch === A)) {
+     if (!r.producerMustRecompute(r) && !fr(r)) {
+       r.dirty = !1, r.lastCleanEpoch = A;
+@@ -171,8 +175,8 @@ function j(r) {
+  * Use of this source code is governed by an MIT-style license that can be
+  * found in the LICENSE file at https://angular.io/license
+  */
+-function Q(r) {
+-  if (H(r), L(r), r.value === W)
++function Q(r, shouldForceRecompute = false) {
++  if (H(r, shouldForceRecompute), L(r), r.value === W)
+     throw r.error;
+   return r.value;
+ }
+@@ -318,12 +322,25 @@ var B;
+         m && (p.equal = m), p.watched = f[r.subtle.watched], p.unwatched = f[r.subtle.unwatched];
+       }
+     }
+-    get() {
++    get(shouldForceRecompute = false) {
+       if (!v(this))
+         throw new TypeError(
+           "Wrong receiver type for Signal.Computed.prototype.get"
+         );
+-      return Q(this[s]);
++      return Q(this[s], shouldForceRecompute);
++    }
++    isPending() {
++      const node = this[s];
++      r.subtle.introspectSources(this).map((s) => s.get());
++      if (!node.producerNode?.length) return false
++
++      for (let len= node.producerNode.length, i = 0; i < len; i++) {
++        debugger
++        if (node.producerNode[i].version !== node.producerLastReadVersion[i]) {
++          return true
++        }
++      }
++      return false
+     }
+   }
+   X = s, S = new WeakSet(), Sr = function() {
+@@ -436,6 +453,7 @@ var B;
+     d.currentComputed = Z, d.watched = Symbol("watched"), d.unwatched = Symbol("unwatched");
+   })(r.subtle || (r.subtle = {}));
+ })(B || (B = {}));
++
+ export {
+   B as Signal
+ };
+diff --git a/dist/wrapper.d.ts b/dist/wrapper.d.ts
+index 8c96d454dc46f9cd069e73325c125eb576f495d5..15beddda67c5f582ab50dbd7a05ce35b9fb6dd36 100644
+--- a/dist/wrapper.d.ts
++++ b/dist/wrapper.d.ts
+@@ -15,7 +15,8 @@ export declare namespace Signal {
+         #private;
+         readonly [NODE]: ComputedNode<T>;
+         constructor(computation: () => T, options?: Signal.Options<T>);
+-        get(): T;
++        get(shouldForceRecompute?: boolean): T;
++        isPending(): boolean;
+     }
+     type AnySignal<T = any> = State<T> | Computed<T>;
+     type AnySink = Computed<any> | subtle.Watcher;

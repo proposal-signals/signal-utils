@@ -82,5 +82,17 @@
   "volta": {
     "node": "20.12.2",
     "pnpm": "9.0.5"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "signal-polyfill@0.1.0": "patches/signal-polyfill@0.1.0.patch"
+    }
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1"
   }
 }

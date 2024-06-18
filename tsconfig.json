@@ -9,6 +9,7 @@
     "moduleResolution": "bundler",
     "declaration": true,
     "emitDeclarationOnly": true,
+    "jsx": "react-jsx",
 
     /**
      Stylistic / linting. Does not provide extra type safety.
