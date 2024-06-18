@@ -37,6 +37,7 @@ export function useSignalValue() {
       if ($val.isPending()) {
         numSchedules++;
         listen();
+        watcher.watch();
       }
     });
     return {
@@ -53,7 +54,6 @@ export function useSignalValue() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [$val]);
 
-  watcher.watch();
   useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   return $val.get();
 }

@@ -3,11 +3,10 @@ import { Signal } from "signal-polyfill";
 
 // subtle, render should be stable
 function useSignalTracking<T>(render: () => T): T {
-  // This hook creates an effect scheduler that will trigger re-renders when its reactive dependencies change, but it
-  // defers the actual execution of the effect to the consumer of this hook.
+  // This hook creates an watcher that will trigger re-renders when any signals ready during the passed render function update
 
-  // We need the exec fn to always be up-to-date when calling scheduler.execute() but it'd be wasteful to
-  // instantiate a new EffectScheduler on every render, so we use an immediately-updated ref
+  // We need the render fn to always be up-to-date when calling computed.get() but it'd be wasteful to
+  // instantiate a new Computed on every render, so we use an immediately-updated ref
   // to wrap it
   const renderRef = React.useRef(render);
   renderRef.current = render;
@@ -35,6 +34,7 @@ function useSignalTracking<T>(render: () => T): T {
       if (computedRender.isPending()) {
         numSchedules++;
         scheduleUpdate?.();
+        watcher.watch()
       }
     });
 
@@ -46,7 +46,7 @@ function useSignalTracking<T>(render: () => T): T {
 
   React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  // reactive dependencies are captured when `scheduler.execute()` is called
+  // reactive dependencies are captured when `computed.get()` is called
   // and then to make it reactive we wait for a `useEffect` to 'attach'
   // this allows us to avoid rendering outside of React's render phase
   // and avoid 'zombie' components that try to render with bad/deleted data before
@@ -58,7 +58,6 @@ function useSignalTracking<T>(render: () => T): T {
     };
   }, [watcher]);
 
-  watcher.watch()
   return computedRender.get(true);
 }
 
@@ -93,7 +92,7 @@ export const ReactForwardRefSymbol = Symbol.for("react.forward_ref");
  * @example
  * ```ts
  * const Counter = track(function Counter(props: CounterProps) {
- *   const count = useAtom('count', 0)
+ *   const count = useSignalState(0)
  *   const increment = useCallback(() => count.set(count.get() + 1), [count])
  *   return <button onClick={increment}>{count.get()}</button>
  * })
