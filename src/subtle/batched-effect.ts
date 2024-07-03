@@ -20,6 +20,8 @@ let batchDepth = 0;
  * will return their updates value. Other computations, watcher, and effects
  * created outside of a batch that depend on updated signals will be run as
  * usual.
+ *
+ * @param fn The function to run inside the batch.
  */
 export const batch = (fn: () => void) => {
   batchDepth++;
@@ -68,6 +70,9 @@ export const batch = (fn: () => void) => {
  *
  * The effect also runs asynchronously, on the microtask queue, if any of the
  * signals it depends on have been updated outside of a `batch()` call.
+ *
+ * @param effectFn The function to run as an effect.
+ * @returns A function that stops and disposes the effect.
  */
 export const batchedEffect = (effectFn: () => void) => {
   const computed = new Signal.Computed(effectFn);
@@ -87,4 +92,8 @@ export const batchedEffect = (effectFn: () => void) => {
   const entry = { computed, watcher };
   watcher.watch(computed);
   computed.get();
+  return () => {
+    watcher.unwatch(computed);
+    notifiedEffects.delete(entry);
+  };
 };

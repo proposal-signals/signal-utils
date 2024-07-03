@@ -230,4 +230,47 @@ describe("batchedEffect()", () => {
     // Later effects are still called
     assert.strictEqual(callCount2, 2);
   });
+
+  test("disposes the effect", async () => {
+    const a = new Signal.State(0);
+
+    let callCount = 0;
+
+    const dispose = batchedEffect(() => {
+      a.get();
+      callCount++;
+    });
+
+    assert.strictEqual(callCount, 1);
+
+    batch(() => {
+      a.set(1);
+    });
+
+    assert.strictEqual(callCount, 2);
+
+    // Trigger an async effect, before our dispose call
+    a.set(2);
+
+    dispose();
+
+    // Set the signal again from inside a batch
+    batch(() => {
+      a.set(3);
+    });
+
+    // No lingering synchronous effect calls
+    assert.strictEqual(callCount, 2);
+
+    // No lingering asynchronous effect calls
+    await 0;
+    assert.strictEqual(callCount, 2);
+
+    // Set the signal again outside a batch
+    a.set(4);
+
+    // No lingering asynchronous effect calls
+    await 0;
+    assert.strictEqual(callCount, 2);
+  });
 });
