@@ -12,25 +12,7 @@ export function signalFunction<Return>(fn: () => Return): State<Return> {
     if (typeof fn !== "function") {
       throw new Error("signalFunction must be called with a function passed");
     }
-
-    const state = new State(fn);
-    const computed = new Signal.Computed(() => {
-      state.retry();
-
-      return state;
-    });
-
-    /**
-     * We have to use a proxy here so that we re-get on each property acess.
-     * this allows the consumers of this signalFunction to not have to bother with
-     * signal APIs, and just worry about dealing with our `State` API.
-     */
-    return new Proxy(state, {
-      get(_, property, receiver) {
-        computed.get();
-        return Reflect.get(state, property, receiver);
-      },
-    });
+    return new State(fn);
   }
 
   throw new Error(
@@ -42,25 +24,22 @@ export function signalFunction<Return>(fn: () => Return): State<Return> {
  * State container that represents the asynchrony of a `signalFunction`
  */
 export class State<Value> {
-  /**
-   * NOTE: #private fields are incompatible with proxies,
-   *       even if accessed via Reflect through a getter first...
-   *
-   */
-  private _data = new Signal.State<SignalAsyncData<Value> | null>(null);
-  private _promise = new Signal.State<Value | undefined>(undefined);
+  #data = new Signal.State<SignalAsyncData<Value> | null>(null);
+  #promise = new Signal.State<Value | undefined>(undefined);
 
   get data() {
-    return this._data.get();
+    this.#computed.get();
+    return this.#data.get();
   }
   set data(value) {
-    this._data.set(value);
+    this.#data.set(value);
   }
   get promise() {
-    return this._promise.get();
+    this.#computed.get();
+    return this.#promise.get();
   }
   set promise(value) {
-    this._promise.set(value);
+    this.#promise.set(value);
   }
 
   /**
@@ -70,21 +49,29 @@ export class State<Value> {
    *
    * See also: https://github.com/qunitjs/qunit/issues/1736
    */
-  private _caughtError = new Signal.State<unknown>(undefined);
+  #caughtError = new Signal.State<unknown>(undefined);
   get caughtError() {
-    return this._caughtError.get();
+    this.#computed.get();
+    return this.#caughtError.get();
   }
   set caughtError(value) {
-    this._caughtError.set(value);
+    this.#caughtError.set(value);
   }
 
   #fn: () => Value;
 
+  #computed: Signal.Computed<this>;
+
   constructor(fn: () => Value) {
     this.#fn = fn;
+    this.#computed = new Signal.Computed(() => {
+      this.retry();
+      return this;
+    });
   }
 
   get state(): "PENDING" | "RESOLVED" | "REJECTED" | "UNSTARTED" {
+    this.#computed.get();
     return this.data?.state ?? "UNSTARTED";
   }
 
@@ -93,6 +80,7 @@ export class State<Value> {
    * until the underlying promise resolves or rejects.
    */
   get isPending() {
+    this.#computed.get();
     if (!this.data) return true;
 
     return this.data.isPending ?? false;
@@ -102,6 +90,7 @@ export class State<Value> {
    * Alias for `isResolved || isRejected`
    */
   get isFinished() {
+    this.#computed.get();
     return this.isResolved || this.isRejected;
   }
 
@@ -110,6 +99,7 @@ export class State<Value> {
    * which is in turn an alias for `isResolved || isRejected`
    */
   get isSettled() {
+    this.#computed.get();
     return this.isFinished;
   }
 
@@ -117,6 +107,7 @@ export class State<Value> {
    * Alias for `isPending`
    */
   get isLoading() {
+    this.#computed.get();
     return this.isPending;
   }
 
@@ -124,6 +115,7 @@ export class State<Value> {
    * When true, the function passed to `signalFunction` has resolved
    */
   get isResolved() {
+    this.#computed.get();
     return this.data?.isResolved ?? false;
   }
 
@@ -131,6 +123,7 @@ export class State<Value> {
    * Alias for `isRejected`
    */
   get isError() {
+    this.#computed.get();
     return this.isRejected;
   }
 
@@ -138,6 +131,7 @@ export class State<Value> {
    * When true, the function passed to `signalFunction` has errored
    */
   get isRejected() {
+    this.#computed.get();
     return this.data?.isRejected ?? Boolean(this.caughtError) ?? false;
   }
 
@@ -158,6 +152,7 @@ export class State<Value> {
    * For now, `signalFunction` will retain that flexibility.
    */
   get value(): Awaited<Value> | null {
+    this.#computed.get();
     if (this.data?.isResolved) {
       // This is sort of a lie, but it ends up working out due to
       // how promises chain automatically when awaited
@@ -172,6 +167,7 @@ export class State<Value> {
    * that error will be the value returned by this property
    */
   get error() {
+    this.#computed.get();
     if (this.state === "UNSTARTED" && this.caughtError) {
       return this.caughtError;
     }
