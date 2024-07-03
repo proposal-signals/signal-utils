@@ -2,6 +2,17 @@
 
 ## Release (2024-07-03)
 
+signal-utils 0.18.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#74](https://github.com/proposal-signals/signal-utils/pull/74) Remove use of Proxy in signalFunction() ([@justinfagnani](https://github.com/justinfagnani))
+
+#### Committers: 1
+- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))
+
+## Release (2024-07-03)
+
 signal-utils 0.17.0 (minor)
 
 #### :rocket: Enhancement
