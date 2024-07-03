@@ -2,28 +2,16 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.16.0",
-      "newVersion": "0.17.0",
+      "oldVersion": "0.17.0",
+      "newVersion": "0.18.0",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :memo: Documentation"
-        },
-        {
-          "impact": "patch",
-          "reason": "Appears in changelog section :house: Internal"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-07-03)\n\nsignal-utils 0.17.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#73](https://github.com/proposal-signals/signal-utils/pull/73) Return dispose function from batchedEffect() ([@justinfagnani](https://github.com/justinfagnani))\n  * [#69](https://github.com/proposal-signals/signal-utils/pull/69) Add batchedEffect() ([@justinfagnani](https://github.com/justinfagnani))\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#73](https://github.com/proposal-signals/signal-utils/pull/73) Return dispose function from batchedEffect() ([@justinfagnani](https://github.com/justinfagnani))\n\n#### :memo: Documentation\n* `signal-utils`\n  * [#68](https://github.com/proposal-signals/signal-utils/pull/68) Fix localCopy demo for ember ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### :house: Internal\n* `signal-utils`\n  * [#67](https://github.com/proposal-signals/signal-utils/pull/67) Update publish.yml ([@NullVoxPopuli](https://github.com/NullVoxPopuli))\n\n#### Committers: 2\n- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))\n- [@NullVoxPopuli](https://github.com/NullVoxPopuli)\n"
+  "description": "## Release (2024-07-03)\n\nsignal-utils 0.18.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#74](https://github.com/proposal-signals/signal-utils/pull/74) Remove use of Proxy in signalFunction() ([@justinfagnani](https://github.com/justinfagnani))\n\n#### Committers: 1\n- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))\n"
 }
