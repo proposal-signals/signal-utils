@@ -32,7 +32,7 @@ export const reaction = <T>(
   equals = Object.is,
 ) => {
   // Passing equals here doesn't seem to dedupe the effect calls.
-  const computed: Signal.Computed<T> | undefined = new Signal.Computed(data, {
+  const computed: Signal.Computed<T> = new Signal.Computed(data, {
     equals,
   });
   let previousValue = computed.get();
@@ -65,8 +65,9 @@ export const reaction = <T>(
   };
   const watcher = new Signal.subtle.Watcher(() => notify?.());
   watcher.watch(computed);
+
   return () => {
-    watcher.unwatch();
+    watcher.unwatch(computed);
     // TODO: Do we need this? Add a memory leak test.
     // By severing the reference to the notify function, we allow the garbage
     // collector to clean up the resources used by the watcher.
