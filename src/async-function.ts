@@ -24,7 +24,6 @@ export function signalFunction<Return>(fn: () => Return): State<Return> {
  * State container that represents the asynchrony of a `signalFunction`
  */
 export class State<Value> {
-  
   #data = new Signal.State<SignalAsyncData<Value> | null>(null);
   get data() {
     this.#computed.get();
@@ -195,7 +194,7 @@ export class State<Value> {
     } catch (e) {
       this.#caughtError.set(e);
     }
-  };
+  }
 
   async #dangerousRetry() {
     // We've previously had data, but we're about to run-again.
@@ -223,5 +222,5 @@ export class State<Value> {
     this.#data.set(new SignalAsyncData<Value>(this.promise!));
 
     return this.promise;
-  };
+  }
 }
