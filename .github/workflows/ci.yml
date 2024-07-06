@@ -38,6 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: wyvox/action-setup-pnpm@v3
+        with: { node-version: 22 }
       - run: pnpm install
       - run: pnpm build
       - run: pnpm vitest ${{ matrix.testenv.args }}
