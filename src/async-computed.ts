@@ -120,10 +120,12 @@ export class AsyncComputed<T> {
    * signals read synchronously - that is, before the first await - will be
    * marked as dependencies of the AsyncComputed, and cause the function to
    * re-run when they change.
+   *
+   * @param options.initialValue The initial value of the AsyncComputed.
    */
   constructor(
     fn: (signal: AbortSignal) => Promise<T>,
-    options?: AsyncComputedOptions<T>
+    options?: AsyncComputedOptions<T>,
   ) {
     this.#value = new Signal.State(options?.initialValue);
     this.#computed = new Signal.Computed(() => {
@@ -165,7 +167,7 @@ export class AsyncComputed<T> {
           this.#error.set(error);
           this.#value.set(undefined);
           this.#deferred.get()!.reject(error);
-        }
+        },
       );
     });
     this.#watcher = new Signal.subtle.Watcher(() => {
