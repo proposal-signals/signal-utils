@@ -1,6 +1,6 @@
 import { Signal } from "signal-polyfill";
 
-export type AsyncComputedState = "initial" | "pending" | "complete" | "error";
+export type AsyncComputedStatus = "initial" | "pending" | "complete" | "error";
 
 export interface AsyncComputedOptions<T> {
   /**
@@ -13,11 +13,12 @@ export interface AsyncComputedOptions<T> {
  * A signal-like object that represents an asynchronous computation.
  *
  * AsyncComputed takes a compute function that performs an asynchronous
- * computation and runs it inside a computed signal, while tracking the state of
+ * computation and runs it inside a computed signal, while tracking the status of
  * the computation, including its most recent completion value and error.
  *
- * Compute functions are run when the `state`, `value`, `error`, or `complete`
- * properties are read, and are re-run when any signals that they read change.
+ * Compute functions are run when the `value`, `error`, or `complete` properties
+ * are read, or when `get()` or `run()` are called, and are re-run when any
+ * signals that they read change.
  *
  * If a new run of the compute function is started before the previous run has
  * completed, the previous run will have its AbortSignal aborted, and the
@@ -27,35 +28,35 @@ export class AsyncComputed<T> {
   // Whether we have been notified of a pending update from the watcher. This is
   // set synchronously when any dependencies of the compute function change.
   #isNotified = false;
-  #state = new Signal.State<AsyncComputedState>("initial");
+  #status = new Signal.State<AsyncComputedStatus>("initial");
 
   /**
-   * The current state of the AsyncComputed, which is one of 'initial',
+   * The current status of the AsyncComputed, which is one of 'initial',
    * 'pending', 'complete', or 'error'.
    *
-   * The state will be 'initial' until the compute function is first run.
+   * The status will be 'initial' until the compute function is first run.
    *
-   * The state will be 'pending' while the compute function is running. If the
-   * state is 'pending', the `value` and `error` properties will be the result
+   * The status will be 'pending' while the compute function is running. If the
+   * status is 'pending', the `value` and `error` properties will be the result
    * of the previous run of the compute function.
    *
-   * The state will be 'complete' when the compute function has completed
-   * successfully. If the state is 'complete', the `value` property will be the
+   * The status will be 'complete' when the compute function has completed
+   * successfully. If the status is 'complete', the `value` property will be the
    * result of the previous run of the compute function and the `error` property
    * will be `undefined`.
    *
-   * The state will be 'error' when the compute function has completed with an
-   * error. If the state is 'error', the `error` property will be the error that
-   * was thrown by the previous run of the compute function and the `value`
+   * The status will be 'error' when the compute function has completed with an
+   * error. If the status is 'error', the `error` property will be the error
+   * that was thrown by the previous run of the compute function and the `value`
    * property will be `undefined`.
    *
-   * This value is read from a signal, so any signals that read the state will
-   * be marked as dependents of it.
+   * This value is read from a signal, so any signals that read it will be
+   * tracked as dependents of it.
    */
-  get state() {
-    // Unconditionally read the state signal to ensure that any signals that
-    // read the state are marked as dependents.
-    const currentState = this.#state.get();
+  get status() {
+    // Unconditionally read the status signal to ensure that any signals that
+    // read it are tracked as dependents.
+    const currentState = this.#status.get();
     return this.#isNotified ? "pending" : currentState;
   }
 
@@ -64,8 +65,8 @@ export class AsyncComputed<T> {
    * the last run of the compute function threw an error, or if the compute
    * function has not yet been run.
    *
-   * This value is read from a signal, so any signals that read the state will
-   * be marked as dependents of it.
+   * This value is read from a signal, so any signals that read it will be
+   * tracked as dependents of it.
    */
   #value: Signal.State<T | undefined>;
   get value() {
@@ -78,8 +79,8 @@ export class AsyncComputed<T> {
    * run of the compute function resolved successfully, or if the compute
    * function has not yet been run.
    *
-   * This value is read from a signal, so any signals that read the state will
-   * be marked as dependents of it.
+   * This value is read from a signal, so any signals that read it will be
+   * tracked as dependents of it.
    */
   #error = new Signal.State<unknown | undefined>(undefined);
   get error() {
@@ -118,7 +119,7 @@ export class AsyncComputed<T> {
    *
    * @param fn The function that performs the asynchronous computation. Any
    * signals read synchronously - that is, before the first await - will be
-   * marked as dependencies of the AsyncComputed, and cause the function to
+   * tracked as dependencies of the AsyncComputed, and cause the function to
    * re-run when they change.
    *
    * @param options.initialValue The initial value of the AsyncComputed.
@@ -130,40 +131,40 @@ export class AsyncComputed<T> {
     this.#value = new Signal.State(options?.initialValue);
     this.#computed = new Signal.Computed(() => {
       const runId = ++this.#currentRunId;
-      // Untrack reading the state signal to avoid triggering the computed when
-      // the state changes.
-      const state = Signal.subtle.untrack(() => this.#state.get());
+      // Untrack reading the status signal to avoid triggering the computed when
+      // the status changes.
+      const status = Signal.subtle.untrack(() => this.#status.get());
 
       // If we're not already pending, create a new deferred to track the
       // completion of the run.
-      if (state !== "pending") {
+      if (status !== "pending") {
         this.#deferred.set(Promise.withResolvers());
       }
       this.#isNotified = false;
-      this.#state.set("pending");
+      this.#status.set("pending");
 
       this.#currentAbortController?.abort();
       this.#currentAbortController = new AbortController();
 
       fn(this.#currentAbortController.signal).then(
         (result) => {
-          // If we've been preempted by a new run, don't update the state or
+          // If we've been preempted by a new run, don't update the status or
           // resolve the deferred.
           if (runId !== this.#currentRunId) {
             return;
           }
-          this.#state.set("complete");
+          this.#status.set("complete");
           this.#value.set(result);
           this.#error.set(undefined);
           this.#deferred.get()!.resolve(result);
         },
         (error) => {
-          // If we've been preempted by a new run, don't update the state or
+          // If we've been preempted by a new run, don't update the status or
           // resolve the deferred.
           if (runId !== this.#currentRunId) {
             return;
           }
-          this.#state.set("error");
+          this.#status.set("error");
           this.#error.set(error);
           this.#value.set(undefined);
           this.#deferred.get()!.reject(error);
@@ -185,10 +186,10 @@ export class AsyncComputed<T> {
    * the compute function threw an error.
    */
   get() {
-    const state = this.state;
+    const status = this.status;
     if (
-      state === "error" ||
-      (state === "pending" && this.error !== undefined)
+      status === "error" ||
+      (status === "pending" && this.error !== undefined)
     ) {
       throw this.error;
     }

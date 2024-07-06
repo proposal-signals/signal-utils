@@ -14,16 +14,16 @@ describe("AsyncComputed", () => {
       await 0;
       return 1;
     });
-    assert.equal(task.state, "initial");
+    assert.equal(task.status, "initial");
 
     // Getting the value starts the task
     assert.strictEqual(task.value, undefined);
     assert.strictEqual(task.error, undefined);
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
 
     const result = await task.complete;
 
-    assert.equal(task.state, "complete");
+    assert.equal(task.status, "complete");
     assert.strictEqual(task.value, 1);
     assert.strictEqual(result, 1);
     assert.strictEqual(task.error, undefined);
@@ -38,20 +38,20 @@ describe("AsyncComputed", () => {
     });
 
     await task.complete;
-    assert.equal(task.state, "complete");
+    assert.equal(task.status, "complete");
     assert.strictEqual(task.value, "a");
     assert.strictEqual(task.error, undefined);
 
     dep.set("b");
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
 
     await task.complete;
-    assert.equal(task.state, "complete");
+    assert.equal(task.status, "complete");
     assert.strictEqual(task.value, "b");
     assert.strictEqual(task.error, undefined);
 
     dep.set("c");
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
   });
 
   test("Preemptive runs reuse the same completed promise", async () => {
@@ -79,10 +79,10 @@ describe("AsyncComputed", () => {
     dep.set("b");
     const secondRunComplete = task.complete;
 
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
     assert.strictEqual(abortSignals.length, 2);
-    assert.strictEqual(abortSignals[0]!.aborted, true);
-    assert.strictEqual(abortSignals[1]!.aborted, false);
+    assert.strictEqual(abortSignals[0].aborted, true);
+    assert.strictEqual(abortSignals[1].aborted, false);
 
     // We should not have created a new Promise. The first Promise should be
     // resolved with the result of the second run.
@@ -107,13 +107,13 @@ describe("AsyncComputed", () => {
     });
 
     task.run();
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
 
     try {
       await task.complete;
       assert.fail("Task should have thrown");
     } catch (error) {
-      assert.equal(task.state, "error");
+      assert.equal(task.status, "error");
       assert.strictEqual(task.value, undefined);
       assert.strictEqual(task.error, error);
     }
@@ -121,7 +121,7 @@ describe("AsyncComputed", () => {
     // Check that the task can re-run after an error
 
     dep.set("b");
-    assert.equal(task.state, "pending");
+    assert.equal(task.status, "pending");
     await task.complete;
     assert.strictEqual(task.value, "b");
     assert.strictEqual(task.error, undefined);
@@ -178,22 +178,22 @@ describe("AsyncComputed", () => {
     });
 
     assert.strictEqual(task2.get(), undefined);
-    assert.strictEqual(task2.state, "pending");
+    assert.strictEqual(task2.status, "pending");
 
     await task2.complete;
     assert.strictEqual(task2.get(), "a");
-    assert.strictEqual(task2.state, "complete");
+    assert.strictEqual(task2.status, "complete");
 
     dep.set("b");
-    assert.strictEqual(task2.state, "pending");
+    assert.strictEqual(task2.status, "pending");
     await task2.complete.catch(() => {});
     assert.throws(() => task2.get());
-    assert.strictEqual(task2.state, "error");
+    assert.strictEqual(task2.status, "error");
 
     dep.set("c");
-    assert.strictEqual(task2.state, "pending");
+    assert.strictEqual(task2.status, "pending");
     await task2.complete;
     assert.strictEqual(task2.get(), "c");
-    assert.strictEqual(task2.state, "complete");
+    assert.strictEqual(task2.status, "complete");
   });
 });
