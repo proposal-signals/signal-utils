@@ -49,6 +49,9 @@ describe("AsyncComputed", () => {
     assert.equal(task.state, "complete");
     assert.strictEqual(task.value, "b");
     assert.strictEqual(task.error, undefined);
+
+    dep.set("c");
+    assert.equal(task.state, "pending");
   });
 
   test("Preemptive runs reuse the same completed promise", async () => {
@@ -157,5 +160,40 @@ describe("AsyncComputed", () => {
     dep.set("c");
     await task.complete;
     assert.strictEqual(computed.get(), "c");
+  });
+
+  test("can chain an AsyncComputed", async () => {
+    const dep = new Signal.State("a");
+    const task1 = new AsyncComputed(async () => {
+      // Read dependencies before first await
+      const value = dep.get();
+      await 0;
+      if (value === "b") {
+        throw new Error("b");
+      }
+      return value;
+    });
+    const task2 = new AsyncComputed(async () => {
+      return task1.complete;
+    });
+
+    assert.strictEqual(task2.get(), undefined);
+    assert.strictEqual(task2.state, "pending");
+
+    await task2.complete;
+    assert.strictEqual(task2.get(), "a");
+    assert.strictEqual(task2.state, "complete");
+
+    dep.set("b");
+    assert.strictEqual(task2.state, "pending");
+    await task2.complete.catch(() => {});
+    assert.throws(() => task2.get());
+    assert.strictEqual(task2.state, "error");
+
+    dep.set("c");
+    assert.strictEqual(task2.state, "pending");
+    await task2.complete;
+    assert.strictEqual(task2.get(), "c");
+    assert.strictEqual(task2.state, "complete");
   });
 });

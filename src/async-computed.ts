@@ -90,10 +90,10 @@ export class AsyncComputed<T> {
   #deferred = new Signal.State<PromiseWithResolvers<T> | undefined>(undefined);
 
   /**
-   * A promise that resolves when the compute functino has completed, or rejects
-   * if the compute functino throws an error.
+   * A promise that resolves when the compute function has completed, or rejects
+   * if the compute function throws an error.
    *
-   * If a new run of the compute functino is started before the previous run has
+   * If a new run of the compute function is started before the previous run has
    * completed, the promise will resolve with the result of the new run.
    */
   get complete(): Promise<T> {
@@ -172,6 +172,7 @@ export class AsyncComputed<T> {
     });
     this.#watcher = new Signal.subtle.Watcher(() => {
       this.#isNotified = true;
+      this.#watcher.watch();
     });
     this.#watcher.watch(this.#computed);
   }
