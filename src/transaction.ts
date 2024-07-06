@@ -1,6 +1,9 @@
 import type { Signal } from "signal-polyfill";
 
 type Mutation = () => void;
+
+const activeTransactions: Set<Transaction> = new Set();
+
 let activeTransaction: null | Transaction = null;
 
 export function setActiveTransaction(transaction: Transaction | null): void {
@@ -9,23 +12,37 @@ export function setActiveTransaction(transaction: Transaction | null): void {
 
 export function signalTransactionSetter(signal: Signal.State<any>): void {
   if (activeTransaction) {
-    const { cellState, usedCells } = activeTransaction;
+    const { cellState, usedCells, seenCells } = activeTransaction;
+    if (seenCells.has(signal)) {
+      throw new Error('Unable to consume signal because its mutated after transaction creation');
+    }
     if (!cellState.has(signal)) {
       cellState.set(signal, signal.get());
       usedCells.add(signal);
+    }
+  } else {
+    for (const t of activeTransactions) {
+      if (t.usedCells.has(signal)) {
+        throw new Error('Unable to mutate signal used in ongoing transaction');
+      } else {
+        t.seenCells.add(signal);
+      }
     }
   }
 }
 
 export class Transaction {
   constructor(fn?: Mutation) {
+    activeTransactions.add(this);
     if (fn) {
       this.execute(fn);
     }
   }
   cellState: WeakMap<Signal.State<any>, unknown> = new WeakMap();
   usedCells: Set<Signal.State<any>> = new Set();
+  seenCells: WeakSet<Signal.State<any>> = new WeakSet();
   execute(fn: Mutation): void {
+    activeTransactions.add(this);
     try {
       setActiveTransaction(this);
       fn();
@@ -34,6 +51,7 @@ export class Transaction {
     }
   }
   commit(fn?: Mutation): void {
+    activeTransactions.add(this);
     if (fn) {
       this.execute(fn);
     }
@@ -48,8 +66,11 @@ export class Transaction {
   cleanup(): void {
     this.cellState = new WeakMap();
     this.usedCells = new Set();
+    this.seenCells = new WeakSet();
+    activeTransactions.delete(this);
   }
   follow(promise: Promise<any>): Promise<any> {
+    activeTransactions.add(this);
     return promise
       .then((result) => {
         this.commit();

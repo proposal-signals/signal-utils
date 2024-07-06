@@ -92,4 +92,36 @@ describe("transaction", () => {
       assert.equal(app.value, 10);
     }
   });
+  test('unable to mutate cell outside of transaction if its already used inside transaction', async () => {
+    const app = getApp();
+    app.value = 10;
+    const transaction = new Transaction(() => {
+      app.value = 20;
+    });
+    try {
+      app.value = 12;
+    } catch (error: any) {
+      assert.equal(error.message, "Unable to mutate signal used in ongoing transaction");
+      assert.equal(app.value, 20);
+    }
+    assert.ok(transaction);
+  });
+  test('unable to consume mutated cell in transaction if its mutated after transaction creation', async () => {
+    const v1 = getApp();
+    const v2 = getApp();
+    v1.value = 10;
+    v2.value = 10;
+    const transaction = new Transaction(() => {
+      v1.value = 20;
+    });
+    v2.value = 3
+    try {
+      transaction.execute(() => {
+        v2.value = 4
+      });
+    } catch(error: any) {
+      assert.equal(error.message, "Unable to consume signal because its mutated after transaction creation");
+      assert.equal(v2.value, 3);
+    }
+  });
 });
