@@ -1,3 +1,4 @@
 packages:
   - "."
   - "tests-public"
+  - "react"

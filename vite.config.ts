@@ -4,6 +4,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import { globbySync } from "globby";
 import { babel } from "@rollup/plugin-babel";
+import react from '@vitejs/plugin-react'
 
 const require = createRequire(import.meta.url);
 const manifest = require("./package.json");
@@ -20,6 +21,10 @@ for (let entry of entryFiles) {
 export default defineConfig({
   // esbuild in vite does not support decorators
   // https://github.com/evanw/esbuild/issues/104
+  test: {
+    // 👋 add the line below to add jsdom to vite
+    environment: 'jsdom',
+  },
   esbuild: false,
   build: {
     outDir: "dist",
@@ -77,5 +82,6 @@ export default defineConfig({
       // ignore tests
       include: ["src"],
     }),
+    react()
   ],
 });
