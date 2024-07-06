@@ -81,8 +81,8 @@ describe("AsyncComputed", () => {
 
     assert.equal(task.status, "pending");
     assert.strictEqual(abortSignals.length, 2);
-    assert.strictEqual(abortSignals[0].aborted, true);
-    assert.strictEqual(abortSignals[1].aborted, false);
+    assert.strictEqual(abortSignals[0]!.aborted, true);
+    assert.strictEqual(abortSignals[1]!.aborted, false);
 
     // We should not have created a new Promise. The first Promise should be
     // resolved with the result of the second run.
