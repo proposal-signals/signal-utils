@@ -194,7 +194,7 @@ export class State<Value> {
     } catch (e) {
       this.#caughtError.set(e);
     }
-  }
+  };
 
   async #dangerousRetry() {
     // We've previously had data, but we're about to run-again.
