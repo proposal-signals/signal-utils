@@ -183,7 +183,7 @@ export class State<Value> {
    * `error` or `resolvedValue` will remain as they were previously
    * until this promise resolves, and then they'll be updated to the new values.
    */
-  async retry() {
+  retry = async () => {
     try {
       /**
        * This function has two places where it can error:
