@@ -33,7 +33,6 @@ export function signalTransactionSetter(signal: Signal.State<any>): void {
 
 export class Transaction {
   constructor(fn?: Mutation) {
-    activeTransactions.add(this);
     if (fn) {
       this.execute(fn);
     }
@@ -51,7 +50,6 @@ export class Transaction {
     }
   }
   commit(fn?: Mutation): void {
-    activeTransactions.add(this);
     if (fn) {
       this.execute(fn);
     }
