@@ -61,13 +61,13 @@ export function signal<Value = any>(
 ) {
   if (args[1].kind === "accessor") {
     return stateDecorator(
-      ...(args as Parameters<typeof stateDecorator<Value>>)
+      ...(args as Parameters<typeof stateDecorator<Value>>),
     );
   }
 
   if (args[1].kind === "getter") {
     return computedDecorator(
-      ...(args as Parameters<typeof computedDecorator<Value>>)
+      ...(args as Parameters<typeof computedDecorator<Value>>),
     );
   }
 
@@ -76,7 +76,7 @@ export function signal<Value = any>(
 
 function stateDecorator<Value = any>(
   target: ClassAccessorDecoratorTarget<unknown, Value>,
-  context: ClassAccessorDecoratorContext
+  context: ClassAccessorDecoratorContext,
 ): ClassAccessorDecoratorResult<unknown, Value> {
   const { get } = target;
 
@@ -109,7 +109,7 @@ function stateDecorator<Value = any>(
 
 function computedDecorator<Value = any>(
   target: () => Value,
-  context: ClassGetterDecoratorContext
+  context: ClassGetterDecoratorContext,
 ): () => Value {
   const kind = context.kind;
 

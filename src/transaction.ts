@@ -16,7 +16,7 @@ export function pushActiveTransaction(transaction: Transaction): void {
 
 export function signalTransactionSetter(
   signal: Signal.State<any>,
-  value: any
+  value: any,
 ): void {
   if (activeTransaction) {
     const { cellState, usedCells, seenCells } = activeTransaction;
@@ -72,7 +72,8 @@ export class Transaction {
       this.execute(fn);
     }
     this.ensureSafeToCommit();
-    const parentTransaction = activeTransactions[activeTransactions.length - 1] || null;
+    const parentTransaction =
+      activeTransactions[activeTransactions.length - 1] || null;
     if (parentTransaction) {
       const { usedCells, cellState } = parentTransaction;
       this.usedCells.forEach((signal) => {
