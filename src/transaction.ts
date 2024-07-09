@@ -71,11 +71,21 @@ export class Transaction {
     if (fn) {
       this.execute(fn);
     }
-    this.usedCells.forEach((signal) => {
-      signal.set(this.cellState.get(signal));
-    });
+    this.ensureSafeToCommit();
+    const parentTransaction = activeTransactions[activeTransactions.length - 1] || null;
+    if (parentTransaction) {
+      const { usedCells, cellState } = parentTransaction;
+      this.usedCells.forEach((signal) => {
+        usedCells.add(signal);
+        cellState.set(signal, this.cellState.get(signal));
+      });
+    } else {
+      this.usedCells.forEach((signal) => {
+        signal.set(this.cellState.get(signal));
+      });
+    }
     for (const t of createdTransactions) {
-      if (t !== this) {
+      if (t !== this && !activeTransactions.includes(t)) {
         t.prevSeenCells.add(t.seenCells);
       }
     }

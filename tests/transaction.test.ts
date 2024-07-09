@@ -49,6 +49,43 @@ describe("transaction", () => {
     transaction.commit();
     assert.equal(app.value, 20);
   });
+  test("nested transactions should not affect each other", () => {
+    const app = getApp(10);
+    const transaction = new Transaction();
+    transaction.execute(() => {
+      app.value = 20;
+      const nestedTransaction = new Transaction();
+      nestedTransaction.execute(() => {
+        app.value = 30;
+        assert.equal(app.value, 30);
+      });
+      assert.equal(app.value, 20);
+      nestedTransaction.commit();
+      assert.equal(app.value, 30);
+    });
+    assert.equal(app.value, 10);
+    transaction.commit();
+    assert.equal(app.value, 30);
+  });
+  test("no error appears if value mutation appears in parent and child transaction", () => {
+    const app = getApp(10);
+    const transaction = new Transaction();
+    transaction.execute(() => {
+      app.value = 20;
+      const nestedTransaction = new Transaction();
+      nestedTransaction.execute(() => {
+        app.value = 30;
+        assert.equal(app.value, 30);
+      });
+      app.value = 40;
+      assert.equal(app.value, 40);
+      nestedTransaction.commit();
+      assert.equal(app.value, 30);
+    });
+    assert.equal(app.value, 10);
+    transaction.commit();
+    assert.equal(app.value, 30);
+  });
   test("should execute mutation in constructor", () => {
     const app = getApp(10);
     const transaction = new Transaction(() => {
