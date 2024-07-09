@@ -2,9 +2,9 @@ import { describe, test, assert } from "vitest";
 import { signal } from "../src/index";
 import { Transaction } from "../src/transaction";
 
-function getApp() {
+function getApp(initValue: any = 0) {
   class Obj {
-    @signal accessor value = 0;
+    @signal accessor value = initValue;
   }
   const app = new Obj();
   return app;
@@ -12,53 +12,54 @@ function getApp() {
 
 describe("transaction", () => {
   test("rollback should work", () => {
-    const app = getApp();
-    app.value = 10;
+    const app = getApp(10);
     const transaction = new Transaction();
     transaction.execute(() => {
       app.value = 20;
     });
-    assert.equal(app.value, 20);
+    assert.equal(app.value, 10);
     transaction.rollback();
     assert.equal(app.value, 10);
   });
   test("commit should work", () => {
-    const app = getApp();
-    app.value = 10;
+    const app = getApp(10);
     const transaction = new Transaction();
     transaction.execute(() => {
       app.value = 20;
     });
-    assert.equal(app.value, 20);
+    assert.equal(app.value, 10);
     transaction.commit();
     assert.equal(app.value, 20);
   });
   test("should work with nested transactions", () => {
-    const app = getApp();
-    app.value = 10;
+    const app = getApp(10);
     const transaction = new Transaction();
     transaction.execute(() => {
       app.value = 20;
       const nestedTransaction = new Transaction();
       nestedTransaction.execute(() => {
         app.value = 30;
+        assert.equal(app.value, 30);
       });
-      assert.equal(app.value, 30);
+      assert.equal(app.value, 20);
       nestedTransaction.rollback();
       assert.equal(app.value, 20);
     });
-    assert.equal(app.value, 20);
-    transaction.rollback();
     assert.equal(app.value, 10);
+    transaction.commit();
+    assert.equal(app.value, 20);
   });
   test("should execute mutation in constructor", () => {
-    const app = getApp();
+    const app = getApp(10);
     const transaction = new Transaction(() => {
       app.value = 20;
     });
-    assert.equal(app.value, 20);
+    assert.equal(app.value, 10);
+    transaction.execute(() => {
+      assert.equal(app.value, 20);
+    });
     transaction.rollback();
-    assert.equal(app.value, 0);
+    assert.equal(app.value, 10);
   });
   test("should work with promises", async () => {
     const app = getApp();
@@ -92,7 +93,7 @@ describe("transaction", () => {
       assert.equal(app.value, 10);
     }
   });
-  test('unable to mutate cell outside of transaction if its already used inside transaction', async () => {
+  test("unable to mutate cell outside of transaction if its already used inside transaction", async () => {
     const app = getApp();
     app.value = 10;
     const transaction = new Transaction(() => {
@@ -101,12 +102,15 @@ describe("transaction", () => {
     try {
       app.value = 12;
     } catch (error: any) {
-      assert.equal(error.message, "Unable to mutate signal used in ongoing transaction");
+      assert.equal(
+        error.message,
+        "Unable to mutate signal used in ongoing transaction"
+      );
       assert.equal(app.value, 20);
     }
     assert.ok(transaction);
   });
-  test('unable to consume mutated cell in transaction if its mutated after transaction creation', async () => {
+  test("unable to consume mutated cell in transaction if its mutated after transaction creation", async () => {
     const v1 = getApp();
     const v2 = getApp();
     v1.value = 10;
@@ -114,14 +118,60 @@ describe("transaction", () => {
     const transaction = new Transaction(() => {
       v1.value = 20;
     });
-    v2.value = 3
+    v2.value = 3;
     try {
       transaction.execute(() => {
-        v2.value = 4
+        v2.value = 4;
       });
-    } catch(error: any) {
-      assert.equal(error.message, "Unable to consume signal because its mutated after transaction creation");
+    } catch (error: any) {
+      assert.equal(
+        error.message,
+        "Unable to consume signal because its mutated after transaction creation"
+      );
       assert.equal(v2.value, 3);
+    }
+  });
+  test("Changes made outside of a transaction are not visible within the transaction.", async () => {
+    const app = getApp(10);
+    assert.equal(app.value, 10);
+    const transaction = new Transaction(() => {
+      app.value = 20;
+      assert.equal(app.value, 20);
+    });
+    app.value = 30;
+    assert.equal(app.value, 30);
+    transaction.execute(() => {
+      assert.equal(app.value, 20);
+    });
+    transaction.rollback();
+    assert.equal(app.value, 30);
+  });
+  test("Changes made within the transaction are not visible outside of the transaction until it commits.", async () => {
+    const app = getApp(10);
+    assert.equal(app.value, 10);
+    const transaction = new Transaction(() => {
+      app.value = 20;
+      assert.equal(app.value, 20);
+    });
+    assert.equal(app.value, 10);
+    transaction.commit();
+    assert.equal(app.value, 20);
+  });
+  test("Transactions fail to commit if they conflict with another transaction in some way (e.g. during the transaction a piece of data that was read or modified was changed by another transaction which committed first)", async () => {
+    const app = getApp(10);
+    const transaction1 = new Transaction(() => {
+      app.value = 20;
+    });
+    const transaction2 = new Transaction(() => {
+      app.value = 30;
+    });
+    transaction1.commit();
+    assert.equal(app.value, 20);
+    try {
+      transaction2.commit();
+    } catch (error: any) {
+      assert.equal(error.message, "Transaction conflict");
+      assert.equal(app.value, 20);
     }
   });
 });

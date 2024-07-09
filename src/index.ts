@@ -1,5 +1,8 @@
 import { Signal } from "signal-polyfill";
-import { signalTransactionSetter } from "./transaction";
+import {
+  signalTransactionGetter,
+  signalTransactionSetter,
+} from "./transaction";
 
 /**
  * Usage:
@@ -58,13 +61,13 @@ export function signal<Value = any>(
 ) {
   if (args[1].kind === "accessor") {
     return stateDecorator(
-      ...(args as Parameters<typeof stateDecorator<Value>>),
+      ...(args as Parameters<typeof stateDecorator<Value>>)
     );
   }
 
   if (args[1].kind === "getter") {
     return computedDecorator(
-      ...(args as Parameters<typeof computedDecorator<Value>>),
+      ...(args as Parameters<typeof computedDecorator<Value>>)
     );
   }
 
@@ -73,7 +76,7 @@ export function signal<Value = any>(
 
 function stateDecorator<Value = any>(
   target: ClassAccessorDecoratorTarget<unknown, Value>,
-  context: ClassAccessorDecoratorContext,
+  context: ClassAccessorDecoratorContext
 ): ClassAccessorDecoratorResult<unknown, Value> {
   const { get } = target;
 
@@ -85,15 +88,15 @@ function stateDecorator<Value = any>(
     get(): Value {
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.
-      return (get.call(this) as Signal.State<Value>).get();
+      const signal = get.call(this) as Signal.State<Value>;
+      return signalTransactionGetter(signal);
     },
 
     set(value: Value) {
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.
       const signal = get.call(this) as Signal.State<Value>;
-      signalTransactionSetter(signal);
-      signal.set(value);
+      signalTransactionSetter(signal, value);
     },
 
     init(value: Value) {
@@ -106,7 +109,7 @@ function stateDecorator<Value = any>(
 
 function computedDecorator<Value = any>(
   target: () => Value,
-  context: ClassGetterDecoratorContext,
+  context: ClassGetterDecoratorContext
 ): () => Value {
   const kind = context.kind;
 

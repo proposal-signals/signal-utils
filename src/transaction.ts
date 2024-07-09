@@ -2,33 +2,43 @@ import type { Signal } from "signal-polyfill";
 
 type Mutation = () => void;
 
-const activeTransactions: Set<Transaction> = new Set();
-
-let activeTransaction: null | Transaction = null;
-
-export function setActiveTransaction(transaction: Transaction | null): void {
-  activeTransaction = transaction;
+let activeTransaction = () => {
+  return activeTransactions[activeTransactions.length - 1] || null;
+};
+const activeTransactions: Transaction[] = [];
+const createdTransactions: Set<Transaction> = new Set();
+export function popActiveTransaction(): void {
+  activeTransactions.pop();
+}
+export function pushActiveTransaction(transaction: Transaction): void {
+  activeTransactions.push(transaction);
 }
 
-export function signalTransactionSetter(signal: Signal.State<any>): void {
-  if (activeTransaction) {
-    const { cellState, usedCells, seenCells } = activeTransaction;
-    if (seenCells.has(signal)) {
-      throw new Error('Unable to consume signal because its mutated after transaction creation');
-    }
+export function signalTransactionSetter(
+  signal: Signal.State<any>,
+  value: any
+): void {
+  const transaction = activeTransaction();
+  if (transaction) {
+    const { cellState, usedCells, seenCells } = transaction;
     if (!cellState.has(signal)) {
-      cellState.set(signal, signal.get());
       usedCells.add(signal);
     }
+    seenCells.add(signal);
+    cellState.set(signal, value);
   } else {
-    for (const t of activeTransactions) {
-      if (t.usedCells.has(signal)) {
-        throw new Error('Unable to mutate signal used in ongoing transaction');
-      } else {
-        t.seenCells.add(signal);
-      }
+    signal.set(value);
+  }
+}
+export function signalTransactionGetter(signal: Signal.State<any>): any {
+  const transaction = activeTransaction();
+  if (transaction) {
+    const { cellState, usedCells } = transaction;
+    if (usedCells.has(signal)) {
+      return cellState.get(signal);
     }
   }
+  return signal.get();
 }
 
 export class Transaction {
@@ -40,35 +50,50 @@ export class Transaction {
   cellState: WeakMap<Signal.State<any>, unknown> = new WeakMap();
   usedCells: Set<Signal.State<any>> = new Set();
   seenCells: WeakSet<Signal.State<any>> = new WeakSet();
+  prevSeenCells: Set<WeakSet<Signal.State<any>>> = new Set();
   execute(fn: Mutation): void {
-    activeTransactions.add(this);
+    createdTransactions.add(this);
     try {
-      setActiveTransaction(this);
+      pushActiveTransaction(this);
       fn();
     } finally {
-      setActiveTransaction(null);
+      popActiveTransaction();
     }
+  }
+  ensureSafeToCommit() {
+    this.usedCells.forEach((signal) => {
+      for (const prevSeen of this.prevSeenCells) {
+        if (prevSeen.has(signal)) {
+          throw new Error("Transaction conflict");
+        }
+      }
+    });
   }
   commit(fn?: Mutation): void {
     if (fn) {
       this.execute(fn);
     }
-    this.cleanup();
-  }
-  rollback(): void {
     this.usedCells.forEach((signal) => {
       signal.set(this.cellState.get(signal));
     });
+    for (const t of createdTransactions) {
+      if (t !== this) {
+        t.prevSeenCells.add(t.seenCells);
+      }
+    }
+    this.cleanup();
+  }
+  rollback(): void {
     this.cleanup();
   }
   cleanup(): void {
+    createdTransactions.delete(this);
     this.cellState = new WeakMap();
     this.usedCells = new Set();
     this.seenCells = new WeakSet();
-    activeTransactions.delete(this);
+    this.prevSeenCells = new Set();
   }
   follow(promise: Promise<any>): Promise<any> {
-    activeTransactions.add(this);
     return promise
       .then((result) => {
         this.commit();
