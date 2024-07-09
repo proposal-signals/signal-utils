@@ -2,25 +2,24 @@ import type { Signal } from "signal-polyfill";
 
 type Mutation = () => void;
 
-let activeTransaction = () => {
-  return activeTransactions[activeTransactions.length - 1] || null;
-};
+let activeTransaction: Transaction | null = null;
 const activeTransactions: Transaction[] = [];
 const createdTransactions: Set<Transaction> = new Set();
 export function popActiveTransaction(): void {
   activeTransactions.pop();
+  activeTransaction = activeTransactions[activeTransactions.length - 1] || null;
 }
 export function pushActiveTransaction(transaction: Transaction): void {
   activeTransactions.push(transaction);
+  activeTransaction = transaction;
 }
 
 export function signalTransactionSetter(
   signal: Signal.State<any>,
   value: any
 ): void {
-  const transaction = activeTransaction();
-  if (transaction) {
-    const { cellState, usedCells, seenCells } = transaction;
+  if (activeTransaction) {
+    const { cellState, usedCells, seenCells } = activeTransaction;
     if (!cellState.has(signal)) {
       usedCells.add(signal);
     }
@@ -31,9 +30,8 @@ export function signalTransactionSetter(
   }
 }
 export function signalTransactionGetter(signal: Signal.State<any>): any {
-  const transaction = activeTransaction();
-  if (transaction) {
-    const { cellState, usedCells } = transaction;
+  if (activeTransaction) {
+    const { cellState, usedCells } = activeTransaction;
     if (usedCells.has(signal)) {
       return cellState.get(signal);
     }
