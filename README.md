@@ -146,7 +146,7 @@ Inspiration for deep reactivity comes from:
 
 ### `deep` function
 
-A utility decorator for recursively, deeply, and lazily auto-tracking JSON-serializable structures at any depth or size.
+A utility function for recursively, deeply, and lazily auto-tracking JSON-serializable structures at any depth or size.
 
 ```gjs
 import { deep } from 'signal-utils/deep';
