@@ -1,6 +1,6 @@
 //  Note from Evan: For some reason, my VSCode won't appropriately assess the return type on keys of store objects. For example, when the input store has a key of *count: number*, the returned store's key is typed *count: unknown*.
 // Isn't an issue for the repo my orginazation is using to test this stuff.
-import { describe, expect, it, fn, beforeEach } from "jest"; // Need import, or should I convert this file to vitest ?
+import { describe, expect, it, fn, beforeEach } from "vitest"; // Need import, or should I convert this file to vitest ?
 import { makeState, makeMemo, makeStore } from "../../src/make/makeStore";
 import type {State, Memo, Store } from "../../src/make/makeStore";
 import { Signal } from "signal-polyfill";
