@@ -57,7 +57,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "signal-polyfill": "^0.1.0"
+    "signal-polyfill": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",
