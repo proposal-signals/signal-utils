@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-10-08)
+
+signal-utils 0.20.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#77](https://github.com/proposal-signals/signal-utils/pull/77) Proposal: Add AsyncComputed ([@justinfagnani](https://github.com/justinfagnani))
+
+#### Committers: 1
+- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))
+
 ## Release (2024-10-02)
 
 signal-utils 0.19.0 (minor)
