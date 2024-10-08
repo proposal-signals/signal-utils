@@ -146,7 +146,7 @@ export class AsyncComputed<T> {
    * @param options.initialValue The initial value of the AsyncComputed.
    */
   constructor(
-    fn: (signal: AbortSignal) => Promise<T>,
+    fn: (abortSignal: AbortSignal) => Promise<T>,
     options?: AsyncComputedOptions<T>
   ) {
     this.#value = new Signal.State(options?.initialValue);

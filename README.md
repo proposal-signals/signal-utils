@@ -583,7 +583,7 @@ An `AsyncComputed` instance tracks its "status", which is either `"initial"`,
 
 - `constructor<T>(fn, options)`
   - arguments:
-    - `fn: (signal: AbortSignal) => Promise<T>`: The compute function.
+    - `fn: (abortSignal: AbortSignal) => Promise<T>`: The compute function.
       Synchronous signal access (before the first await) is tracked.
       
       If a run is preempted by another run because dependencies change, the
