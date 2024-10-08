@@ -51,6 +51,8 @@ npm add signal-utils signal-polyfill
 - subtle utilities
   - [effect](#leaky-effect-via-queuemicrotask)
   - [reaction](#reaction)
+  - [Batched Effects](#batched-effects)
+  - [AsyncComputed](#asynccomputed)
 
 ### `@signal`
 
@@ -542,6 +544,73 @@ batch(() => {
 ```
 
 Synchronous batched effects can be useful when abstracting over signals to use them as a backing storage mechanism. In some cases you may want the effect of a signal update to be synchronously observable, but also to allow batching when possible for the usual performacne and coherence reasons.
+
+#### AsyncComputed
+
+The `AsyncComputed` class reprents an _async_ computation that consumes other signals.
+
+While computing a value based on other signals _synchronously_ is covered by the core signals API, computing a value _asynchronously_ is not. (There is an ongoing [discussion about how to handle async computations](https://github.com/tc39/proposal-signals/issues/30 however).
+
+`AsyncComputed` is similar to `Signal.Computed`, except that it takes an async (or Promise-returning) function as the computation function.
+
+All _synchronous_ access to signals within the function is tracked (by running it within a `Signal.Computed`), so that when the signal dependencies change, the computation is rerun. New runs of the async computation preempt pending runs of the computation.
+
+```ts
+import {AsyncComputed} from 'signal-utils/async-computed';
+
+const count = new Signal.State(1);
+
+const asyncDoubled = new AsyncComputed(async () => {
+  // Wait 10ms
+  await new Promise((res) => setTimeout(res, 10));
+
+  return count.get() * 2;
+});
+
+console.log(asyncDoubled.status); // Logs: pending
+console.log(asyncDoubled.value); // Logs: undefined 
+
+await asyncDoubled.complete;
+
+console.log(asyncDoubled.status); // Logs: complete
+console.log(asyncDoubled.value); // Logs: 2
+```
+
+An `AsyncComputed` instance tracks its "status", which is either `"initial"`,
+`"pending"`, `"complete"`, or `"error"`.
+
+##### AsyncComputed API
+
+- `constructor<T>(fn, options)`
+  - arguments:
+    - `fn: (signal: AbortSignal) => Promise<T>`: The compute function.
+      Synchronous signal access (before the first await) is tracked.
+      
+      If a run is preempted by another run because dependencies change, the
+      AbortSignal will abort. It's recomended to call `signal.throwIfAborted()`
+      after any `await`.
+    - `options?: AsyncComputedOptions<T>`:
+      - `initialValue`: The initial value to return from `.value` before the
+        computation has yet run.
+- `status: "initial" | "pending" | "complete" | "error"`
+- `value: T | undefined`: The last value that the compute function resolved
+  with, or `undefined` if the last run of the compute function threw an error.
+  If the compute function has not yet been run `value` will be the value of the
+  `initialValue` or `undefined`.
+- `error: unknown`: The last error that the compute function threw, or
+  `undefined` if the last run of the compute function resolved successfully, or
+  if the compute function has not yet been run.
+- `complete: Promise<T>`: A promise that resolves when the compute function has
+  completed, or rejects if the compute function throws an error.
+   
+  If a new run of the compute function is started before the previous run has
+  completed, the promise will resolve with the result of the new run.
+- `run(): void`: Runs the compute function if it is not already running and its
+  dependencies have changed.
+- `get(): T | undefined`: Retruns the current `value` or throws if the last
+  completion result was an error. This method is best used for accessing from
+  other computed signals, since it will propagate error states into the other
+  computed signals.
 
 ## Contributing
 

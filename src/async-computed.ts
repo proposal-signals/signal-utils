@@ -13,16 +13,16 @@ export interface AsyncComputedOptions<T> {
  * A signal-like object that represents an asynchronous computation.
  *
  * AsyncComputed takes a compute function that performs an asynchronous
- * computation and runs it inside a computed signal, while tracking the status of
- * the computation, including its most recent completion value and error.
+ * computation and runs it inside a computed signal, while tracking the status
+ * of the computation, including its most recent completion value and error.
  *
  * Compute functions are run when the `value`, `error`, or `complete` properties
  * are read, or when `get()` or `run()` are called, and are re-run when any
  * signals that they read change.
  *
  * If a new run of the compute function is started before the previous run has
- * completed, the previous run will have its AbortSignal aborted, and the
- * result of the previous run will be ignored.
+ * completed, the previous run will have its AbortSignal aborted, and the result
+ * of the previous run will be ignored.
  */
 export class AsyncComputed<T> {
   // Whether we have been notified of a pending update from the watcher. This is
@@ -52,27 +52,39 @@ export class AsyncComputed<T> {
    *
    * This value is read from a signal, so any signals that read it will be
    * tracked as dependents of it.
+   *
+   * Accessing this property will cause the compute function to run if it hasn't
+   * already.
    */
   get status() {
     // Unconditionally read the status signal to ensure that any signals that
     // read it are tracked as dependents.
     const currentState = this.#status.get();
+    // Read from the non-signal #isNotified field, which can be set by the
+    // watcher synchronously.
     return this.#isNotified ? "pending" : currentState;
   }
 
+  #value: Signal.State<T | undefined>;
+
   /**
    * The last value that the compute function resolved with, or `undefined` if
-   * the last run of the compute function threw an error, or if the compute
-   * function has not yet been run.
+   * the last run of the compute function threw an error. If the compute
+   * function has not yet been run `value` will be the value of the
+   * `initialValue` or `undefined`.
    *
    * This value is read from a signal, so any signals that read it will be
    * tracked as dependents of it.
+   *
+   * Accessing this property will cause the compute function to run if it hasn't
+   * already.
    */
-  #value: Signal.State<T | undefined>;
   get value() {
     this.run();
     return this.#value.get();
   }
+
+  #error = new Signal.State<unknown | undefined>(undefined);
 
   /**
    * The last error that the compute function threw, or `undefined` if the last
@@ -81,8 +93,10 @@ export class AsyncComputed<T> {
    *
    * This value is read from a signal, so any signals that read it will be
    * tracked as dependents of it.
+   *
+   * Accessing this property will cause the compute function to run if it hasn't
+   * already.
    */
-  #error = new Signal.State<unknown | undefined>(undefined);
   get error() {
     this.run();
     return this.#error.get();
@@ -96,6 +110,13 @@ export class AsyncComputed<T> {
    *
    * If a new run of the compute function is started before the previous run has
    * completed, the promise will resolve with the result of the new run.
+   *
+   * This value is read from a signal, so any signals that read it will be
+   * tracked as dependents of it. The identity of the promise will change if the
+   * compute function is re-run after having completed or errored.
+   *
+   * Accessing this property will cause the compute function to run if it hasn't
+   * already.
    */
   get complete(): Promise<T> {
     this.run();
@@ -126,7 +147,7 @@ export class AsyncComputed<T> {
    */
   constructor(
     fn: (signal: AbortSignal) => Promise<T>,
-    options?: AsyncComputedOptions<T>,
+    options?: AsyncComputedOptions<T>
   ) {
     this.#value = new Signal.State(options?.initialValue);
     this.#computed = new Signal.Computed(() => {
@@ -168,10 +189,12 @@ export class AsyncComputed<T> {
           this.#error.set(error);
           this.#value.set(undefined);
           this.#deferred.get()!.reject(error);
-        },
+        }
       );
     });
-    this.#watcher = new Signal.subtle.Watcher(() => {
+    this.#watcher = new Signal.subtle.Watcher(async () => {
+      // Set the #isNotified flag synchronously when any dependencies change, so
+      // that it can be read synchronously by the status getter.
       this.#isNotified = true;
       this.#watcher.watch();
     });
@@ -180,7 +203,7 @@ export class AsyncComputed<T> {
 
   /**
    * Returns the last value that the compute function resolved with, or
-   * `undefined` if the compute function has not yet been run.
+   * the initial value if the compute function has not yet been run.
    *
    * @throws The last error that the compute function threw, is the last run of
    * the compute function threw an error.
