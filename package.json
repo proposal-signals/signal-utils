@@ -1,6 +1,6 @@
 {
   "name": "signal-utils",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Utils for use with the Signals Proposal: https://github.com/proposal-signals/proposal-signals",
   "keywords": [
     "signals",
@@ -57,7 +57,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "signal-polyfill": "^0.1.0"
+    "signal-polyfill": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",
@@ -81,6 +81,6 @@
   "packageManager": "pnpm@9.0.6",
   "volta": {
     "node": "22.0.0",
-    "pnpm": "9.0.5"
+    "pnpm": "9.0.6"
   }
 }

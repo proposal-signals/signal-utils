@@ -25,21 +25,15 @@ export function signalFunction<Return>(fn: () => Return): State<Return> {
  */
 export class State<Value> {
   #data = new Signal.State<SignalAsyncData<Value> | null>(null);
-  #promise = new Signal.State<Value | undefined>(undefined);
-
   get data() {
     this.#computed.get();
     return this.#data.get();
   }
-  set data(value) {
-    this.#data.set(value);
-  }
+
+  #promise = new Signal.State<Value | undefined>(undefined);
   get promise() {
     this.#computed.get();
     return this.#promise.get();
-  }
-  set promise(value) {
-    this.#promise.set(value);
   }
 
   /**
@@ -53,9 +47,6 @@ export class State<Value> {
   get caughtError() {
     this.#computed.get();
     return this.#caughtError.get();
-  }
-  set caughtError(value) {
-    this.#caughtError.set(value);
   }
 
   #fn: () => Value;
@@ -199,22 +190,23 @@ export class State<Value> {
        * - immediately when inovking `fn` (where auto-tracking occurs)
        * - after an await, "eventually"
        */
-      await this._dangerousRetry();
+      await this.#dangerousRetry();
     } catch (e) {
-      this.caughtError = e;
+      this.#caughtError.set(e);
     }
   };
 
-  _dangerousRetry = async () => {
+  async #dangerousRetry() {
     // We've previously had data, but we're about to run-again.
     // we need to do this again so `isLoading` goes back to `true` when re-running.
     // NOTE: we want to do this _even_ if this.data is already null.
-    //       it's all in the same tracking frame and the important thing is taht
+    //       it's all in the same tracking frame and the important thing is that
     //       we can't *read* data here.
-    this.data = null;
+    this.#data.set(null);
 
-    // We need to invoke this before going async so that tracked properties are consumed (entangled with) synchronously
-    this.promise = this.#fn();
+    // We need to invoke this before going async so that tracked properties are
+    // consumed (entangled with) synchronously
+    this.#promise.set(this.#fn());
 
     // TrackedAsyncData interacts with tracked data during instantiation.
     // We don't want this internal state to entangle with `signalFunction`
@@ -226,9 +218,9 @@ export class State<Value> {
      * This is detached from the tracking frame (via the above await),
      * se the UI can update accordingly, without causing us to refetch
      */
-    this.caughtError = null;
-    this.data = new SignalAsyncData(this.promise);
+    this.#caughtError.set(null);
+    this.#data.set(new SignalAsyncData<Value>(this.promise!));
 
     return this.promise;
-  };
+  }
 }
