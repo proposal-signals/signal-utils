@@ -147,7 +147,7 @@ export class AsyncComputed<T> {
    */
   constructor(
     fn: (abortSignal: AbortSignal) => Promise<T>,
-    options?: AsyncComputedOptions<T>
+    options?: AsyncComputedOptions<T>,
   ) {
     this.#value = new Signal.State(options?.initialValue);
     this.#computed = new Signal.Computed(() => {
@@ -189,7 +189,7 @@ export class AsyncComputed<T> {
           this.#error.set(error);
           this.#value.set(undefined);
           this.#deferred.get()!.reject(error);
-        }
+        },
       );
     });
     this.#watcher = new Signal.subtle.Watcher(async () => {
