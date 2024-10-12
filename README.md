@@ -44,6 +44,7 @@ npm add signal-utils signal-polyfill
   - [async function](#async-function) 
   - [localCopy](#localcopy-function)
   - [deep](#deep-function)
+  - [transaction](#transaction)
 - class utilities
   - [@signal](#signal)
   - [@localCopy](#localcopy)
@@ -223,6 +224,49 @@ Live, interactive demos of this concept:
 - [Ember](https://limber.glimdown.com/edit?c=MQAgYg9gTg1glgOwOYgMoBcCG6CmIDuc6AFiAEo4C2EuIAqgA4Am2OAzgFAfHroNsAuAPRD0hXjigA6AMYRKQgPpQ2M4lDht0cTAiFbsAVzZCAjAHZzABgAcNgGwP7ATgDMAVlfnXzgCw2uAANgpAArNhAAGzgANxwOOEoGaHQQAG8oiBlMSIBhCAYATwBfEAAzKHkQAHJ0KEwZGBwmAFp0CAhIgCMIAA9qgG4EpJSQfJGEHARUiqrqgAEkaMpKSSE5Can0QeHkqFSMuoamphBS2coaxeXVqFF6xsQkHcS9g5AIBDPyysuFqi6a2oTDgZTgkh2HDkCC06RAAClUAB5ABy3wAvCAlhAujkACrETRDKGRTBsCIAESoEBAOF6uAQTAi42Sk2m6Q4IBA80iWRy%2BSKAApqpgoEg2FIYjlDDhqgBKTLZSIANWlOGJXMMzFYABk%2BSq1SBMZyuSBBYgGIZ0ABROLTBXogB8IBImikvKVqsiMqNIAtVttWykWDFOHQkrVGpAxF0TEiOFQhi6lCIvpNXMFbCTKZtdvQDudaXTpqzyaIgemUgYUBweapZUwhki6EFcqGptNrolovFUk%2BibLLYyUu9OAELsJEo9OS9PuKbeLxS4XJEIAAgiBoXVOvHTv70CaADy4JKk3CO4uHsrQS5pNKfGqlnPVCdumOM%2BMDnPFYoXjtcw9SUBSI-3-LlrRBVIUUwVZxy5YsO0PfcQBHGV0TvLt3X1WccB-dJ7y%2Bap9xfTCtRYXA9U9NU8KEUDEKEICcBA5d-0PLorXaBBHS-IhDyEdjeE%2BOiQD468oEoC9L2rHBHWnA1RzgsDTQwycsKo0cfzYqBHRrahaHmVCx3wgzqOKPjpMkxCtEKeNhK5ZCMh6KAmEkcdTAYXoQDYTo4CYAYzkvfR0BsmSj1EKgGDPUKlw4Ok3hAFyGybVIZFJcl1wYBhaXpKYmTGeRWS2DkuXmI5GmaFDDUxAAiABZBo8AAdUQJhDGq9tuTKk4EuwTAo2jWNP2zVNMUFcjMALV8JXG31xo6zd3yQHBoNWX1WyNZ1MMMkAAGpMWqABCSEAJPSLWGEw8qWoblDPQtIttM7l%2B2G9A7sw984wTF6aMs01D3UX6uVyRs2DwOlcCgBAcgW3QlrNShMEKQEvMSJtsCeEBMBAGsKnYUgIDKbHqVoca5QES8BM4-CH2qVK4EaEjVLUWHlpg3Df2B4w8GtHLIeh3JFpwPjKaEliAIB4sdTJVIeIkJgBC0i6LLvRFUSkLQNGQUFCimqQZoQJtIhAVxNKECywtOqKLyXYJAg4IA&format=glimdown)
 - [Preact](https://preactjs.com/repl?code=aW1wb3J0IHsgcmVuZGVyIH0gZnJvbSAncHJlYWN0JzsKaW1wb3J0IHsgdXNlUmVmLCB1c2VFZmZlY3QgfSBmcm9tICdwcmVhY3QvaG9va3MnOwppbXBvcnQgeyBzaWduYWwsIGVmZmVjdCwgdXNlU2lnbmFsIH0gZnJvbSAnQHByZWFjdC9zaWduYWxzJzsKaW1wb3J0IHsgaHRtbCB9IGZyb20gJ2h0bS9wcmVhY3QnOwoKZnVuY3Rpb24gdXNlTG9jYWxDb3B5KHJlbW90ZSkgewoJY29uc3QgbG9jYWwgPSB1c2VSZWYoKTsKCWlmICghbG9jYWwuY3VycmVudCkgewoJCWxvY2FsLmN1cnJlbnQgPSBzaWduYWwocmVtb3RlLnBlZWsoKSk7Cgl9CgoJdXNlRWZmZWN0KCgpID0%2BIHsKCSAgLy8gU3luY2hyb25vdXNseSB1cGRhdGUgdGhlIGxvY2FsIGNvcHkgd2hlbiByZW1vdGUgY2hhbmdlcy4KCSAgLy8gQ29yZSBlZmZlY3RzIGFyZSBqdXN0IGEgd2F5IHRvIGhhdmUgc3luY2hyb25vdXMgY2FsbGJhY2tzCgkgIC8vIHJlYWN0IHRvIHNpZ25hbCBjaGFuZ2VzIGluIGEgcHJldHR5IGVmZmljaWVudCB3YXkuCgkJcmV0dXJuIGVmZmVjdCgoKSA9PiB7CgkJCWxvY2FsLmN1cnJlbnQudmFsdWUgPSByZW1vdGUudmFsdWU7CgkJfSk7Cgl9LCBbcmVtb3RlXSk7CgoJcmV0dXJuIGxvY2FsLmN1cnJlbnQ7Cn0KCmZ1bmN0aW9uIERlbW8oeyBuYW1lLCBvblN1Ym1pdCB9KSB7CgkJY29uc3QgbG9jYWxOYW1lID0gdXNlTG9jYWxDb3B5KG5hbWUpOwoKICAgIGNvbnN0IHVwZGF0ZUxvY2FsTmFtZSA9IChpbnB1dEV2ZW50KSA9PiBsb2NhbE5hbWUudmFsdWUgPSBpbnB1dEV2ZW50LnRhcmdldC52YWx1ZTsKCiAgICBjb25zdCBoYW5kbGVTdWJtaXQgPSAoc3VibWl0RXZlbnQpID0%2BIHsKICAgICAgICBzdWJtaXRFdmVudC5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgIG9uU3VibWl0KHsgdmFsdWU6IGxvY2FsTmFtZS52YWx1ZSB9KTsKICAgIH0KCiAgICByZXR1cm4gaHRtbGAKICAgICAgICA8Zm9ybSBvblN1Ym1pdD0ke2hhbmRsZVN1Ym1pdH0%2BCiAgICAgICAgICAgIDxsYWJlbD4KICAgICAgICAgICAgICAgIEVkaXQgTmFtZTogICAKICAgICAgICAgICAgICAgIDxpbnB1dCB2YWx1ZT0ke2xvY2FsTmFtZS52YWx1ZX0gb25JbnB1dD0ke3VwZGF0ZUxvY2FsTmFtZX0gLz4KICAgICAgICAgICAgPC9sYWJlbD4KCiAgICAgICAgICAgIDxidXR0b24%2BU3VibWl0PC9idXR0b24%2BCiAgICAgICAgPC9mb3JtPgoKICAgICAgICA8cHJlPmxvY2FsVmFsdWU6ICR7bG9jYWxOYW1lfTxiciAvPnBhcmVudCB2YWx1ZTogJHtuYW1lfTwvcHJlPmA7Cn0KCmV4cG9ydCBmdW5jdGlvbiBBcHAoKSB7CiAgICBjb25zdCBuYW1lID0gdXNlU2lnbmFsKCdNYWNlIFdpbmR1Jyk7CiAgICBjb25zdCBkYXRhID0gdXNlU2lnbmFsKCcnKTsKCiAgICBjb25zdCBoYW5kbGVTdWJtaXQgPSAoZCkgPT4gZGF0YS52YWx1ZSA9IGQ7CiAgICBjb25zdCBjaGFuZ2VOYW1lID0gKCkgPT4gbmFtZS52YWx1ZSArPSAnISc7CgogICAgcmV0dXJuIGh0bWxgCiAgICAgICAgPCR7RGVtb30gbmFtZT0ke25hbWV9IG9uU3VibWl0PSR7aGFuZGxlU3VibWl0fSAvPgoKICAgICAgICA8aHIgLz4KCiAgICAgICAgQ2F1c2UgZXh0ZXJuYWwgY2hhbmdlIChtYXliZSBzaW11bGF0aW5nIGEgcmVmcmVzaCBvZiByZW1vdGUgZGF0YSk6CiAgICAgICAgPGJ1dHRvbiBvbkNsaWNrPSR7Y2hhbmdlTmFtZX0%2BQ2F1c2UgRXh0ZXJuYWwgQ2hhbmdlPC9idXR0b24%2BCgogICAgICAgIDxociAvPgogICAgICAgIExhc3QgU3VibWl0dGVkOjxiciAvPgogICAgICAgIDxwcmU%2BJHtKU09OLnN0cmluZ2lmeShkYXRhLnZhbHVlLCBudWxsLCAzKX08L3ByZT5gOwp9CgpyZW5kZXIoPEFwcCAvPiwgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2FwcCcpKTsK)
 - [Solid](https://playground.solidjs.com/anonymous/0cf7972e-f55d-4483-909d-6c172c80d5ac)
+
+### `Transaction`
+
+A utility class for managing transactions that can be committed or rolled back. This is useful for implementing features like optimistic updates.
+
+```js
+import { Transaction } from 'signal-utils';
+
+class App {
+  @signal userName = '';
+  @signal users = [];
+  
+  async addUser() {
+    const addUserTransaction = new Transaction();
+    // optimistic update
+    addUserTransaction.execute(() => {
+      this.users = [...this.users, this.userName];
+      this.userName = '';
+    });
+    try {
+      const response = await fetch('/api/add-user', {
+        method: 'POST',
+        body: JSON.stringify({ userName: this.userName }),
+      });
+      const serverUsers = await response.json();
+      // commit the transaction
+      addUserTransaction.commit(() => {
+        this.users = serverUsers;
+      });
+    } catch (error) {
+      // rollback the transaction
+      addUserTransaction.rollback();
+    }
+  }
+}
+```
+
+Methods available in the `Transaction` class:
+
+- `execute(fn: Mutation): void` - Executes the given mutation function within the transaction.
+- `commit(fn?: Mutation): void` - Commits the transaction. Optionally, you can pass a mutation function to execute during the commit.
+- `rollback(): void` - Rolls back all changes made during the transaction.
+- `follow(promise: Promise<any>): Promise<any>` - Follows a promise, committing if it resolves and rolling back if it rejects.
 
 ### `Array`
 
