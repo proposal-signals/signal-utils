@@ -1,5 +1,8 @@
 import { Signal } from "signal-polyfill";
 
+const STATE_SYMBOL = Symbol.for("___state___");
+const MEMO_SYMBOL = Symbol.for("___memo___");
+
 type Store<T> = T extends object
     ? {
           [K in keyof T]: T[K] extends Signal.State<infer U>
@@ -38,7 +41,7 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         }
 
         // For makeMemo
-        else if (typeof initObj[key] === "object" && initObj[key].___memo___) {
+        else if (typeof initObj[key] === "object" && initObj[key][MEMO_SYMBOL]) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
                     return initObj[key].value;
@@ -47,7 +50,7 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         }
 
         // For makeState
-        else if (typeof initObj[key] === "object" && initObj[key].___state___) {
+        else if (typeof initObj[key] === "object" && initObj[key][STATE_SYMBOL]) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
                     return initObj[key].value;
@@ -61,7 +64,7 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         // Maintain Computeds
         else if (
             typeof initObj[key] === "object" &&
-            Signal.Computed.isComputed(initObj[key])
+            Signal.isComputed(initObj[key])
         ) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
@@ -73,7 +76,7 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         // Maintain Signals
         else if (
             typeof initObj[key] === "object" &&
-            Signal.State.isState(initObj[key])
+            Signal.isState(initObj[key])
         ) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
@@ -118,7 +121,7 @@ function makeState<T>(value: T): State<T> {
     });
     // Branding for use in stores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Don't want to expose brand in types
-    (store as any).___state___ = true;
+    (store as any)[STATE_SYMBOL] = true;
     return store as State<T>;
 }
 
@@ -129,7 +132,7 @@ function makeMemo<T>(fn: () => T): Memo<T> {
     });
     // Branding for use in stores
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Don't want to expose brand in types
-    (store as any).___memo___ = true;
+    (store as any)[MEMO_SYMBOL] = true;
     return store as Memo<T>;
 }
 

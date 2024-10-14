@@ -1,15 +1,12 @@
-//  Note from Evan: For some reason, my VSCode won't appropriately assess the return type on keys of store objects. For example, when the input store has a key of *count: number*, the returned store's key is typed *count: unknown*.
-// Isn't an issue for the repo my orginazation is using to test this stuff.
-import { describe, expect, it, vi, beforeEach } from "vitest"; // Need import, or should I convert this file to vitest ?
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import { makeState, makeMemo, makeStore } from "../../src/make/makeStore";
-import type {State, Memo, Store } from "../../src/make/makeStore";
 import { Signal } from "signal-polyfill";
 
 describe("makeStore", () => {
     const signalConst = Signal.State;
-    const signalIsState = Signal.State.isState;
+    const signalIsState = Signal.isState;
     const computedConst = Signal.Computed;
-    const computedIsComputed = Signal.Computed.isComputed;
+    const computedIsComputed = Signal.isComputed;
     let watcher = new Signal.subtle.Watcher(() => {});
 
     function effect(cb: () => void): () => void {
@@ -28,8 +25,8 @@ describe("makeStore", () => {
         (Signal.Computed as any) = vi.fn(function (obj) {
             return new computedConst(obj as () => unknown);
         });
-        Signal.Computed.isComputed = computedIsComputed;
-        Signal.State.isState = signalIsState;
+        Signal.isComputed = computedIsComputed;
+        Signal.isState = signalIsState;
     });
 
     describe("getting/setting fields", () => {
