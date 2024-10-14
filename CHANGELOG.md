@@ -1,5 +1,39 @@
 # Changelog
 
+## Release (2024-10-08)
+
+signal-utils 0.20.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#77](https://github.com/proposal-signals/signal-utils/pull/77) Proposal: Add AsyncComputed ([@justinfagnani](https://github.com/justinfagnani))
+
+#### Committers: 1
+- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))
+
+## Release (2024-10-02)
+
+signal-utils 0.19.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#83](https://github.com/proposal-signals/signal-utils/pull/83) Update signal-polyfill peerDependency version ([@darcyparker](https://github.com/darcyparker))
+  * [#76](https://github.com/proposal-signals/signal-utils/pull/76) Remove setters from signalFunction()'s State ([@justinfagnani](https://github.com/justinfagnani))
+
+#### :memo: Documentation
+* `signal-utils`
+  * [#78](https://github.com/proposal-signals/signal-utils/pull/78) Annotate deep function as a function, not a decorator ([@chee](https://github.com/chee))
+
+#### :house: Internal
+* `signal-utils`
+  * [#79](https://github.com/proposal-signals/signal-utils/pull/79) sync pnpm config for tools ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 4
+- Darcy Parker ([@darcyparker](https://github.com/darcyparker))
+- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+- chee ([@chee](https://github.com/chee))
+
 ## Release (2024-07-03)
 
 signal-utils 0.18.0 (minor)

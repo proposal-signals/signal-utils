@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       signal-polyfill:
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
     devDependencies:
       '@babel/core':
         specifier: ^7.24.4
@@ -2400,6 +2400,9 @@ packages:
 
   signal-polyfill@0.1.0:
     resolution: {integrity: sha512-RMyLaEor0noasIsXmvLfRNf/QeF3eND6A1WErMqJ5ZLc3dpI7aifcZMwwpLafJkGnyLSWraK8gcXaAqxCtxxeg==}
+
+  signal-polyfill@0.2.0:
+    resolution: {integrity: sha512-EbZ5L6pm0LPVZECfzfDLQ+2tWd2xQ+iG+HfuvqWjF+pl0yvdT1rsL/YgfeBakubLbnwAd1zRvap1rYqPBG8prA==}
 
   sirv@2.0.4:
     resolution: {integrity: sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==}
@@ -5353,6 +5356,8 @@ snapshots:
   signal-exit@4.1.0: {}
 
   signal-polyfill@0.1.0: {}
+
+  signal-polyfill@0.2.0: {}
 
   sirv@2.0.4:
     dependencies:
