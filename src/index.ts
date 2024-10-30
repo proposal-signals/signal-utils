@@ -1,6 +1,13 @@
 import { Signal } from "signal-polyfill";
 
 /**
+ * Define the options to pass to the underling Signal 
+ */
+export function signal<Value = any>(
+  options: Signal.Options<Value>,
+): typeof stateDecorator<Value>;
+
+/**
  * Usage:
  * ```js
  * export class Counter {
@@ -52,16 +59,22 @@ export function signal<Value = any>(
 
 export function signal<Value = any>(
   ...args:
+    | [Signal.Options<Value>]
     | Parameters<typeof stateDecorator<Value>>
     | Parameters<typeof computedDecorator<Value>>
 ) {
-  if (args[1].kind === "accessor") {
+  // Options
+  if (args.length === 1) {
+    return optionsBuilder(args[0]);
+  }
+
+  if (args[2].kind === "accessor") {
     return stateDecorator(
       ...(args as Parameters<typeof stateDecorator<Value>>),
     );
   }
 
-  if (args[1].kind === "getter") {
+  if (args[2].kind === "getter") {
     return computedDecorator(
       ...(args as Parameters<typeof computedDecorator<Value>>),
     );
@@ -70,7 +83,28 @@ export function signal<Value = any>(
   throw new Error(`@signal can only be used on accessors or getters`);
 }
 
+function optionsBuilder<Value = any>(options: Signal.Options<Value> = {}) {
+
+  return (...args: StateArgs<Value> | ComputedArgs<Value>) => {
+    if (args[1].kind === "accessor") {
+      return signal(options, args[0], args[1]);
+    }
+
+    if (args[1].kind === "getter") {
+      return signal(options, args[0], args[1]);
+    }
+
+    throw new Error(`@signal can only be used on accessors or getters`);
+  }
+}
+
+type FullStateArgs<Value> = Parameters<typeof stateDecorator<Value>>
+type FullComputedArgs<Value> = Parameters<typeof computedDecorator<Value>>
+type StateArgs<Value> = [FullStateArgs<Value>[1], FullStateArgs<Value>[2]];
+type ComputedArgs<Value> = [FullComputedArgs<Value>[1], FullComputedArgs<Value>[2]];
+
 function stateDecorator<Value = any>(
+  options: Signal.Options<Value> = {},
   target: ClassAccessorDecoratorTarget<unknown, Value>,
   context: ClassAccessorDecoratorContext,
 ): ClassAccessorDecoratorResult<unknown, Value> {
@@ -96,12 +130,13 @@ function stateDecorator<Value = any>(
     init(value: Value) {
       // SAFETY: does TS not allow us to have a different type internally?
       //         maybe I did something goofy.
-      return new Signal.State(value) as unknown as Value;
+      return new Signal.State(value, options) as unknown as Value;
     },
   };
 }
 
 function computedDecorator<Value = any>(
+  options: Signal.Options<Value> = {},
   target: () => Value,
   context: ClassGetterDecoratorContext,
 ): () => Value {
@@ -113,10 +148,10 @@ function computedDecorator<Value = any>(
 
   let caches = new WeakMap<typeof target, Signal.Computed<Value>>();
 
-  return function (this: unknown) {
+  return function(this: unknown) {
     let cache = caches.get(target);
     if (!cache) {
-      cache = new Signal.Computed(() => target.call(this));
+      cache = new Signal.Computed(() => target.call(this), options);
       caches.set(target, cache);
     }
 
