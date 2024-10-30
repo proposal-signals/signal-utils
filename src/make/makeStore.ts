@@ -13,24 +13,30 @@ type Store<T> = T extends object
       }
     : T;
 
-function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
+function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store<T> {
     // Base case which mostly for a recursive call of deep
     // Deep shouldn't be called on a primitive number/string/boolean/etc
     // It wont create a signal
+
     if (typeof initObj !== "object") {
         return initObj as Store<T>;
     }
 
-    const fakeProxy = {} as Store<T>;
-    const keys = Object.keys(initObj);
+    const fakeProxy = {} as Partial<Store<T extends object>>;
+    const keys = Object.keys(initObj) as (keyof T)[];
     keys.forEach((key) => {
         const descriptor = Object.getOwnPropertyDescriptor(initObj, key);
 
+        if(descriptor === undefined){
+            return;
+        }
+
         // Maintain getters
-        if (descriptor.get) {
+        const descriptorGet = descriptor.get;
+        if (descriptorGet !== undefined) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return descriptor.get();
+                    return descriptorGet();
                 },
             });
         }
@@ -41,22 +47,22 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         }
 
         // For makeMemo
-        else if (typeof initObj[key] === "object" && initObj[key][MEMO_SYMBOL]) {
+        else if (typeof initObj[key] === "object" && (initObj[key] as any)[MEMO_SYMBOL]) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return initObj[key].value;
+                    return (initObj[key] as Memo<unknown>).value;
                 },
             });
         }
 
         // For makeState
-        else if (typeof initObj[key] === "object" && initObj[key][STATE_SYMBOL]) {
+        else if (typeof initObj[key] === "object" && (initObj[key] as any)[STATE_SYMBOL]) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return initObj[key].value;
+                    return (initObj[key] as State<unknown>).value;
                 },
                 set: (val) => {
-                    initObj[key].value = val;
+                    (initObj[key] as State<unknown>).value = val;
                 },
             });
         }
@@ -68,7 +74,7 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         ) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return initObj[key].get();
+                    return (initObj[key] as Signal.Computed<unknown>).get();
                 },
             });
         }
@@ -80,14 +86,14 @@ function makeStore<T>(initObj: T, isDeep: boolean = false): Store<T> {
         ) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return initObj[key].get();
+                    return (initObj[key] as Signal.State<unknown>).get();
                 },
                 set: (val) => {
-                    initObj[key].set(val);
+                    (initObj[key] as Signal.State<unknown>).set(val);
                 },
             });
         } else {
-            let storage;
+            let storage: Signal.State<object | T[typeof key]>;
             let valueBeforeGet = initObj[key];
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
