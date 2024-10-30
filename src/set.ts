@@ -4,11 +4,23 @@ import {
   type Storage,
 } from "./-private/util.ts";
 
+// many of these do not exist yet
+const NEWING_METHODS = [
+  'difference',
+  'symmetricDifference',
+  'intersection',
+  'union',
+];
+
+const QUERYING_METHODS = [
+  'isDisjointFrom',
+  'isSubsetOf',
+  'isSupersetOf',
+];
+
 export class SignalSet<T = unknown> implements Set<T> {
   private collection = createStorage();
-
   private storages: StorageMap<T> = new Map();
-
   private vals: Set<T>;
 
   private storageFor(key: T): Storage {
@@ -36,6 +48,20 @@ export class SignalSet<T = unknown> implements Set<T> {
   constructor(iterable: Iterable<T>);
   constructor(existing?: readonly T[] | Iterable<T> | null | undefined) {
     this.vals = new Set(existing);
+    let self = this;
+
+    return new Proxy(self, {
+      get(target, property, receiver) {
+        if (!(property in this)) {
+          if (QUERYING_METHODS.includes(property)) {
+
+          }
+
+        }
+
+        return Reflect.get(target, property, receiver);
+      }
+    });
   }
 
   // **** KEY GETTERS ****
