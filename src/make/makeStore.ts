@@ -3,26 +3,29 @@ import { Signal } from "signal-polyfill";
 const STATE_SYMBOL = Symbol.for("___state___");
 const MEMO_SYMBOL = Symbol.for("___memo___");
 
-type Store<T> = T extends object
-    ? {
-          [K in keyof T]: T[K] extends Signal.State<infer U>
-              ? U
-              : T[K] extends Signal.Computed<infer U>
+type Store<T> =
+    {
+        [K in keyof T]: T[K] extends Signal.State<infer U>
+            ? U
+            : T[K] extends Signal.Computed<infer U>
                 ? U
-                : T[K];
-      }
-    : T;
+                : T[K] extends State<infer U>
+                    ? U
+                    : T[K] extends Memo<infer U>
+                        ? U
+                        : T[K]
+    };
 
 function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store<T> {
     // Base case which mostly for a recursive call of deep
     // Deep shouldn't be called on a primitive number/string/boolean/etc
     // It wont create a signal
 
-    if (typeof initObj !== "object") {
-        return initObj as Store<T>;
-    }
+    // if (typeof initObj !== "object") {
+    //     return initObj as Store<T>;
+    // }
 
-    const fakeProxy = {} as Partial<Store<T extends object>>;
+    const fakeProxy = {} as Partial<Store<T>>;
     const keys = Object.keys(initObj) as (keyof T)[];
     keys.forEach((key) => {
         const descriptor = Object.getOwnPropertyDescriptor(initObj, key);
@@ -93,13 +96,13 @@ function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store
                 },
             });
         } else {
-            let storage: Signal.State<object | T[typeof key]>;
+            let storage: Signal.State<T[keyof T] | Store<T[keyof T] & object>>;
             let valueBeforeGet = initObj[key];
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
                     if (!storage) {
                         storage = new Signal.State(
-                            isDeep
+                            isDeep && typeof valueBeforeGet === "object" && valueBeforeGet !== null
                                 ? makeStore(valueBeforeGet, true)
                                 : valueBeforeGet,
                         );
@@ -117,7 +120,7 @@ function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store
         }
     });
 
-    return fakeProxy;
+    return fakeProxy as Store<T>;
 }
 
 type State<T> = { value: T };
