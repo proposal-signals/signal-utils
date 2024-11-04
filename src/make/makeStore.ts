@@ -16,17 +16,48 @@ type Store<T> =
                         : T[K]
     };
 
+/**
+ * Creates a reactive store from an initial object. The store proxies the initial object,
+ * maintaining reactivity for its properties. It supports nested objects, getters, functions,
+ * and reactive signals (state and computed).
+ *
+ * @param initObj - The initial object to create the store from.
+ * @param isDeep - Whether to recursively make nested objects reactive. Defaults to `false`.
+ *
+ * @returns A reactive store that proxies the initial object.
+ *
+ * @example
+ * ```ts
+ * const store = makeStore({
+ *   count: makeState(0),
+ *   doubled: makeMemo(() => store.count * 2),
+ *   increment() {
+ *     store.count++;
+ *   }
+ * });
+ *
+ * console.log(store.count); // 0
+ * console.log(store.doubled); // 0
+ * store.increment();
+ * console.log(store.count); // 1
+ * console.log(store.doubled); // 2
+ * ```
+ *
+ * @category Store
+ */
+
 function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store<T> {
     // Base case which mostly for a recursive call of deep
     // Deep shouldn't be called on a primitive number/string/boolean/etc
     // It wont create a signal
 
-    // if (typeof initObj !== "object") {
-    //     return initObj as Store<T>;
-    // }
+    if (initObj == null || typeof initObj !== "object") {
+        return initObj as Store<T>;
+    }
 
-    const fakeProxy = {} as Partial<Store<T>>;
+    const fakeProxy = {} as Store<T>;
     const keys = Object.keys(initObj) as (keyof T)[];
+
     keys.forEach((key) => {
         const descriptor = Object.getOwnPropertyDescriptor(initObj, key);
 
@@ -35,18 +66,20 @@ function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store
         }
 
         // Maintain getters
-        const descriptorGet = descriptor.get;
-        if (descriptorGet !== undefined) {
+        const getter = descriptor!.get;
+        if (getter) {
             Object.defineProperty(fakeProxy, key, {
                 get: () => {
-                    return descriptorGet();
+                    return getter();
                 },
             });
+            return;
         }
 
+        const initValue = initObj[key as keyof T];
         // Roll other functions over
-        else if (typeof initObj[key] === "function") {
-            fakeProxy[key] = initObj[key];
+        if (typeof initValue === "function") {
+            fakeProxy[key] = initValue as Store<T>[keyof T];
         }
 
         // For makeMemo
@@ -120,7 +153,7 @@ function makeStore<T extends object>(initObj: T, isDeep: boolean = false): Store
         }
     });
 
-    return fakeProxy as Store<T>;
+    return fakeProxy;
 }
 
 type State<T> = { value: T };
