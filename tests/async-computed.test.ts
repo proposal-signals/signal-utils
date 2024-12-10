@@ -14,9 +14,9 @@ describe("AsyncComputed", () => {
       await 0;
       return 1;
     });
-    assert.equal(task.status, "initial");
 
-    // Getting the value starts the task
+    // Getting the value (or status and other properties) starts the task
+    assert.equal(task.status, "pending");
     assert.strictEqual(task.value, undefined);
     assert.strictEqual(task.error, undefined);
     assert.equal(task.status, "pending");
