@@ -1,5 +1,20 @@
 # Changelog
 
+## Release (2024-12-10)
+
+signal-utils 0.21.0 (minor)
+
+#### :rocket: Enhancement
+* `signal-utils`
+  * [#89](https://github.com/proposal-signals/signal-utils/pull/89) Emit TypeScript declaration maps ([@aomarks](https://github.com/aomarks))
+
+#### :bug: Bug Fix
+* `signal-utils`
+  * [#88](https://github.com/proposal-signals/signal-utils/pull/88) Bugfix: Accessing AsyncComputed status property should trigger computed function ([@aomarks](https://github.com/aomarks))
+
+#### Committers: 1
+- Al Marks ([@aomarks](https://github.com/aomarks))
+
 ## Release (2024-10-08)
 
 signal-utils 0.20.0 (minor)
