@@ -57,6 +57,7 @@ export class AsyncComputed<T> {
    * already.
    */
   get status() {
+    this.run();
     // Unconditionally read the status signal to ensure that any signals that
     // read it are tracked as dependents.
     const currentState = this.#status.get();
