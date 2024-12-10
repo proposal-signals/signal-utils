@@ -2,16 +2,20 @@
   "solution": {
     "signal-utils": {
       "impact": "minor",
-      "oldVersion": "0.19.0",
-      "newVersion": "0.20.0",
+      "oldVersion": "0.20.0",
+      "newVersion": "0.21.0",
       "constraints": [
         {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-10-08)\n\nsignal-utils 0.20.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#77](https://github.com/proposal-signals/signal-utils/pull/77) Proposal: Add AsyncComputed ([@justinfagnani](https://github.com/justinfagnani))\n\n#### Committers: 1\n- Justin Fagnani ([@justinfagnani](https://github.com/justinfagnani))\n"
+  "description": "## Release (2024-12-10)\n\nsignal-utils 0.21.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#89](https://github.com/proposal-signals/signal-utils/pull/89) Emit TypeScript declaration maps ([@aomarks](https://github.com/aomarks))\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#88](https://github.com/proposal-signals/signal-utils/pull/88) Bugfix: Accessing AsyncComputed status property should trigger computed function ([@aomarks](https://github.com/aomarks))\n\n#### Committers: 1\n- Al Marks ([@aomarks](https://github.com/aomarks))\n"
 }
