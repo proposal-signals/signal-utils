@@ -1,9 +1,9 @@
 import { describe, it, assert } from "vitest";
 
-import { signal } from "signal-utils";
-import { signalObject, SignalObject } from "signal-utils/object";
-import { signalArray, SignalArray } from "signal-utils/array";
-import { load, SignalAsyncData } from "signal-utils/async-data";
+import { signal } from "../src";
+import { signalObject, SignalObject } from "../src/object";
+import { signalArray, SignalArray } from "../src/array";
+import { load, SignalAsyncData } from "../src/async-data";
 
 describe("Public API", () => {
   it("exists", () => {
