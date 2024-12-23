@@ -83,4 +83,25 @@ describe("@signal (getter)", () => {
       new State();
     }, /@signal can only be used on accessors or getters/);
   });
+
+  it("not shared between instances", () => {
+    class State {
+      @signal accessor #value = 3;
+
+      @signal
+      get doubled() {
+        return this.#value * 2;
+      }
+
+      constructor(value: number) {
+        this.#value = value;
+      }
+    }
+
+    let state1 = new State(1);
+    let state2 = new State(2);
+
+    assert.strictEqual(state1.doubled, 2);
+    assert.strictEqual(state2.doubled, 4);
+  });
 });

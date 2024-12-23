@@ -111,15 +111,23 @@ function computedDecorator<Value = any>(
     throw new Error(`Can only use @cached on getters.`);
   }
 
-  let caches = new WeakMap<typeof target, Signal.Computed<Value>>();
+  const caches = new WeakMap<
+    typeof target,
+    WeakMap<object, Signal.Computed<Value>>
+  >();
 
   return function (this: unknown) {
     let cache = caches.get(target);
     if (!cache) {
-      cache = new Signal.Computed(() => target.call(this));
+      cache = new WeakMap();
       caches.set(target, cache);
     }
+    let effect = cache.get(this as object);
+    if (!effect) {
+      effect = new Signal.Computed(() => target.call(this));
+      cache.set(this as object, effect);
+    }
 
-    return cache.get();
+    return effect.get();
   };
 }
