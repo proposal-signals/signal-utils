@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2024-12-23)
+
+signal-utils 0.21.1 (patch)
+
+#### :bug: Bug Fix
+* `signal-utils`
+  * [#92](https://github.com/proposal-signals/signal-utils/pull/92) fix: Issue with `@signal`'s cache: `computed` instances sharing the same cache ([@JuerGenie](https://github.com/JuerGenie))
+
+#### Committers: 1
+- Juer.G Whang ([@JuerGenie](https://github.com/JuerGenie))
+
 ## Release (2024-12-10)
 
 signal-utils 0.21.0 (minor)
