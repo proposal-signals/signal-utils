@@ -1,14 +1,10 @@
 {
   "solution": {
     "signal-utils": {
-      "impact": "minor",
-      "oldVersion": "0.20.0",
-      "newVersion": "0.21.0",
+      "impact": "patch",
+      "oldVersion": "0.21.0",
+      "newVersion": "0.21.1",
       "constraints": [
-        {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        },
         {
           "impact": "patch",
           "reason": "Appears in changelog section :bug: Bug Fix"
@@ -17,5 +13,5 @@
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-12-10)\n\nsignal-utils 0.21.0 (minor)\n\n#### :rocket: Enhancement\n* `signal-utils`\n  * [#89](https://github.com/proposal-signals/signal-utils/pull/89) Emit TypeScript declaration maps ([@aomarks](https://github.com/aomarks))\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#88](https://github.com/proposal-signals/signal-utils/pull/88) Bugfix: Accessing AsyncComputed status property should trigger computed function ([@aomarks](https://github.com/aomarks))\n\n#### Committers: 1\n- Al Marks ([@aomarks](https://github.com/aomarks))\n"
+  "description": "## Release (2024-12-23)\n\nsignal-utils 0.21.1 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#92](https://github.com/proposal-signals/signal-utils/pull/92) fix: Issue with `@signal`'s cache: `computed` instances sharing the same cache ([@JuerGenie](https://github.com/JuerGenie))\n\n#### Committers: 1\n- Juer.G Whang ([@JuerGenie](https://github.com/JuerGenie))\n"
 }
