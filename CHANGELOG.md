@@ -1,5 +1,17 @@
 # Changelog
 
+## Release (2026-09-08)
+
+signal-utils 0.21.2 (patch)
+
+#### :memo: Documentation
+* `signal-utils`
+  * [#105](https://github.com/proposal-signals/signal-utils/pull/105) fix(docs): correct `markdownlint` whitespace issues ([@agilgur5](https://github.com/agilgur5))
+  * [#104](https://github.com/proposal-signals/signal-utils/pull/104) fix(docs): correct link syntax and another typo ([@agilgur5](https://github.com/agilgur5))
+
+#### Committers: 1
+- Anton Gilgur ([@agilgur5](https://github.com/agilgur5))
+
 ## Release (2024-12-23)
 
 signal-utils 0.21.1 (patch)

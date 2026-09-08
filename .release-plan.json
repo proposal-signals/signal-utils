@@ -2,16 +2,16 @@
   "solution": {
     "signal-utils": {
       "impact": "patch",
-      "oldVersion": "0.21.0",
-      "newVersion": "0.21.1",
+      "oldVersion": "0.21.1",
+      "newVersion": "0.21.2",
       "constraints": [
         {
           "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "reason": "Appears in changelog section :memo: Documentation"
         }
       ],
       "pkgJSONPath": "./package.json"
     }
   },
-  "description": "## Release (2024-12-23)\n\nsignal-utils 0.21.1 (patch)\n\n#### :bug: Bug Fix\n* `signal-utils`\n  * [#92](https://github.com/proposal-signals/signal-utils/pull/92) fix: Issue with `@signal`'s cache: `computed` instances sharing the same cache ([@JuerGenie](https://github.com/JuerGenie))\n\n#### Committers: 1\n- Juer.G Whang ([@JuerGenie](https://github.com/JuerGenie))\n"
+  "description": "## Release (2026-09-08)\n\nsignal-utils 0.21.2 (patch)\n\n#### :memo: Documentation\n* `signal-utils`\n  * [#105](https://github.com/proposal-signals/signal-utils/pull/105) fix(docs): correct `markdownlint` whitespace issues ([@agilgur5](https://github.com/agilgur5))\n  * [#104](https://github.com/proposal-signals/signal-utils/pull/104) fix(docs): correct link syntax and another typo ([@agilgur5](https://github.com/agilgur5))\n\n#### Committers: 1\n- Anton Gilgur ([@agilgur5](https://github.com/agilgur5))\n"
 }
