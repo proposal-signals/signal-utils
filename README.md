@@ -1,6 +1,6 @@
 # signal-utils
 
-Utils for the [Signal's Proposal](https://github.com/proposal-signals/proposal-signals).
+Utils for the [Signals Proposal](https://github.com/proposal-signals/proposal-signals).
 
 Try it out on JSBin: https://jsbin.com/safoqap/edit?html,output
 
@@ -549,7 +549,7 @@ Synchronous batched effects can be useful when abstracting over signals to use t
 
 The `AsyncComputed` class reprents an _async_ computation that consumes other signals.
 
-While computing a value based on other signals _synchronously_ is covered by the core signals API, computing a value _asynchronously_ is not. (There is an ongoing [discussion about how to handle async computations](https://github.com/tc39/proposal-signals/issues/30 however).
+While computing a value based on other signals _synchronously_ is covered by the core signals API, computing a value _asynchronously_ is not. (There is an ongoing [discussion about how to handle async computations](https://github.com/tc39/proposal-signals/issues/30) however).
 
 `AsyncComputed` is similar to `Signal.Computed`, except that it takes an async (or Promise-returning) function as the computation function.
 
