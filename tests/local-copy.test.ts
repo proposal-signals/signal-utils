@@ -60,4 +60,19 @@ describe("localCopy()", () => {
 
     assertStable(() => state.local.get());
   });
+
+  test("it correctly updates when remote value was reverted", () => {
+    let remote = new Signal.State(123);
+
+    let local = localCopy(() => remote.get());
+
+    local.set(789);
+
+    remote.set(456);
+    remote.set(123);
+
+    assert.strictEqual(local.get(), 123, "local value updates correctly");
+
+    assertStable(() => local.get());
+  });
 });
