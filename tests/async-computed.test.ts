@@ -2,6 +2,26 @@ import { describe, test, assert } from "vitest";
 import { Signal } from "signal-polyfill";
 import { AsyncComputed } from "../src/async-computed.ts";
 
+
+// Polyfill for Promise.withResolvers (necessary because feature not yet supported by vitest)
+interface Resolvers<T> {
+  promise: Promise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason?: any) => void;
+}
+
+if (!Promise.withResolvers) {
+  Promise.withResolvers = function<T>(): Resolvers<T> {
+    let resolve!: (value: T | PromiseLike<T>) => void;
+    let reject!: (reason?: any) => void;
+    const promise = new Promise<T>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+}
+
 describe("AsyncComputed", () => {
   test("initialValue", async () => {
     const task = new AsyncComputed(async () => 1, { initialValue: 0 });
