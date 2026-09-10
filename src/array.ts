@@ -51,54 +51,12 @@ function convertToInt(prop: number | string | symbol): number | null {
   return num % 1 === 0 ? num : null;
 }
 
-// This rule is correct in the general case, but it doesn't understand
-// declaration merging, which is how we're using the interface here. This says
-// `SignalArray` acts just like `Array<T>`, but also has the properties
-// declared via the `class` declaration above -- but without the cost of a
-// subclass, which is much slower than the proxied array behavior. That is: a
-// `SignalArray` *is* an `Array`, just with a proxy in front of accessors and
-// setters, rather than a subclass of an `Array` which would be de-optimized by
-// the browsers.
-//
-export interface SignalArray<T = unknown> extends Array<T> {}
-
-export class SignalArray<T = unknown> {
-  /**
-   * Creates an array from an iterable object.
-   * @param iterable An iterable object to convert to an array.
-   */
-  static from<T>(iterable: Iterable<T> | ArrayLike<T>): SignalArray<T>;
-
-  /**
-   * Creates an array from an iterable object.
-   * @param iterable An iterable object to convert to an array.
-   * @param mapfn A mapping function to call on every element of the array.
-   * @param thisArg Value of 'this' used to invoke the mapfn.
-   */
-  static from<T, U>(
-    iterable: Iterable<T> | ArrayLike<T>,
-    mapfn: (v: T, k: number) => U,
-    thisArg?: unknown,
-  ): SignalArray<U>;
-
-  static from<T, U>(
-    iterable: Iterable<T> | ArrayLike<T>,
-    mapfn?: (v: T, k: number) => U,
-    thisArg?: unknown,
-  ): SignalArray<T> | SignalArray<U> {
-    return mapfn
-      ? new SignalArray(Array.from(iterable, mapfn, thisArg))
-      : new SignalArray(Array.from(iterable));
-  }
-
-  static of<T>(...arr: T[]): SignalArray<T> {
-    return new SignalArray(arr);
-  }
-
-  constructor(arr: T[] = []) {
-    let clone = arr.slice();
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let self = this;
+export class SignalArray<T = unknown> extends Array<T> {
+  constructor(arrayLength?: number);
+  constructor(arrayLength: number);
+  constructor(...items: T[]);
+  constructor(...args: T[]) {
+    super(...args);
 
     let boundFns = new Map<string | symbol, (...args: any[]) => any>();
 
@@ -109,13 +67,13 @@ export class SignalArray<T = unknown> {
      */
     let nativelyAccessingLengthFromPushOrUnshift = false;
 
-    return new Proxy(clone, {
+    return new Proxy(this, {
       get(target, prop /*, _receiver */) {
         let index = convertToInt(prop);
 
         if (index !== null) {
-          self.#readStorageFor(index);
-          self.#collection.get();
+          target.#readStorageFor(index);
+          target.#collection.get();
 
           return target[index];
         }
@@ -132,7 +90,7 @@ export class SignalArray<T = unknown> {
           if (nativelyAccessingLengthFromPushOrUnshift) {
             nativelyAccessingLengthFromPushOrUnshift = false;
           } else {
-            self.#collection.get();
+            target.#collection.get();
           }
 
           return target[prop];
@@ -150,7 +108,7 @@ export class SignalArray<T = unknown> {
 
           if (fn === undefined) {
             fn = (...args) => {
-              self.#collection.get();
+              target.#collection.get();
               return (target as any)[prop](...args);
             };
 
@@ -169,10 +127,10 @@ export class SignalArray<T = unknown> {
         let index = convertToInt(prop);
 
         if (index !== null) {
-          self.#dirtyStorageFor(index);
-          self.#collection.set(null);
+          target.#dirtyStorageFor(index);
+          target.#collection.set(null);
         } else if (prop === "length") {
-          self.#collection.set(null);
+          target.#collection.set(null);
         }
 
         return true;
@@ -208,9 +166,6 @@ export class SignalArray<T = unknown> {
   }
 }
 
-// Ensure instanceof works correctly
-Object.setPrototypeOf(SignalArray.prototype, Array.prototype);
-
-export function signalArray<Item>(x?: Item[]) {
-  return new SignalArray(x);
+export function signalArray<Item>(x: Item[] = []) {
+  return new SignalArray(...x);
 }
